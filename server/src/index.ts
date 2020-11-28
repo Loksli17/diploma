@@ -1,14 +1,14 @@
 import express, {Request, Response, NextFunction} from 'express';
-import config from './config';
+import config   from './config';
+import Router   from './routes';
+import mongoose from 'mongoose';
 
 //middlewares
 // import cors from cors
 
-//routers
-import Router from './routes';
-
 
 export class App{
+    
     private static   instance: App;
     private          app     : express.Application;
     private readonly port    : number;
@@ -30,7 +30,7 @@ export class App{
         return this.instance || (this.instance = new this());
     }
 
-    public init(){
+    public async init(){
         this.app.listen(3000, () => console.log(`Online corel was started on port: ${this.port}. Stop it now?`));
     }
 
