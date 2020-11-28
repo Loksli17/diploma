@@ -1,10 +1,19 @@
 import {Router, Request, Response, NextFunction} from 'express';
+// import {UserModel, User}       from '../models/UserModel';
+// import {ProjectModel, Project} from '../models/ProjectModel';
+
 
 export default class IndexController{
     private static router: Router = Router();
 
-    private static getIndexApi (req: Request, res: Response){
-        res.send('indexApi');
+    private static async getIndexApi (req: Request, res: Response){
+        let
+            users   : Array<any>    = [],
+            projects: Array<any> = [];
+
+        console.log(projects);
+        
+        res.send({users: users, projects: projects});
     }
 
     public static routes(){

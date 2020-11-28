@@ -3,11 +3,11 @@ import {Router, Request, Response, NextFunction} from 'express';
 export default class AuthController{
     private static router: Router = Router();
 
-    private static getLoginApi(req: Request, res: Response){
+    private static async getLoginApi(req: Request, res: Response){
         res.status(200).send('login');
     }
 
-    private static getSignupApi(req: Request, res: Response){
+    private static async getSignupApi(req: Request, res: Response){
         res.status(200).send('signup');
     }
 

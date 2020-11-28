@@ -7,7 +7,8 @@
     "start": "node server/dist/index.js",
     "dev": "nodemon server/src/index.ts",
     "build": "tsc -p",
-    "db-users": "nodemon server/src/commands/createUsers.ts"
+    "db-users": "nodemon server/src/commands/createUsers.ts",
+    "db-projects": "nodemon server/src/commands/createProjects.ts"
   },
   "repository": {
     "type": "git",
@@ -21,10 +22,7 @@
   },
   "homepage": "https://github.com/RobinLoksli/diploma#readme",
   "dependencies": {
-    "@typegoose/typegoose": "^7.4.2",
-    "@types/mongoose": "^5.10.1",
-    "express": "^4.17.1",
-    "mongoose": "^5.10.15"
+    "express": "^4.17.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",

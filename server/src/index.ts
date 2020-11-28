@@ -1,7 +1,8 @@
 import express, {Request, Response, NextFunction} from 'express';
 import config   from './config';
 import Router   from './routes';
-import mongoose from 'mongoose';
+
+import './config/database';
 
 //middlewares
 // import cors from cors
@@ -12,7 +13,6 @@ export class App{
     private static   instance: App;
     private          app     : express.Application;
     private readonly port    : number;
-    private          db      : any;
     
     private constructor(port: number = config.app.port){
         this.app  = express();

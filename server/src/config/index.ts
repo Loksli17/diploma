@@ -1,7 +1,8 @@
 export default{
     db: {
-        name: 'onlineCorel',
-        url : 'mongodb://localhost:27017/',
+        name    : 'onlineCorel',
+        user    : 'root',
+        password: '1234',
     },
     secret: {
         password: '~1;3JklN,<az09T',
