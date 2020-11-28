@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/RobinLoksli/diploma#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "typeorm": "^0.2.29"
   },
   "devDependencies": {
     "@types/express": "^4.17.9",

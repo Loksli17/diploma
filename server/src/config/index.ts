@@ -3,6 +3,7 @@ export default{
         name    : 'onlineCorel',
         user    : 'root',
         password: '1234',
+        port    : 3306,
     },
     secret: {
         password: '~1;3JklN,<az09T',
