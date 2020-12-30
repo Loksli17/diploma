@@ -8,7 +8,7 @@ const
         host    : 'localhost',
         port    : config.db.port,
         username: config.db.user,
-        password: 'config.db.password',
+        password: config.db.password,
         database: config.db.name,
     }),
     init = async (): Promise<void> => {
