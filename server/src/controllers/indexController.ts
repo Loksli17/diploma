@@ -8,10 +8,8 @@ export default class IndexController{
 
     private static async getIndexApi (req: Request, res: Response){
         let
-            users   : Array<any>    = [],
+            users   : Array<any> = [],
             projects: Array<any> = [];
-
-        console.log(projects);
         
         res.send({users: users, projects: projects});
     }

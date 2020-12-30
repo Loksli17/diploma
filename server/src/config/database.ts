@@ -1,18 +1,23 @@
-import {getConnectionManager, ConnectionManager, Connection} from 'typeorm';
+import {getConnectionManager, ConnectionManager, Connection, getConnection} from 'typeorm';
 import config from '../config';
 
 const
-    connectionManager = new ConnectionManager(),
+    connectionManager = getConnectionManager(),
     connection        = connectionManager.create({
         type    : 'mysql',
         host    : 'localhost',
         port    : config.db.port,
         username: config.db.user,
-        password: config.db.password,
+        password: 'config.db.password',
         database: config.db.name,
     }),
     init = async (): Promise<void> => {
-        await connection.connect();
+        try{
+            await connection.connect();
+            console.log(`Connection to ${config.db.name} was successfully. User: ${config.db.user}`);
+        }catch(err){
+            throw new Error(err);    
+        }
     };
 
-init();
+export default init;
