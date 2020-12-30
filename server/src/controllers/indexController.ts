@@ -10,8 +10,8 @@ export default class IndexController{
 
     private static async getIndexApi (req: Request, res: Response){
         let
-            users   : Array<User> = [],
-            projects: Array<any>  = [];
+            users   : Array<User>    = [],
+            projects: Array<Project> = [];
 
         users = await getRepository(User).createQueryBuilder()
             .take(4)
@@ -19,6 +19,7 @@ export default class IndexController{
             .getMany();
 
         projects = await getRepository(Project).createQueryBuilder()
+            .innerJoin('user_has_project', 'user', 'user_id = :id', {id: 1})
             .getMany();
         
         res.send({users: users, projects: projects});

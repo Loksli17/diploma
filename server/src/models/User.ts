@@ -1,5 +1,6 @@
 import {IsEmail, MinLength} from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable} from 'typeorm';
+import Project from './Project';
 
 @Entity()
 export default class User{
@@ -23,4 +24,7 @@ export default class User{
     @Column()
     @MinLength(7)
     public password: string = '12345678';
+
+    @ManyToMany(() => Project, project => project.users)
+    public projects: Array<Project> | undefined; 
 }
