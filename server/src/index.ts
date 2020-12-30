@@ -2,7 +2,6 @@ import express, {Request, Response, NextFunction} from 'express';
 import config    from './config';
 import Router    from './routes';
 import connectDb from './config/database';
-import { Db } from 'typeorm';
 
 //middlewares
 // import cors from cors

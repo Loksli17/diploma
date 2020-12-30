@@ -1,6 +1,6 @@
 import {Router, Request, Response, NextFunction} from 'express';
-// import {UserModel, User}       from '../models/UserModel';
-// import {ProjectModel, Project} from '../models/ProjectModel';
+import { getRepository } from 'typeorm';
+import User from '../models/User';
 
 
 export default class IndexController{
@@ -8,8 +8,10 @@ export default class IndexController{
 
     private static async getIndexApi (req: Request, res: Response){
         let
-            users   : Array<any> = [],
-            projects: Array<any> = [];
+            users   : Array<User> = [],
+            projects: Array<any>  = [];
+
+        users = await getRepository(User).find();
         
         res.send({users: users, projects: projects});
     }

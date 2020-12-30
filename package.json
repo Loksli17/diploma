@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/RobinLoksli/diploma#readme",
   "dependencies": {
+    "class-validator": "^0.12.2",
     "express": "^4.17.1",
     "mysql2": "^2.2.5",
     "typeorm": "^0.2.29"

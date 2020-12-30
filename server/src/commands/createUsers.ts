@@ -1,4 +1,4 @@
-import {UserModel, User} from '../models/UserModel';
+import {UserModel, User} from '../models/User';
 import '../config/database';
 
 const init = async(): Promise<void> => {
