@@ -1,4 +1,4 @@
-import {getConnectionManager, ConnectionManager, Connection, getConnection} from 'typeorm';
+import {getConnectionManager} from 'typeorm';
 import config from '../config';
 
 const
