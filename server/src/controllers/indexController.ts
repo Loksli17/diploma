@@ -19,7 +19,7 @@ export default class IndexController{
             .getMany();
 
         projects = await getRepository(Project).createQueryBuilder()
-            .innerJoin('user_has_project', 'user', 'user_id = :id', {id: 1})
+            .where('authorId = :id', {id: 1})
             .getMany();
         
         res.send({users: users, projects: projects});
