@@ -1,4 +1,4 @@
-import {ProjectModel, Project} from '../models/ProjectModel';
+import {ProjectModel, Project} from '../models/Project';
 import '../config/database';
 
 const init = async(): Promise<void> => {

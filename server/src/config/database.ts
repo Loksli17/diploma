@@ -1,5 +1,6 @@
 import {getConnectionManager} from 'typeorm';
 import config                 from '../config';
+import Project                from '../models/Project';
 import User                   from '../models/User';
 
 
@@ -13,7 +14,7 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User],
+        entities: [User, Project],
     }),
     init = async (): Promise<void> => {
         try{

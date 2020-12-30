@@ -1,5 +1,5 @@
 import {IsEmail, MinLength} from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn, getRepository} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity()
 export default class User{

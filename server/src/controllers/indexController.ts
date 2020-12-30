@@ -1,6 +1,8 @@
 import {Router, Request, Response, NextFunction} from 'express';
-import { getRepository } from 'typeorm';
-import User from '../models/User';
+
+import {getRepository} from 'typeorm';
+import User            from '../models/User';
+import Project         from '../models/Project';
 
 
 export default class IndexController{
@@ -11,7 +13,13 @@ export default class IndexController{
             users   : Array<User> = [],
             projects: Array<any>  = [];
 
-        users = await getRepository(User).find();
+        users = await getRepository(User).createQueryBuilder()
+            .take(4)
+            .skip(2)
+            .getMany();
+
+        projects = await getRepository(Project).createQueryBuilder()
+            .getMany();
         
         res.send({users: users, projects: projects});
     }
