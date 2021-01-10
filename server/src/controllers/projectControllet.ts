@@ -3,11 +3,12 @@ import {Router, Request, Response} from 'express';
 import {getRepository} from 'typeorm';
 import Project         from '../models/Project';
 
+
 export default class ProjectController{
 
     private static router: Router = Router();
 
-    private static async getProjectsApi(req: Request, res: Response){
+    private static async getProjects(req: Request, res: Response){
         
         interface POST{
             take: number;
@@ -44,7 +45,7 @@ export default class ProjectController{
 
 
     public static routes(){
-        this.router.all('/get-projects' , this.getProjectsApi);
+        this.router.all('/get-projects' , this.getProjects);
         return this.router;
     }
 }

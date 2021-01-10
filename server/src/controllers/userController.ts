@@ -3,11 +3,12 @@ import {Router, Request, Response} from 'express';
 import {getRepository} from 'typeorm';
 import User            from '../models/User';
 
+
 export default class UserController{
 
     private static router: Router = Router();
 
-    private static async getFriendsApi(req: Request, res: Response){
+    private static async getFriends(req: Request, res: Response){
         
         interface POST{
             take: number;
@@ -42,9 +43,21 @@ export default class UserController{
         res.status(200).send({friends: friends});
     }
 
+    private static async searchUser(req: Request, res: Response){
+
+        interface POST{
+            login?: string;
+            id   ?: number;
+            email?: string;
+        }
+
+        let 
+            POST: POST = req.body;
+    }
 
     public static routes(){
-        this.router.all('/get-friends' , this.getFriendsApi);
+        this.router.all('/get-friends', this.getFriends);
+        this.router.all('/search-User', this.searchUser);
         return this.router;
     }
 }
