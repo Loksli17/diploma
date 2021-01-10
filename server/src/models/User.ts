@@ -28,3 +28,4 @@ export default class User{
     @ManyToMany(() => Project, project => project.users)
     public projects: Array<Project> | undefined; 
 }
+
