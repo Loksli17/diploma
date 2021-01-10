@@ -30,6 +30,3 @@ export default class IndexController{
         return this.router;
     }
 }
-
-const readline = require('readline-sync');
-const crypto   = require('crypto');
