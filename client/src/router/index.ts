@@ -1,17 +1,21 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
+import { createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
-        name: 'Home',
-        component: Home
+        path     : '/',
+        name     : 'Home',
+        component: () => import('../views/Home.vue'),
     },
     {
-        path: '/about',
-        name: 'About',
-        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-    }
+        path    : '/login',
+        name    : 'Login',
+        component: () => import('../views/Login.vue'),
+    },
+    {
+        path     : '/signup',
+        name     : 'Signup',
+        component: () => import('../views/Signup.vue'),
+    },
 ]
 
 const router = createRouter({
