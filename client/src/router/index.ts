@@ -9,12 +9,17 @@ const routes: Array<RouteRecordRaw> = [
     {
         path    : '/login',
         name    : 'Login',
-        component: () => import('../views/Login.vue'),
+        component: () => import('../views/auth/Login.vue'),
     },
     {
         path     : '/signup',
         name     : 'Signup',
-        component: () => import('../views/Signup.vue'),
+        component: () => import('../views/auth/Signup.vue'),
+    },
+    {
+        path     : "/:pathMatch(.*)*",
+        name     : '404',
+        component: () => import('../views/404.vue'),
     },
 ]
 
