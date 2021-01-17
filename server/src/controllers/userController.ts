@@ -43,6 +43,7 @@ export default class UserController{
         res.status(200).send({friends: friends});
     }
 
+    
     private static async searchUser(req: Request, res: Response){
 
         interface POST{
