@@ -52,8 +52,14 @@ export default class UserController{
             email?: string;
         }
 
+        //DON'T FORGET ABOUT LIKE
         let 
-            POST: POST = req.body;
+            POST: POST         = req.body,
+            users: Array<User> = await getRepository(User).createQueryBuilder()
+                .where('user.login = :login', {login: POST.login})
+                .getMany();
+
+        res.status(200).send({users: users});
     }
 
     public static routes(){
