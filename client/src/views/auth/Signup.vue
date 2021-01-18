@@ -10,7 +10,7 @@
 
 <script lang="ts">
     import {defineComponent} from 'vue';
-    import AuthNav             from '../../components/auth/AuthNav.vue';
+    import AuthNav           from '../../components/auth/AuthNav.vue';
 
     
     export default defineComponent({

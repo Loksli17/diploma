@@ -1,5 +1,5 @@
 <template>
-    <form :action=action :method=method>
+    <form :class=className :id=id :action=action :method=method>
         <div class="row" v-for="row in rows" :key='row'>
             <label v-for="item in row" :key='item.name'>
                 <span>{{item.label}}</span>
@@ -74,17 +74,23 @@
         ]
     ]
 
-
-    export default defineComponent({
+    const Form = defineComponent({
         data(){
             return {
-                action: '/auth/login',
-                rows  : rows,
-                method: 'post'
+                action   : '/auth/login',
+                rows     : rows,
+                method   : 'post',
+                className: 'login-form',
             } 
         },
         methods: {
 
         },
     });
+
+    export {
+        Form,
+        Option,
+        FormItem
+    };
 </script>
