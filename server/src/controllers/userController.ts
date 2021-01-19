@@ -52,7 +52,7 @@ export default class UserController{
             email?: string;
         }
 
-        //DON'T FORGET ABOUT LIKE
+        // TODO DON'T FORGET ABOUT LIKE
         let 
             POST: POST         = req.body,
             users: Array<User> = await getRepository(User).createQueryBuilder()
