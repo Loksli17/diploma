@@ -1,8 +1,8 @@
 <template>
     <form :class=className :id=id :action=action :method=method>
-        <div class="row" v-for="row in rows" :key='row'>
-            <label v-for="item in row" :key='item.name'>
-                <span>{{item.label}}</span>
+        <div class="form-row" v-for="row in rows" :key='row'>
+            <label class="form-col" v-for="item in row" :key='item.name'>
+                <span>{{item.label ?? $filters.upperFirst(item.name)}}</span>
                 
                 <textarea v-if="item.type == 'textarea'" v-model="item.value" :name=item.name></textarea>
                 
@@ -59,38 +59,66 @@
         multiple?: boolean;
     }
 
-    const rows: Array<Array<FormItem>> = [
-        [
-            {type: 'text',     name: 'login',    label: 'Username or E-mail', autofocus: true},
-            {type: 'select',   name: 'testList', options: [{text: 'kek', id: 1}, {text: 'lol', id: 2}], selected: 'lol'},
-        ],
-        [
-            {type: 'password', name: 'password', label: 'Password'},
-            {type: 'select',   name: 'testList', options: [{text: 'kek', id: 1}, {text: 'lol', id: 2}], selected: 'lol'},
-        ],
-        [
-            {type: 'number',   name: 'test',     label: 'TEST'},
-            {type: 'submit',   name: 'submit',   value: 'Log in'},
-        ]
-    ]
+    // interface FormData{
 
-    const Form = defineComponent({
-        data(){
-            return {
-                action   : '/auth/login',
-                rows     : rows,
-                method   : 'post',
-                className: 'login-form',
-            } 
-        },
+    // }
+
+    export default defineComponent({
         methods: {
-
+            sendData: function(e: any){
+                console.log();
+            }
         },
+        props: {
+            action: {
+                type    : String,
+                required: true,
+            },
+            method: {
+                type    : String,
+                required: true,
+            },
+            id: {
+                type: String,
+            },
+            className: {
+                type: String,
+            },
+            rows: {
+                type: Array,
+            }
+        },
+        mounted(){
+            console.log(this.rows);
+        }
     });
-
-    export {
-        Form,
-        Option,
-        FormItem
-    };
 </script>
+
+<style lang="scss">
+    form{
+        display: grid;
+        row-gap: 20px;
+        max-width: 400px;
+        
+        .form-row{
+            display: grid;
+            grid-auto-flow: row;
+        }
+
+        .form-col{
+            display: grid;
+            row-gap: 10px;
+
+            span{
+                text-align: left;
+                font-size: 18px;
+                font-weight: 500;
+            }
+
+            input{
+                padding: 10px;
+                font-size: 15px;
+            }
+        }
+    }
+</style>

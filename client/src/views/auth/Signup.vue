@@ -2,7 +2,7 @@
     <div>
         <div></div>
         <div>
-            <AuthNav/>
+            <AuthNav v-bind:ind='1'/>
             <h1>Signup</h1>
         </div>
     </div>
@@ -11,7 +11,6 @@
 <script lang="ts">
     import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
-
     
     export default defineComponent({
         components: {

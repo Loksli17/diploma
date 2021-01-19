@@ -1,5 +1,5 @@
 import {IsEmail, MinLength} from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, Unique} from 'typeorm';
 import Project from './Project';
 
 @Entity()
