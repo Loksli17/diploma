@@ -1,5 +1,5 @@
 <template>
-    <form :class=className :id=id :action=action :method=method @submit.prevent="sendData">
+    <form :class=className :id=id :action=action method='post' @submit.prevent="sendData">
         <div class="form-row" v-for="row in rows" :key='row'>
             <label class="form-col" v-for="item in row" :key='item.name'>
                 <span v-if="item.type != 'submit'">{{item.label ?? $filters.upperFirst(item.name)}}</span>
@@ -113,10 +113,16 @@
             sendData: async function(){
                 const propsToSend: Array<Prop> = this.createPropsToSend();
                 this.pullFormData(propsToSend);
-                const result = await this.$axios.post('auth/signup', JSON.stringify(this.formData), {
+                const result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
                     headers: config.headers,
                 });
+                console.log(result);
                 this.result = result;
+                this.parseResult();
+            },
+
+            parseResult: function(){
+                console.log(this.result);
             }
         },
 

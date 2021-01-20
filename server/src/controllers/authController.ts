@@ -1,5 +1,9 @@
 import {Router, Request, Response, NextFunction} from 'express';
 
+import {getRepository}             from 'typeorm';
+import User                        from '../models/User';
+import {validate, ValidationError} from 'class-validator';
+
 export default class AuthController{
     private static router: Router = Router();
 
@@ -7,13 +11,52 @@ export default class AuthController{
         res.status(200).send('login');
     }
 
+
     private static async signup(req: Request, res: Response){
 
-        // le
-        let user: string = req.body.user;
-        console.log(req.body);
+        interface POST{
+            user: {
+                lastName : string,
+                firstName: string,
+                login    : string,
+                email    : string,
+                password : string,
+            };
+        }
+
+        let 
+            result        : any  , 
+            POST          : POST = req.body,
+            validateResult: Array<ValidationError>,
+            user          : User = new User(); 
+
+        if(POST.user == undefined){
+            res.status(500).send({error: 'Data about `user` has not sended'});
+        }
+
+        user.lastName  = POST.user.lastName;
+        user.firstName = POST.user.firstName;
+        user.login     = POST.user.login;
+        user.email     = POST.user.email;
+        user.password  = POST.user.password;
+
+        validateResult = await validate(user);
+
+        if(validateResult.length){
+            res.status(200).send({msg: 'bad', errors: validateResult});
+            return;
+        }
+
+        // try{
+        //     result = await getRepository(User).insert(user);
+        // }catch(err){
+        //     throw new Error(err)
+        // }
+    
+        console.log(result);
         res.status(200).send({body: req.body});
     }
+
 
     public static routes(){
         this.router.all(`/login`, this.login);

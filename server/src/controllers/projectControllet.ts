@@ -20,12 +20,12 @@ export default class ProjectController{
             projects: Array<Project> = [];
 
         if(POST.take == undefined){
-            res.status(500).send({error: 'Data about take has not sended'});
+            res.status(500).send({error: 'Data about `take` has not sended'});
             return;
         }
 
         if(POST.skip == undefined){
-            res.status(500).send({error: 'Data about skip has not sended'});
+            res.status(500).send({error: 'Data about `skip` has not sended'});
             return;
         }
 

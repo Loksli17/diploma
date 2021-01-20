@@ -7,7 +7,6 @@
             <Form
                 v-bind:rows="rowsFormSignup"
                 v-bind:action="'/auth/signup'"
-                v-bind:method="'post'"
                 v-bind:tableName="'user'"
                 v-bind:className="'signup-form'"
             />
@@ -16,8 +15,7 @@
 </template>
 
 <script lang="ts">
-    import axios from 'axios';
-import {defineComponent} from 'vue';
+    import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
     
