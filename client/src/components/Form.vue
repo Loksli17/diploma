@@ -31,6 +31,11 @@
 <script lang="ts">
     import {defineComponent} from "vue";
 
+    interface Prop{
+        name: string;
+        value: string;
+    }
+
     export interface Option{
         text: string;
         id: string | number;
@@ -61,40 +66,61 @@
 
     export default defineComponent({
         methods: {
-            sendData: async function(){
 
+            createPropsToSend: function(): any {
+                
+                const propsToSend: Array<Prop> = [];
+                
                 for(let i = 0; i < this.rows.length; i++){
                     for(let j = 0; j < this.rows[i].length; j++){
 
                         switch(this.rows[i][j].type){
                             case 'submit':
                                 break;
-                            
                             case 'select':
-                                this.formData[this.rows[i][j].name] = this.rows[i][j].selected?.toString() || ''
+                                propsToSend.push({name: this.rows[i][j].name, value: this.rows[i][j].selected?.toString() || ''});
                                 break;
-
                             case 'date':
-                                this.formData[this.rows[i][j].name] = this.$filters.dateToDb(this.rows[i][j].value?.toString() || '');
+                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.dateToDb(this.rows[i][j].value?.toString() || '')});
                                 break;
-
                             case 'datetime':
-                                this.formData[this.rows[i][j].name] = this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '');
+                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '')});
                                 break;
-
                             case 'time':
-                                this.formData[this.rows[i][j].name] = this.$filters.timeToDb(this.rows[i][j].value?.toString() || '');
+                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.timeToDb(this.rows[i][j].value?.toString() || '')});
                                 break;
-
                             default:
-                                this.formData[this.rows[i][j].name] = this.rows[i][j].value?.toString() || '';
+                                propsToSend.push({name: this.rows[i][j].name, value: this.rows[i][j].value?.toString() || ''});
                         }
-
-                        // this.formData[this.rows[i][j].name] = tempValue;
                     }
                 }
-                const result = await this.$axios.post('http://localhost:3000/auth/signup', this.formData);
-                console.log(result);
+                return propsToSend;
+            },
+
+            pullFormData: function(propsToSend: Array<Prop>){
+                if(this.tableName != undefined){
+                    this.formData[this.tableName] = {};
+                    for(let i = 0; i < propsToSend.length; i++){
+                        this.formData[this.tableName][propsToSend[i].name] = propsToSend[i].value;
+                    }              
+                }else{
+                    for(let i = 0; i < propsToSend.length; i++){
+                        this.formData[propsToSend[i].name] = propsToSend[i].value;
+                    }
+                }
+            },
+            
+            sendData: async function(){
+                const propsToSend: Array<Prop> = this.createPropsToSend();
+                this.pullFormData(propsToSend);
+                const result = await this.$axios.post('http://localhost:3000/auth/signup', JSON.stringify(this.formData), {
+                    headers: {
+                        'Accept'          : 'application/json, text/javascript, */*, q=0.01',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type'    : 'application/json'
+                    }
+                });
+                this.result = result;
             }
         },
 
@@ -113,7 +139,7 @@
             className: {
                 type: String,
             },
-            arrayName: {
+            tableName: {
                 type: String,
             },
             rows: {
@@ -125,7 +151,8 @@
 
         data(){
             return{
-                formData: new FormData() as FormData,
+                formData: {} as {[k: string]: any},
+                result  : {} as {[k: string]: any},
             }
         },
 

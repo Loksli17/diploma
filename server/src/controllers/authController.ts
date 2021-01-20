@@ -8,8 +8,11 @@ export default class AuthController{
     }
 
     private static async signup(req: Request, res: Response){
+
+        // le
+        let user: string = req.body.user;
         console.log(req.body);
-        res.status(200).send('good');
+        res.status(200).send({body: req.body});
     }
 
     public static routes(){
