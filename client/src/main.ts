@@ -3,8 +3,9 @@ import App                    from './App.vue';
 import router                 from './router';
 import moment                 from 'moment';
 import axios, {AxiosInstance} from 'axios';
-import config                 from 'config/config';
+import config                 from './../config/config';
 
+axios.defaults.baseURL = config.axiosPath;
 
 const filters = {
     upperFirst: function(str: string){

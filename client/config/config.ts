@@ -1,7 +1,9 @@
+import axios from 'axios';
+
 export default {
-    port     : process.env.PORT || 8080,
-    axiosPath: 'http://localhost:3000',
+    axiosPath: 'http://localhost:3000/',
     headers  : {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        // 'X-XSRF-TOKEN': axios.post('/csrf'),
     },
 }

@@ -3,10 +3,8 @@ import config    from './config';
 import Router    from './routes';
 import connectDb from './config/database';
 import cors      from 'cors';
-
-//middlewares
-// import cors from cors
-
+import csurf     from 'csurf';
+import session   from 'express-session';
 
 export class App{
     
@@ -24,7 +22,6 @@ export class App{
 
         this.app.use(this.logErrors);
         this.app.use(this.errorHandler);
-
     }
 
     public static get Instance(): App{
@@ -36,11 +33,12 @@ export class App{
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: NextFunction){
-        console.error(err.stack);
+        console.error(err);
         next(err);
     }
 
-    private errorHandler(err: Error, req: Request, res: Response, next: NextFunction){
+    private errorHandler(err: Error, req: Request, res: Response){
+        console.error(err);
         res.send(500).send({error: err});
     }
 

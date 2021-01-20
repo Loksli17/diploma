@@ -16,9 +16,10 @@
 </template>
 
 <script lang="ts">
-    import {defineComponent} from 'vue';
+    import axios from 'axios';
+import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
-    import Form, {FormItem}  from '../../components/Form.vue'; 
+    import Form, {FormItem}  from '../../components/Form.vue';
     
     export default defineComponent({
         data(){

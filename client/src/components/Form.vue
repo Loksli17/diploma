@@ -113,7 +113,7 @@
             sendData: async function(){
                 const propsToSend: Array<Prop> = this.createPropsToSend();
                 this.pullFormData(propsToSend);
-                const result = await this.$axios.post('http://localhost:3000/auth/signup', JSON.stringify(this.formData), {
+                const result = await this.$axios.post('auth/signup', JSON.stringify(this.formData), {
                     headers: config.headers,
                 });
                 this.result = result;
@@ -156,7 +156,6 @@
             //checking of data
             for(let i = 0; i < this.rows.length; i++){
                 for(let j = 0; j < this.rows[i].length; j++){
-
                     switch(this.rows[i][j].type){
                         case 'select': 
                             break;
