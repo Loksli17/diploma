@@ -61,9 +61,7 @@
 
     export default defineComponent({
         methods: {
-            sendData: async function(e: any){
-
-                const formData: FormData = new FormData();
+            sendData: async function(){
 
                 for(let i = 0; i < this.rows.length; i++){
                     for(let j = 0; j < this.rows[i].length; j++){
@@ -75,26 +73,30 @@
                                 break;
                             
                             case 'select':
+                                tempValue = this.rows[i][j].selected?.toString() || '';
                                 break;
 
                             case 'date':
+                                tempValue = this.$filters.dateToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             case 'datetime':
+                                tempValue = this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             case 'time':
+                                tempValue = this.$filters.timeToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             default:
                                 tempValue = this.rows[i][j].value?.toString() || '';
                         }
 
-                        formData.append(this.rows[i][j].name, tempValue); 
+                        this.formData.append(this.rows[i][j].name, tempValue); 
                     }
                 }
 
-                console.log(formData.get('user[firstName]'), formData.get('user[lastName]'), formData.get('user[login]'), formData.get('user[email]'), formData.get('user[password]'));
+                
             }
         },
 
@@ -122,11 +124,12 @@
 
         data(){
             return{
-                formData: [] as Array<object>,
+                formData: new FormData() as FormData,
             }
         },
 
         created(){
+            console.log('kek', this);
             for(let i = 0; i < this.rows.length; i++){
                 for(let j = 0; j < this.rows[i].length; j++){
 

@@ -23,6 +23,7 @@
         data(){
             return {
                 rowsFormLogin: [
+                    [{type: 'time', name: 'date'}],
                     [{type: 'text', name: 'data[login]', label: 'Username or E-mail'},],
                     [{type: 'password', name: 'data[password]', label: 'Password'},],
                     [{type: 'submit', name: 'submit', value: 'Log in'}],
