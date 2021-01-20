@@ -30,6 +30,7 @@
 
 <script lang="ts">
     import {defineComponent} from "vue";
+    import config            from '../../config/config';
 
     interface Prop{
         name: string;
@@ -67,13 +68,12 @@
     export default defineComponent({
         methods: {
 
-            createPropsToSend: function(): any {
+            createPropsToSend: function(): Array<Prop> {
                 
                 const propsToSend: Array<Prop> = [];
                 
                 for(let i = 0; i < this.rows.length; i++){
                     for(let j = 0; j < this.rows[i].length; j++){
-
                         switch(this.rows[i][j].type){
                             case 'submit':
                                 break;
@@ -114,11 +114,7 @@
                 const propsToSend: Array<Prop> = this.createPropsToSend();
                 this.pullFormData(propsToSend);
                 const result = await this.$axios.post('http://localhost:3000/auth/signup', JSON.stringify(this.formData), {
-                    headers: {
-                        'Accept'          : 'application/json, text/javascript, */*, q=0.01',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type'    : 'application/json'
-                    }
+                    headers: config.headers,
                 });
                 this.result = result;
             }
@@ -164,12 +160,10 @@
                     switch(this.rows[i][j].type){
                         case 'select': 
                             break;
-
                         case 'textarea':
                             break;
-
                         default:
-                            //check type of input
+                            //checking type of input
                             if(this.rows[i][j].options != undefined){
                                 throw new Error(`You must not add 'options' for input. Only select has this property`);
                             }else if(this.rows[i][j].selected != undefined){
