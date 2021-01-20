@@ -66,37 +66,35 @@
                 for(let i = 0; i < this.rows.length; i++){
                     for(let j = 0; j < this.rows[i].length; j++){
 
-                        let tempValue: string = '';
-
                         switch(this.rows[i][j].type){
                             case 'submit':
                                 break;
                             
                             case 'select':
-                                tempValue = this.rows[i][j].selected?.toString() || '';
+                                this.formData[this.rows[i][j].name] = this.rows[i][j].selected?.toString() || ''
                                 break;
 
                             case 'date':
-                                tempValue = this.$filters.dateToDb(this.rows[i][j].value?.toString() || '');
+                                this.formData[this.rows[i][j].name] = this.$filters.dateToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             case 'datetime':
-                                tempValue = this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '');
+                                this.formData[this.rows[i][j].name] = this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             case 'time':
-                                tempValue = this.$filters.timeToDb(this.rows[i][j].value?.toString() || '');
+                                this.formData[this.rows[i][j].name] = this.$filters.timeToDb(this.rows[i][j].value?.toString() || '');
                                 break;
 
                             default:
-                                tempValue = this.rows[i][j].value?.toString() || '';
+                                this.formData[this.rows[i][j].name] = this.rows[i][j].value?.toString() || '';
                         }
 
-                        this.formData.append(this.rows[i][j].name, tempValue); 
+                        // this.formData[this.rows[i][j].name] = tempValue;
                     }
                 }
-
-                
+                const result = await this.$axios.post('http://localhost:3000/auth/signup', this.formData);
+                console.log(result);
             }
         },
 
@@ -115,6 +113,9 @@
             className: {
                 type: String,
             },
+            arrayName: {
+                type: String,
+            },
             rows: {
                 default : [], 
                 type    : Array as () => Array<Array<FormItem>>,
@@ -129,7 +130,7 @@
         },
 
         created(){
-            console.log('kek', this);
+            //checking of data
             for(let i = 0; i < this.rows.length; i++){
                 for(let j = 0; j < this.rows[i].length; j++){
 
