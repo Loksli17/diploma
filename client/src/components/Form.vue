@@ -87,11 +87,7 @@
                                 break;
 
                             default:
-                                if(this.rows[i][j] != undefined && this.rows[i][j].value != undefined){
-                                    tempValue = this.rows[i][j].value?.toString() || '';
-                                }else{
-                                    tempValue = '';
-                                }
+                                tempValue = this.rows[i][j].value?.toString() || '';
                         }
 
                         formData.append(this.rows[i][j].name, tempValue); 
