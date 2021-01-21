@@ -16,7 +16,7 @@ export default class ProjectController{
         }
 
         let 
-            POST     : POST            = req.body,
+            POST    : POST           = req.body,
             projects: Array<Project> = [];
 
         if(POST.take == undefined){

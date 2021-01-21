@@ -3,6 +3,7 @@ import {Router, Request, Response, NextFunction} from 'express';
 import {getRepository}             from 'typeorm';
 import User                        from '../models/User';
 import {validate, ValidationError} from 'class-validator';
+import Parser                      from '../libs/parser';
 
 export default class AuthController{
     private static router: Router = Router();
@@ -43,18 +44,20 @@ export default class AuthController{
         validateResult = await validate(user);
 
         if(validateResult.length){
-            res.status(200).send({msg: 'bad', errors: validateResult});
+            console.log(Parser.parseValidateError(validateResult));
+            res.status(202).send({msg: 'bad', errors: Parser.parseValidateError(validateResult)});
             return;
         }
 
         // try{
         //     result = await getRepository(User).insert(user);
         // }catch(err){
+            // res.status(500).send({msg: 'Error with datebase'});
         //     throw new Error(err)
         // }
     
         console.log(result);
-        res.status(200).send({body: req.body});
+        res.status(201).send({body: req.body});
     }
 
 

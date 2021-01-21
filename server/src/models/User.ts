@@ -23,6 +23,7 @@ export default class User{
     @Column()
     @IsEmail()
     @IsNotEmpty()
+    // @Unique()
     public email: string = '123@mail.ru';
 
     @Column()

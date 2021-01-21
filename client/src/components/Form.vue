@@ -1,6 +1,6 @@
 <template>
     <form :class=className :id=id :action=action method='post' @submit.prevent="sendData">
-        <div class="form-row" v-for="row in rows" :key='row'>
+        <div class="form-row" v-for="row in printRows" :key='row'>
             <label class="form-col" v-for="item in row" :key='item.name'>
                 <span v-if="item.type != 'submit'">{{item.label ?? $filters.upperFirst(item.name)}}</span>
                 
@@ -22,6 +22,8 @@
                     :autocomplete=item.autocomplete
                     :autofocus=item.autofocus
                 />
+
+                <div v-if="item.error" class="error">{{item.error}}</div>
             </label>
         </div>
     </form>
@@ -45,6 +47,7 @@
     export interface FormItem{
         type: string;
         name: string;
+        error?: string;
 
         //input
         value?: string | number | Date;
@@ -68,36 +71,45 @@
     export default defineComponent({
         methods: {
 
+            resetRows: function(){
+                for(let i = 0; i < this.printRows.length; i++){
+                    for(let j = 0; j < this.printRows[i].length; j++){
+                        delete this.printRows[i][j].error;
+                    }
+                }
+            },
+
             createPropsToSend: function(): Array<Prop> {
-                
                 const propsToSend: Array<Prop> = [];
                 
-                for(let i = 0; i < this.rows.length; i++){
-                    for(let j = 0; j < this.rows[i].length; j++){
-                        switch(this.rows[i][j].type){
+                for(let i = 0; i < this.printRows.length; i++){
+                    for(let j = 0; j < this.printRows[i].length; j++){
+                        switch(this.printRows[i][j].type){
                             case 'submit':
                                 break;
                             case 'select':
-                                propsToSend.push({name: this.rows[i][j].name, value: this.rows[i][j].selected?.toString() || ''});
+                                propsToSend.push({name: this.printRows[i][j].name, value: this.printRows[i][j].selected?.toString() || ''});
                                 break;
                             case 'date':
-                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.dateToDb(this.rows[i][j].value?.toString() || '')});
+                                propsToSend.push({name: this.printRows[i][j].name, value: this.$filters.dateToDb(this.printRows[i][j].value?.toString() || '')});
                                 break;
                             case 'datetime':
-                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.datetimeToDb(this.rows[i][j].value?.toString() || '')});
+                                propsToSend.push({name: this.printRows[i][j].name, value: this.$filters.datetimeToDb(this.printRows[i][j].value?.toString() || '')});
                                 break;
                             case 'time':
-                                propsToSend.push({name: this.rows[i][j].name, value: this.$filters.timeToDb(this.rows[i][j].value?.toString() || '')});
+                                propsToSend.push({name: this.printRows[i][j].name, value: this.$filters.timeToDb(this.printRows[i][j].value?.toString() || '')});
                                 break;
                             default:
-                                propsToSend.push({name: this.rows[i][j].name, value: this.rows[i][j].value?.toString() || ''});
+                                propsToSend.push({name: this.printRows[i][j].name, value: this.printRows[i][j].value?.toString() || ''});
                         }
                     }
                 }
                 return propsToSend;
             },
 
-            pullFormData: function(propsToSend: Array<Prop>){
+            pullFormData: function(){
+                const propsToSend: Array<Prop> = this.createPropsToSend();
+
                 if(this.tableName != undefined){
                     this.formData[this.tableName] = {};
                     for(let i = 0; i < propsToSend.length; i++){
@@ -111,18 +123,31 @@
             },
             
             sendData: async function(){
-                const propsToSend: Array<Prop> = this.createPropsToSend();
-                this.pullFormData(propsToSend);
+                this.resetRows();
+                this.pullFormData();
                 const result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
                     headers: config.headers,
                 });
-                console.log(result);
                 this.result = result;
                 this.parseResult();
             },
 
             parseResult: function(){
-                console.log(this.result);
+                if(this.result.status == 202){
+                    for(let i = 0; i < this.result.data.errors.length; i++){
+                        for(let j = 0; j < this.printRows.length; j++){
+                            for(let k = 0; k < this.printRows[j].length; k++){
+                                if(this.result.data.errors[i].name === this.printRows[j][k].name){
+                                    this.printRows[j][k].error = this.result.data.errors[i].msg;
+                                }
+                            }
+                        }
+                    }
+
+                }else if(this.result.status == 201){
+                    //all right
+                    console.log('fuck yes');
+                }
             }
         },
 
@@ -153,8 +178,9 @@
 
         data(){
             return{
-                formData: {} as {[k: string]: any},
-                result  : {} as {[k: string]: any},
+                printRows: Array.from(this.rows) as Array<Array<FormItem>>,
+                formData : {} as {[k: string]: any},
+                result   : {} as {[k: string]: any},
             }
         },
 
