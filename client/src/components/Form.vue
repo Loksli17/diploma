@@ -143,10 +143,9 @@
                             }
                         }
                     }
-
                 }else if(this.result.status == 201){
                     //all right
-                    console.log('fuck yes');
+                    console.log('kek');
                 }
             }
         },
@@ -176,9 +175,9 @@
             }
         },
 
-        data(){
+        data(){ 
             return{
-                printRows: Array.from(this.rows) as Array<Array<FormItem>>,
+                printRows: JSON.parse(JSON.stringify(this.rows)) as Array<Array<FormItem>>,
                 formData : {} as {[k: string]: any},
                 result   : {} as {[k: string]: any},
             }

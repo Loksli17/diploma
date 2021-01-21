@@ -1,9 +1,14 @@
-import {IsEmail, MinLength, IsNotEmpty} from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, Unique} from 'typeorm';
-import Project from './Project';
+import {IsEmail, MinLength, IsNotEmpty}                     from 'class-validator';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
+import {IsUniq}                                             from '@join-com/typeorm-class-validator-is-uniq';
+import Project                                              from './Project';
 
 @Entity()
 export default class User{
+
+    constructor(user: Partial<User>){
+        Object.assign(this, user);
+    }
 
     @PrimaryGeneratedColumn()
     public id?: number;
@@ -20,13 +25,13 @@ export default class User{
     @IsNotEmpty()
     public login: string = 'bestMathMan228';
 
-    @Column()
+    @Column({unique: true})
     @IsEmail()
     @IsNotEmpty()
-    // @Unique()
+    @IsUniq()
     public email: string = '123@mail.ru';
 
-    @Column()
+    @Column({})
     @MinLength(7)
     @IsNotEmpty()
     public password: string = '12345678';

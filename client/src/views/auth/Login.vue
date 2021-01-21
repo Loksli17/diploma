@@ -5,7 +5,7 @@
             <h1>Login</h1>
             <Form
                 v-bind:rows="rowsFormLogin"
-                v-bind:action="'/auth/login'"
+                v-bind:acсвtion="'/auth/login'"
                 v-bind:method="'post'"
                 v-bind:className="'login-form'"
             />

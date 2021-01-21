@@ -4,6 +4,7 @@ import {getRepository}             from 'typeorm';
 import User                        from '../models/User';
 import {validate, ValidationError} from 'class-validator';
 import Parser                      from '../libs/parser';
+import crypto                      from 'crypto-js';
 
 export default class AuthController{
     private static router: Router = Router();
@@ -29,35 +30,30 @@ export default class AuthController{
             result        : any  , 
             POST          : POST = req.body,
             validateResult: Array<ValidationError>,
-            user          : User = new User(); 
+            user          : User; 
 
         if(POST.user == undefined){
             res.status(500).send({error: 'Data about `user` has not sended'});
         }
 
-        user.lastName  = POST.user.lastName;
-        user.firstName = POST.user.firstName;
-        user.login     = POST.user.login;
-        user.email     = POST.user.email;
-        user.password  = POST.user.password;
-
+        user           = new User(POST.user);
         validateResult = await validate(user);
 
         if(validateResult.length){
-            console.log(Parser.parseValidateError(validateResult));
-            res.status(202).send({msg: 'bad', errors: Parser.parseValidateError(validateResult)});
+            res.status(202).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
             return;
         }
 
-        // try{
-        //     result = await getRepository(User).insert(user);
-        // }catch(err){
-            // res.status(500).send({msg: 'Error with datebase'});
-        //     throw new Error(err)
-        // }
+        user.password = crypto.SHA256(user.password).toString();
+
+        try{
+            await getRepository(User).insert(user);
+        }catch(err){
+            res.status(500).send({msg: 'Error with datebase'});
+            throw new Error(err)
+        }
     
-        console.log(result);
-        res.status(201).send({body: req.body});
+        res.status(201).send({msg: `User ${user.login} has been registered successfully`});
     }
 
 
