@@ -1,9 +1,10 @@
-import {createApp}            from 'vue';
-import App                    from './App.vue';
-import router                 from './router';
-import moment                 from 'moment';
-import axios, {AxiosInstance} from 'axios';
-import config                 from './../config/config';
+import {createApp}                        from 'vue';
+import App                                from './App.vue';
+import router                             from './router';
+import moment                             from 'moment';
+import axios, {AxiosInstance}             from 'axios';
+import config                             from './../config/config';
+import flashMessege, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 
 axios.defaults.baseURL = config.axiosPath;
 
@@ -35,6 +36,7 @@ declare module '@vue/runtime-core'{
     interface ComponentCustomProperties{
         $filters: typeof filters;
         $axios: AxiosInstance;
+        $flashMessage: FlashMessagePlugin;
     }
 }
 
@@ -43,4 +45,10 @@ const app = createApp(App);
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$axios   = axios
 
+app.use(flashMessege, {
+    name    : 'flashMessage',
+    tag     : 'FlashMessage',
+    time    : 6000,
+    strategy: 'single',
+});
 app.use(router).mount('#app');

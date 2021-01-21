@@ -144,8 +144,11 @@
                         }
                     }
                 }else if(this.result.status == 201){
-                    //all right
-                    console.log('kek');
+                    this.$flashMessage.show({
+                        type: 'success',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: this.result.data.msg,
+                    });
                 }
             }
         },
