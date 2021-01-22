@@ -139,32 +139,45 @@
             sendData: async function(){
                 this.resetRows();
                 this.pullFormData();
-                const result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
-                    headers: config.headers,
-                });
-                this.result = result;
-                this.parseResult();
+
+                try {
+                    this.result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
+                        headers: config.headers,
+                        // validateStatus: false,
+                    });
+
+                    if(this.result.status == 201){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: this.result.data.msg,
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: `Unexpected server error`,
+                        });
+                    }
+                }catch(err){
+                    Object.assign(this.result, err.response);
+                    this.parseErrors();
+                    throw new Error(err);
+                }
+                
             },
 
-            parseResult: function(){
-                if(this.result.status == 202){
-                    for(let i = 0; i < this.result.data.errors.length; i++){
-                        for(let j = 0; j < this.printRows.length; j++){
-                            for(let k = 0; k < this.printRows[j].length; k++){
-                                if(this.result.data.errors[i].name === this.printRows[j][k].name){
-                                    this.printRows[j][k].error = this.result.data.errors[i].msg;
-                                }
+            parseErrors: function(){
+                for(let i = 0; i < this.result.data.errors.length; i++){
+                    for(let j = 0; j < this.printRows.length; j++){
+                        for(let k = 0; k < this.printRows[j].length; k++){
+                            if(this.result.data.errors[i].name === this.printRows[j][k].name){
+                                this.printRows[j][k].error = this.result.data.errors[i].msg;
                             }
                         }
                     }
-                }else if(this.result.status == 201){
-                    this.$flashMessage.show({
-                        type: 'success',
-                        // image: require("../../assets/flashMessage/fail.svg"),
-                        text: this.result.data.msg,
-                    });
                 }
-            }
+            },
         },
 
         props: {

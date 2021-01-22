@@ -7,9 +7,42 @@ import Parser                      from '../libs/parser';
 import crypto                      from 'crypto-js';
 
 export default class AuthController{
+
     private static router: Router = Router();
 
     private static async login(req: Request, res: Response){
+
+        interface POST{
+            password: string,
+            email   : string,
+        }
+
+        let 
+            POST: POST            = req.body,
+            user: User | undefined;
+
+        if(POST.email == undefined){
+            res.status(500).send({error: 'Data about `emil` has not sended'});
+        }
+
+        if(POST.password == undefined){
+            res.status(500).send({error: 'Data about `emil` has not sended'});
+        }
+
+        user = await getRepository(User).findOne({where: {email: POST.email}});
+
+        if(user == undefined){
+            res.status(202).send({msg: 'Bad validation', errors: [{msg: `User with this email doesn' exists`, name: 'email'}]});
+            return;
+        }
+
+        if(crypto.SHA256(user.password).toString() !== crypto.SHA256(POST.password).toString()){
+            res.status(202).send({msg: 'Bad validation', errors: [{msg: `Password uncorrect`, name: 'password'}]});
+            return;
+        }
+
+
+
         res.status(200).send('login');
     }
 
@@ -40,7 +73,7 @@ export default class AuthController{
         validateResult = await validate(user);
 
         if(validateResult.length){
-            res.status(202).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
+            res.status(400).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
             return;
         }
 
