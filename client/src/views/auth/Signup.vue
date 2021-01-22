@@ -9,6 +9,7 @@
                 v-bind:action="'/auth/signup'"
                 v-bind:tableName="'user'"
                 v-bind:className="'signup-form'"
+                v-bind:successCode="201"
             />
         </div>
     </div>

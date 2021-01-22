@@ -5,6 +5,9 @@ import User                        from '../models/User';
 import {validate, ValidationError} from 'class-validator';
 import Parser                      from '../libs/parser';
 import crypto                      from 'crypto-js';
+import jwt                         from 'jsonwebtoken';
+import config                      from '../config';
+
 
 export default class AuthController{
 
@@ -18,8 +21,9 @@ export default class AuthController{
         }
 
         let 
-            POST: POST            = req.body,
-            user: User | undefined;
+            POST : POST            = req.body,
+            token: string          = '',
+            user : User | undefined;
 
         if(POST.email == undefined){
             res.status(500).send({error: 'Data about `emil` has not sended'});
@@ -32,18 +36,18 @@ export default class AuthController{
         user = await getRepository(User).findOne({where: {email: POST.email}});
 
         if(user == undefined){
-            res.status(202).send({msg: 'Bad validation', errors: [{msg: `User with this email doesn' exists`, name: 'email'}]});
+            res.status(400).send({msg: 'Bad validation', errors: [{msg: `User with this email doesn' exists`, name: 'email'}]});
             return;
         }
 
-        if(crypto.SHA256(user.password).toString() !== crypto.SHA256(POST.password).toString()){
-            res.status(202).send({msg: 'Bad validation', errors: [{msg: `Password uncorrect`, name: 'password'}]});
+        if(user.password !== crypto.SHA256(POST.password).toString()){
+            res.status(400).send({msg: 'Bad validation', errors: [{msg: `Password uncorrect`, name: 'password'}]});
             return;
         }
 
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1h'});
 
-
-        res.status(200).send('login');
+        res.status(200).send({token: token, userId: user.id, msg: `${user.firstName}, welcome to Draw Together`});
     }
 
 

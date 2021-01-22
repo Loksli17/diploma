@@ -83,6 +83,39 @@
     }
 
     export default defineComponent({
+
+        props: {
+            action: {
+                type    : String,
+                required: true,
+            },
+            method: {
+                type    : String,
+                required: true,
+            },
+            successCode: {
+                type: Number,
+                required: true,
+            },
+            id: {
+                type: String,
+            },
+            className: {
+                type: String,
+            },
+            tableName: {
+                type: String,
+            },
+            overloadParseResult: {
+                type: Boolean,
+            },
+            rows: {
+                default : [], 
+                type    : Array as () => Array<Array<FormItem>>,
+                required: true,
+            }
+        },
+
         methods: {
 
             resetRows: function(){
@@ -143,10 +176,14 @@
                 try {
                     this.result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
                         headers: config.headers,
-                        // validateStatus: false,
                     });
 
-                    if(this.result.status == 201){
+                    if(this.overloadParseResult){
+                        this.$emit('result-parser', this.result);
+                        return;
+                    }
+
+                    if(this.result.status == this.successCode){
                         this.$flashMessage.show({
                             type: 'success',
                             // image: require("../../assets/flashMessage/fail.svg"),
@@ -161,8 +198,10 @@
                     }
                 }catch(err){
                     Object.assign(this.result, err.response);
+                    if(this.overloadParseResult){
+                        this.$emit('formResultParser', this.result);
+                    }
                     this.parseErrors();
-                    throw new Error(err);
                 }
                 
             },
@@ -178,31 +217,6 @@
                     }
                 }
             },
-        },
-
-        props: {
-            action: {
-                type    : String,
-                required: true,
-            },
-            method: {
-                type    : String,
-                required: true,
-            },
-            id: {
-                type: String,
-            },
-            className: {
-                type: String,
-            },
-            tableName: {
-                type: String,
-            },
-            rows: {
-                default : [], 
-                type    : Array as () => Array<Array<FormItem>>,
-                required: true,
-            }
         },
 
         data(){ 

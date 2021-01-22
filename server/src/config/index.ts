@@ -8,7 +8,7 @@ export default{
     secret: {
         password: '~1;3JklN,<az09T',
         session : 'mtq[}$TyE4fg9)1',
-        jwt     : '*7asd#$d^FjM!',
+        jwt     : '!jfGHkl324FgKekl0L23^fdg#$',
     },
     app: {
         port: 3000,
