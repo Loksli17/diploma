@@ -283,7 +283,7 @@
 
     form{
         display: grid;
-        row-gap: 50px;
+        row-gap: 45px;
         max-width: 600px;
         
         .form-row{
@@ -321,6 +321,7 @@
             .error-msg{
                 position: absolute;
                 top: $heightInput + 5px + 10px + 21px;
+                font-size: 14px;
             }
         }
     }
