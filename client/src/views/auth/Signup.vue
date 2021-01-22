@@ -10,6 +10,8 @@
                 v-bind:tableName="'user'"
                 v-bind:className="'signup-form'"
                 v-bind:successCode="201"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="formResultParser"
             />
         </div>
     </div>
@@ -39,6 +41,18 @@
                 ] as Array<Array<FormItem>>,
             }
         },
+
+        methods: {
+            formResultParser: function(result: any){
+                this.$router.push('/login');
+                this.$flashMessage.show({
+                    type: 'success',
+                    // image: require("../../assets/flashMessage/fail.svg"),
+                    text: result.data.msg,
+                });
+            }
+        },
+        
         components: {
             AuthNav,
             Form,

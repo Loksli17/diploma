@@ -116,6 +116,15 @@
             }
         },
 
+        
+        data(){ 
+            return{
+                printRows: JSON.parse(JSON.stringify(this.rows)) as Array<Array<FormItem>>,
+                formData : {} as {[k: string]: any},
+                result   : {} as {[k: string]: any},
+            }
+        },
+
         methods: {
 
             resetRows: function(){
@@ -199,9 +208,10 @@
                 }catch(err){
                     Object.assign(this.result, err.response);
                     if(this.overloadParseResult){
-                        this.$emit('formResultParser', this.result);
+                        this.$emit('result-parser', this.result);
                     }
                     this.parseErrors();
+                    throw new Error(err);
                 }
                 
             },
@@ -217,14 +227,6 @@
                     }
                 }
             },
-        },
-
-        data(){ 
-            return{
-                printRows: JSON.parse(JSON.stringify(this.rows)) as Array<Array<FormItem>>,
-                formData : {} as {[k: string]: any},
-                result   : {} as {[k: string]: any},
-            }
         },
 
         created(){

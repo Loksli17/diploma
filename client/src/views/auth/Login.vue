@@ -9,7 +9,7 @@
                 v-bind:className="'login-form'"
                 v-bind:successCode="200"
                 v-bind:overloadParseResult="true"
-                v-on:result-parser="loginFormParser"
+                v-on:result-parser="formResultParser"
             />
         </div>
     </div>
@@ -21,16 +21,9 @@
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
 
-    interface LoginFormResult{
-        token: string;
-        userId: number;
-    }
-
     export default defineComponent({
-        
         data(){
             return {
-                formResult: {} as LoginFormResult,
                 rowsFormLogin: [
                     [{type: 'text',     name: 'email',    label: 'E-mail'},],
                     [{type: 'password', name: 'password', label: 'Password'},],
@@ -40,7 +33,7 @@
         },
 
         methods: {
-            loginFormParser: function(result: object){
+            formResultParser: function(result: object){
                 console.log('yeeees', result);
             }
         },

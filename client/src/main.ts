@@ -4,7 +4,7 @@ import router                             from './router';
 import moment                             from 'moment';
 import axios, {AxiosInstance}             from 'axios';
 import config                             from './../config/config';
-import flashMessege, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
+import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 
 axios.defaults.baseURL = config.axiosPath;
 
@@ -45,7 +45,7 @@ const app = createApp(App);
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$axios   = axios
 
-app.use(flashMessege, {
+app.use(flashMessage, {
     name    : 'flashMessage',
     tag     : 'FlashMessage',
     time    : 6000,
