@@ -1,12 +1,19 @@
 <template>
     <form :class=className :id=id :action=action method='post' @submit.prevent="sendData">
         <div class="form-row" v-for="row in printRows" :key='row'>
-            <label class="form-col" v-for="item in row" :key='item.name'>
+            <label :class="{'error': item.error}" class="form-col" v-for="item in row" :key='item.name'>
                 <span v-if="item.type != 'submit'">{{item.label ?? $filters.upperFirst(item.name)}}</span>
                 
-                <textarea v-if="item.type == 'textarea'" v-model="item.value" :name=item.name></textarea>
-                
-                <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple>
+                <textarea v-if="item.type == 'textarea'" v-model="item.value" :name=item.name
+                    :maxlength=item.maxLength
+                    :rows=item.rows
+                    :cols=item.cols
+                    :wrap=item.wrap
+                    :tabindex=item.tabIndex
+                >
+                </textarea>
+
+                <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
                     <option v-for="option in item.options" :key="option.id">{{option.text}}</option>
                 </select>
                 
@@ -23,7 +30,7 @@
                     :autofocus=item.autofocus
                 />
 
-                <div v-if="item.error" class="error">{{item.error}}</div>
+                <div v-if="item.error" class="error-msg">{{item.error}}</div>
             </label>
         </div>
     </form>
@@ -66,6 +73,13 @@
         options?: Array<Option>;
         selected?: string | number;
         multiple?: boolean;
+
+        //textarea
+        cols?: number;
+        maxLenth?: number;
+        rows?: number;
+        tabindex?: number;
+        wrap?: string;
     }
 
     export default defineComponent({
@@ -190,17 +204,70 @@
             //checking of data
             for(let i = 0; i < this.rows.length; i++){
                 for(let j = 0; j < this.rows[i].length; j++){
+
+                    const 
+                        selectProp: Array<string> = [
+                            'name',
+                            'type',
+                            'error',
+                            'label',
+
+                            'selected',
+                            'options',
+                            'multiple',
+                            'disabled',
+                        ],
+                        inputProp: Array<string> = [
+                            'name',
+                            'type',
+                            'error',
+                            'label',
+                            'value',
+
+                            'max',
+                            'min',
+                            'pattern',
+                            'required',
+                            'disabled',
+                            'readonly',
+                            'placeholder',
+                            'step',
+                            'autocomplete',
+                            'autofocus',
+                        ],
+                        textProp: Array<string> = [
+                            'name',
+                            'type',
+                            'error',
+                            'label',
+                            'value',
+                            'cols',
+                            'maxLength',
+                            'rows',
+                            'tabIndex',
+                            'wrap',
+                        ];
+
                     switch(this.rows[i][j].type){
                         case 'select': 
+                            for(const key in this.rows[i][j]){
+                                if(!selectProp.includes(key)){
+                                    throw new Error('error select');
+                                }
+                            }
                             break;
                         case 'textarea':
+                            for(const key in this.rows[i][j]){
+                                if(!textProp.includes(key)){
+                                    throw new Error('error text');
+                                }
+                            }
                             break;
                         default:
-                            //checking type of input
-                            if(this.rows[i][j].options != undefined){
-                                throw new Error(`You must not add 'options' for input. Only select has this property`);
-                            }else if(this.rows[i][j].selected != undefined){
-                                throw new Error(`You must not add 'selected' for input. Only select has this property. Check form element with indexes: ${i}, ${j}`);
+                            for(const key in this.rows[i][j]){
+                                if(!inputProp.includes(key)){
+                                    throw new Error(`error input in row: ${i} and elem: ${j} with prop: ${key}`);
+                                }
                             }
                     }
                 }
@@ -211,10 +278,13 @@
 
 
 <style lang="scss">
+
+    $heightInput: 50px;
+
     form{
         display: grid;
-        row-gap: 20px;
-        max-width: 400px;
+        row-gap: 50px;
+        max-width: 600px;
         
         .form-row{
             display: grid;
@@ -225,6 +295,15 @@
         .form-col{
             display: grid;
             row-gap: 10px;
+            position: relative;
+
+            &.error{
+                color: red;
+
+                input{
+                    border: 1.5px solid #f00;
+                }
+            }
 
             span{
                 text-align: left;
@@ -233,8 +312,15 @@
             }
 
             input{
+                box-sizing: border-box;
+                height: $heightInput;
                 padding: 10px;
                 font-size: 15px;
+            }
+
+            .error-msg{
+                position: absolute;
+                top: $heightInput + 5px + 10px + 21px;
             }
         }
     }
