@@ -39,7 +39,7 @@
 
 <script lang="ts">
     import {defineComponent} from "vue";
-    import config            from '../../config/config';
+    import config            from '../config/config';
 
     interface Prop{
         name: string;

@@ -33,8 +33,13 @@
         },
 
         methods: {
-            formResultParser: function(result: object){
-                console.log('yeeees', result);
+            formResultParser: function(result: any){
+                console.log(result.data);
+
+                this.$flashMessage.show({
+                    type: 'success',
+                    text: result.data.msg,
+                });
             }
         },
 
