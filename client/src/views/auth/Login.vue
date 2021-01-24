@@ -20,6 +20,7 @@
     import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
+    import User              from '../../types/User';
 
     export default defineComponent({
         data(){
@@ -36,11 +37,23 @@
             formResultParser: function(result: any){
                 console.log(result.data);
 
+                if(result.status === 400){
+                    console.log('bad');
+                    return;
+                }
+
                 this.$flashMessage.show({
                     type: 'success',
                     text: result.data.msg,
                 });
-            }
+
+                this.$store.commit('setUserIdentity', result.data.user);
+                this.$store.commit('setJWT', result.data.token);
+
+                console.log(this.$store.getters.getJWT, this.$store.getters.getUserIdentity);
+
+                this.$router.push('/');
+            },
         },
 
         components: {

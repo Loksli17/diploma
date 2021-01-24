@@ -5,7 +5,7 @@ import moment                             from 'moment';
 import axios, {AxiosInstance}             from 'axios';
 import config                             from './config/config';
 import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
-
+import store                              from './store';
 
 axios.defaults.baseURL = config.axiosPath;
 
@@ -38,6 +38,7 @@ declare module '@vue/runtime-core'{
         $filters: typeof filters;
         $axios: AxiosInstance;
         $flashMessage: FlashMessagePlugin;
+        $store: typeof store;
     }
 }
 
@@ -52,4 +53,5 @@ app.use(flashMessage, {
     time    : 6000,
     strategy: 'single',
 });
-app.use(router).mount('#app');
+
+app.use(store).use(router).mount('#app');

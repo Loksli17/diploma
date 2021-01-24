@@ -45,11 +45,19 @@ export default class AuthController{
             return;
         }
 
-        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1h'});
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1m'});
 
-        res.status(200).send({token: token, userId: user.id, msg: `${user.firstName}, welcome to Draw Together`});
+        res.status(200).send({token: token, user: user, msg: `${user.firstName}, welcome to Draw Together`});
     }
 
+    private static async createTokens(req: Request, res: Response){
+
+    }
+
+    public static async checkToken(req: Request, res: Response, next: NextFunction){
+        console.log('headers:', req.headers);
+        next();
+    }
 
     private static async signup(req: Request, res: Response){
 
@@ -97,6 +105,7 @@ export default class AuthController{
     public static routes(){
         this.router.all(`/login`, this.login);
         this.router.all(`/signup`, this.signup);
+        this.router.all(`/get-tokens`, this.createTokens);
         return this.router;
     }
 }
