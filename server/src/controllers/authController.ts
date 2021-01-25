@@ -13,6 +13,7 @@ export default class AuthController{
 
     private static router: Router = Router();
 
+
     private static async login(req: Request, res: Response){
 
         interface POST{
@@ -26,11 +27,11 @@ export default class AuthController{
             user : User | undefined;
 
         if(POST.email == undefined){
-            res.status(500).send({error: 'Data about `emil` has not sended'});
+            res.status(500).send({error: 'Data about `email` has not sended'});
         }
 
         if(POST.password == undefined){
-            res.status(500).send({error: 'Data about `emil` has not sended'});
+            res.status(500).send({error: 'Data about `password` has not sended'});
         }
 
         user = await getRepository(User).findOne({where: {email: POST.email}});
@@ -45,18 +46,42 @@ export default class AuthController{
             return;
         }
 
-        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1h'});
-
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1m'});
         res.status(200).send({token: token, user: user, msg: `${user.firstName}, welcome to Draw Together`});
     }
 
-    private static async createTokens(req: Request, res: Response){
 
+    private static async createToken(req: Request, res: Response){
+
+        interface POST{
+            id: number;
+        }
+
+        let
+            token: string = '',
+            user : User | undefined, 
+            POST : POST = req.body;
+
+        if(POST.id == undefined){
+            res.status(500).send({error: 'Data about `id` has not sended'});
+            return;
+        }
+
+        user = await getRepository(User).findOne(POST.id);
+
+        if(user == undefined){
+            res.status(500).send({error: `User with id = ${POST.id} hasn't founded`});
+            return;
+        }
+
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1m'});
+        res.status(200).send({token: token});
     }
+
 
     public static async checkToken(req: Request, res: Response, next: NextFunction){
 
-        if(req.originalUrl == '/auth/login' || req.originalUrl == '/auth/singup'){
+        if(req.originalUrl == '/auth/login' || req.originalUrl == '/auth/signup'){
             next();
             return;
         }
@@ -64,21 +89,19 @@ export default class AuthController{
         let token: string | undefined = req.headers.authorization;
 
         if(token == undefined){
-            res.status(401).send({});
+            res.status(401).send({msg: `token wasn't found`});
             return;
         }
         
         try {
-            if(jwt.verify(token, config.secret.jwt)){
-                next();
-                return;
-            }else{
-                res.status(401).send({});
-            }
+            jwt.verify(token, config.secret.jwt);
+            next();
         }catch(err){
-            res.status(401).send({});
+            console.log(err);
+            res.status(401).send({msg: err.message});
         }
     }
+
 
     private static async signup(req: Request, res: Response){
 
@@ -93,7 +116,6 @@ export default class AuthController{
         }
 
         let 
-            result        : any  , 
             POST          : POST = req.body,
             validateResult: Array<ValidationError>,
             user          : User; 
@@ -126,7 +148,7 @@ export default class AuthController{
     public static routes(){
         this.router.all(`/login`, this.login);
         this.router.all(`/signup`, this.signup);
-        this.router.all(`/get-tokens`, this.createTokens);
+        this.router.all(`/get-token`, this.createToken);
         return this.router;
     }
 }

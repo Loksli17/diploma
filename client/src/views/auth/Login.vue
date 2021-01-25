@@ -21,6 +21,7 @@
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
     import User              from '../../types/User';
+    import moment            from 'moment';
 
     export default defineComponent({
         data(){
@@ -50,12 +51,12 @@
                     text: result.data.msg,
                 });
 
-                console.log(this.$store.state.jwt, this.$store.state.userIdentity);
+                result.data.user.authDate = new Date(moment().add(7, 'd').format('YYYY-DD-MM'));
 
                 this.$store.commit('setUserIdentity', result.data.user);
                 this.$store.commit('setJWT', result.data.token);
 
-                console.log(this.$store.state.jwt, this.$store.state.userIdentity);
+                this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;
 
                 this.$router.push('/');
             },

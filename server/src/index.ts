@@ -20,7 +20,7 @@ export class App{
         this.app.use('/', Router.routes);
 
         this.app.use(this.logErrors);
-        // this.app.use(this.errorHandler);
+        this.app.use(this.errorHandler);
     }
 
     public static get Instance(): App{
@@ -36,10 +36,10 @@ export class App{
         next(err);
     }
 
-    // private errorHandler(err: Error, req: Request, res: Response){
-    //     console.error(err);
-    //     res.status(500).send({error: err});
-    // }
+    private errorHandler(err: Error, req: Request, res: Response, next: NextFunction){
+        console.error(err);
+        res.status(500).send({error: err});
+    }
 
     private createMiddlewares(){
         this.app.use(cors());
