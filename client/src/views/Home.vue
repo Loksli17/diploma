@@ -8,6 +8,18 @@
     export default defineComponent({
         components: {
             
+        },
+
+        created: async function(){
+
+            console.log(this.$store.state.userIdentity, this.$store.state.jwt);
+            
+            try {
+                const result = await this.$axios.post('project/get-projects', {take: 8, skip: 0}); 
+                console.log(result);      
+            }catch(err){
+                console.log(err)
+            }
         }
     });
 </script>

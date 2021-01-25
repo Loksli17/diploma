@@ -4,8 +4,8 @@ import User          from '../types/User';
 const store = createStore({
     
     state: {
-        userIdentity: null as User | null,
-        jwt         : undefined as string | undefined,
+        userIdentity: localStorage.getItem('userIdentity') == "undefined" ? null : JSON.parse(localStorage.getItem('userIdentity')!) as User | null,
+        jwt         : localStorage.getItem('jwt') == "undefined" ? null : localStorage.getItem('jwt') as string | null,
     },
 
     getters: {
@@ -18,20 +18,20 @@ const store = createStore({
         //     return Boolean(localStorage.getItem('jwt'));
         // },
 
-        getJWT: (state): string | null => {
-            const jwt: string | null = localStorage.getItem('jwt');
-            if(jwt == null) return null;
-            state.jwt = jwt;
-            return state.jwt;
-        },
+        // getJWT: (state): string | null => {
+        //     const jwt: string | null = localStorage.getItem('jwt');
+        //     if(jwt == null) return null;
+        //     state.jwt = jwt;
+        //     return state.jwt;
+        // },
 
-        getUserIdentity: function(state): User | null{
-            const localStoreUser: string | null = localStorage.getItem('userIdentity');
-            if(localStoreUser == null) return null;
-            const user: User | null = JSON.parse(localStoreUser);
-            state.userIdentity = user;
-            return state.userIdentity;
-        },
+        // getUserIdentity: function(state): User | null{
+        //     const localStoreUser: string | null = localStorage.getItem('userIdentity');
+        //     if(localStoreUser == null) return null;
+        //     const user: User | null = JSON.parse(localStoreUser);
+        //     state.userIdentity = user;
+        //     return state.userIdentity;
+        // },
     },
 
     mutations: {

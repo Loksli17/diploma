@@ -33,9 +33,12 @@
             }
         },
 
+        created: function(){
+            console.log(this.$store.state.jwt, this.$store.state.userIdentity);
+        },
+
         methods: {
             formResultParser: function(result: any){
-                console.log(result.data);
 
                 if(result.status === 400){
                     console.log('bad');
@@ -47,10 +50,12 @@
                     text: result.data.msg,
                 });
 
+                console.log(this.$store.state.jwt, this.$store.state.userIdentity);
+
                 this.$store.commit('setUserIdentity', result.data.user);
                 this.$store.commit('setJWT', result.data.token);
 
-                console.log(this.$store.getters.getJWT, this.$store.getters.getUserIdentity);
+                console.log(this.$store.state.jwt, this.$store.state.userIdentity);
 
                 this.$router.push('/');
             },

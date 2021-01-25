@@ -8,6 +8,7 @@ import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 import store                              from './store';
 
 axios.defaults.baseURL = config.axiosPath;
+axios.defaults.headers.common['Authorization'] = store.state.jwt;
 
 const filters = {
     upperFirst: function(str: string){
@@ -53,5 +54,6 @@ app.use(flashMessage, {
     time    : 6000,
     strategy: 'single',
 });
+
 
 app.use(store).use(router).mount('#app');

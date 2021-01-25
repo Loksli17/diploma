@@ -1,4 +1,3 @@
-import { toHandlers } from 'vue';
 import { createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -35,20 +34,20 @@ const router = createRouter({
 })
 
 
-router.beforeEach(async (to, from, next) => {
+// router.beforeEach(async (to, from, next) => {
     
-    const isAuth: boolean = Boolean();
+//     const isAuth: boolean = Boolean();
 
-    if(to.name !== 'Login' && !isAuth && to.name !== 'Signup'){
-        next({name: 'Login'})
-    }else if((to.name === 'Login' || to.name !== 'Signup') && isAuth){
-        next({name: 'Home'});
-    }else if(to.path === 'logout'){
-        next({path: '/login'});
-    }else{
-        next();
-    }
+//     if(to.name !== 'Login' && !isAuth && to.name !== 'Signup'){
+//         next({name: 'Login'})
+//     }else if((to.name === 'Login' || to.name !== 'Signup') && isAuth){
+//         next({name: 'Home'});
+//     }else if(to.path === 'logout'){
+//         next({path: '/login'});
+//     }else{
+//         next();
+//     }
  
-});
+// });
 
 export default router
