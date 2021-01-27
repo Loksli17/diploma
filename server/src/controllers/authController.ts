@@ -46,7 +46,8 @@ export default class AuthController{
             return;
         }
 
-        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1m'});
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '10s'});
+        console.log(token);
         res.status(200).send({token: token, user: user, msg: `${user.firstName}, welcome to Draw Together`});
     }
 
@@ -74,14 +75,17 @@ export default class AuthController{
             return;
         }
 
-        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '1m'});
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '10s'});
+        console.log(token);
         res.status(200).send({token: token});
     }
 
 
     public static async checkToken(req: Request, res: Response, next: NextFunction){
 
-        if(req.originalUrl == '/auth/login' || req.originalUrl == '/auth/signup'){
+        let authUrl: Array<string> = ['/auth/login', '/auth/signup', '/auth/get-token'];
+
+        if(authUrl.includes(req.originalUrl)){
             next();
             return;
         }

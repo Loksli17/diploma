@@ -6,49 +6,59 @@ import axios, {AxiosInstance}             from 'axios';
 import config                             from './config/config';
 import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 import store                              from './store';
+import User                               from './types/User';
 
 axios.defaults.baseURL = config.axiosPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;
 
-
-//!
 axios.interceptors.response.use(
     (res) => {return res},
-    (err) => {
+    async (err) => {
         if(err && err.response.status === 401){
             if(err.response.data.msg == 'jwt expired' && store.state.userIdentity != null){
-                // if(store.state.userIdentity.authDate >= new Date()){
-                //     const result: {token: string} = await axios.post('auth/get-token', {id: store.state.userIdentity.id});
-                //     store.state.jwt = result.token;
-                //     axios.defaults.headers.common['Authorization'] = store.state.jwt;
-                // }
+                const
+                    endDate = moment(store.state.userIdentity.authDate),
+                    now     = moment();
+
+                if(endDate.diff(now) >= 0){
+                    //* refresh token
+                    const result = await axios.post('auth/get-token', {id: store.state.userIdentity.id});
+                    store.commit('setJWT', result.data.token);
+                    axios.defaults.headers.common['Authorization'] = store.state.jwt;
+                    return Promise.resolve();
+                }
             }
+            //* logout
+            store.commit('setUserIdentity', null);
+            store.commit('setJWT', null);
             router.push('/login');
             return Promise.reject(err);
         }else if(err){
-            console.log('interceptors', err.response.status);
             return Promise.reject(err);
         }
     }
 )
 
-// router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     
-//     const
-//         userIdentity: User | null   = store.state.userIdentity,
-//         jwt: string | null = store.state.jwt; 
+    const userIdentity: User | null = store.state.userIdentity;
+    let isAuth: boolean = false;
 
-//     if(to.name !== 'Login' && !isAuth && to.name !== 'Signup'){
-//         next({name: 'Login'})
-//     }else if((to.name === 'Login' || to.name !== 'Signup') && isAuth){
-//         next({name: 'Home'});
-//     }else if(to.path === 'logout'){
-//         next({path: '/login'});
-//     }else{
-//         next();
-//     }
- 
-// });
+    isAuth = userIdentity != null ? true : false;
+
+    if(to.name !== 'Login' && !isAuth && to.name !== 'Signup'){
+        next({name: 'Login'})
+    }else if((to.name === 'Login' || to.name === 'Signup') && isAuth){
+        next({name: '404'});
+    }else if(to.path === '/logout'){
+        store.commit('setUserIdentity', null);
+        store.commit('setJWT', null);
+        router.push('/login');
+    }else{
+        next();
+    }
+
+});
 
 
 const filters = {

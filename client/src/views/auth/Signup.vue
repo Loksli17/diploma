@@ -50,6 +50,7 @@
                 }
 
                 this.$router.push('/login');
+                
                 this.$flashMessage.show({
                     type: 'success',
                     // image: require("../../assets/flashMessage/fail.svg"),

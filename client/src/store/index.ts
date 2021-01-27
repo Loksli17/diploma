@@ -8,40 +8,23 @@ const store = createStore({
         jwt         : localStorage.getItem('jwt') == "undefined" ? null : localStorage.getItem('jwt') as string | null,
     },
 
-    getters: {
-
-        // checkIdentityUser: function(state): boolean{
-        //     return Boolean(localStorage.getItem('userIdentity'));
-        // },
-
-        // checkJWT: function(state): boolean{
-        //     return Boolean(localStorage.getItem('jwt'));
-        // },
-
-        // getJWT: (state): string | null => {
-        //     const jwt: string | null = localStorage.getItem('jwt');
-        //     if(jwt == null) return null;
-        //     state.jwt = jwt;
-        //     return state.jwt;
-        // },
-
-        // getUserIdentity: function(state): User | null{
-        //     const localStoreUser: string | null = localStorage.getItem('userIdentity');
-        //     if(localStoreUser == null) return null;
-        //     const user: User | null = JSON.parse(localStoreUser);
-        //     state.userIdentity = user;
-        //     return state.userIdentity;
-        // },
-    },
-
     mutations: {
-        setUserIdentity: function(state, user: User){
-            localStorage.setItem('userIdentity', JSON.stringify(user));
-            state.userIdentity = Object.assign({}, user);
+        setUserIdentity: function(state, user: User | null){
+            if(user == null){
+                localStorage.setItem('userIdentity', "undefined");
+                state.userIdentity = null;
+            }else{
+                localStorage.setItem('userIdentity', JSON.stringify(user));
+                state.userIdentity = Object.assign({}, user);
+            }
         },
 
-        setJWT: function(state, jwt: string){
-            localStorage.setItem('jwt', jwt);
+        setJWT: function(state, jwt: string | null){
+            if(jwt == null){
+                localStorage.setItem('jwt', "undefined");
+            }else{
+                localStorage.setItem('jwt', jwt);   
+            }
             state.jwt = jwt;
         }
     }

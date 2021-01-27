@@ -34,15 +34,10 @@
             }
         },
 
-        created: function(){
-            // console.log(this.$store.state.jwt, this.$store.state.userIdentity);
-        },
-
         methods: {
             formResultParser: function(result: any){
 
                 if(result.status === 400){
-                    console.log('bad');
                     return;
                 }
 
@@ -51,13 +46,12 @@
                     text: result.data.msg,
                 });
 
-                result.data.user.authDate = new Date(moment().add(7, 'd').format('YYYY-DD-MM'));
+                result.data.user.authDate = moment().add(1, 'd');
 
                 this.$store.commit('setUserIdentity', result.data.user);
                 this.$store.commit('setJWT', result.data.token);
 
                 this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;
-
                 this.$router.push('/');
             },
         },
