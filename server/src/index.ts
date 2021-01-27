@@ -1,8 +1,10 @@
 import express, {Request, Response, NextFunction} from 'express';
-import config    from './config';
-import Router    from './routes';
-import connectDb from './config/database';
-import cors      from 'cors';
+
+import config     from './config';
+import Router     from './routes';
+import connectDb  from './config/database';
+import cors       from 'cors';
+import fileUpload from 'express-fileupload';
 
 
 export class App{
@@ -45,6 +47,7 @@ export class App{
         this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
+        this.app.use(fileUpload());
     }
     
 }

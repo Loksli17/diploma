@@ -282,14 +282,14 @@
                         case 'select': 
                             for(const key in this.rows[i][j]){
                                 if(!selectProp.includes(key)){
-                                    throw new Error('error select');
+                                    throw new Error(`error select in row: ${i} and elem: ${j} with prop: ${key}`);
                                 }
                             }
                             break;
                         case 'textarea':
                             for(const key in this.rows[i][j]){
                                 if(!textProp.includes(key)){
-                                    throw new Error('error text');
+                                    throw new Error(`error text in row: ${i} and elem: ${j} with prop: ${key}`);
                                 }
                             }
                             break;

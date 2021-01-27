@@ -1,5 +1,6 @@
 import {validate, ValidationError} from 'class-validator';
 import {Router, Request, Response} from 'express';
+import fileUpload                  from 'express-fileupload';
 
 import {getRepository} from 'typeorm';
 import Parser          from '../libs/parser';
@@ -9,6 +10,7 @@ import User            from '../models/User';
 export default class UserController{
 
     private static router: Router = Router();
+
 
     private static async getFriends(req: Request, res: Response){
         
@@ -65,6 +67,36 @@ export default class UserController{
     }
 
 
+    private static async getById(req: Request, res: Response){
+
+        interface POST{
+            id: number;
+        }
+
+        let 
+            POST: POST = req.body,
+            user: User | undefined;
+
+        if(POST.id == undefined){
+            res.status(400).send({error: 'Data about `id` has not sended'});
+            return;
+        }
+
+        try {
+            user = await getRepository(User).findOne(POST.id);
+        }catch(err) {
+            res.status(400).send({error: 'Error with DB'});
+            throw new Error(err);
+        }
+
+        if(user == undefined){
+            res.status(200).send({msg: 'User has not been founded'});
+        }
+
+        res.status(200).send({user: user});
+    }
+
+
     private static async editUser(req: Request, res: Response){
 
         interface POST{
@@ -101,7 +133,6 @@ export default class UserController{
         user.login     = POST.user.login;
         user.firstName = POST.user.firstName;
         user.lastName  = POST.user.lastName;
-        user.email     = POST.user.email;
 
         validateResult = await validate(user);
 
@@ -118,13 +149,24 @@ export default class UserController{
             throw new Error(err);
         }
 
-        res.status(201).send({msg: `You data has chanded successfully`, user: user});
+        res.status(201).send({msg: `Data about You has chanded successfully`, user: user});
     }
+
+
+    private static async editAvatar(){
+
+        interface POST{
+
+        }
+    }
+
 
     public static routes(){
         this.router.all('/get-friends', this.getFriends);
         this.router.all('/search-user', this.searchUser);
-        this.router.all('/edit', this.editUser);
+        this.router.all('/edit',        this.editUser);
+        this.router.all('/editAvatar',  this.editAvatar);
+        this.router.all('/get-id',      this.getById);
         return this.router;
     }
 }
