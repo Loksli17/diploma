@@ -124,6 +124,8 @@ export default class AuthController{
             res.status(500).send({error: 'Data about `user` has not sended'});
         }
 
+        console.log(POST.user);
+
         user           = new User(POST.user);
         validateResult = await validate(user);
 

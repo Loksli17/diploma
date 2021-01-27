@@ -35,7 +35,7 @@
         },
 
         created: function(){
-            console.log(this.$store.state.jwt, this.$store.state.userIdentity);
+            // console.log(this.$store.state.jwt, this.$store.state.userIdentity);
         },
 
         methods: {

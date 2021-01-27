@@ -44,6 +44,11 @@
 
         methods: {
             formResultParser: function(result: any){
+
+                if(result.status == 400){
+                    return;
+                }
+
                 this.$router.push('/login');
                 this.$flashMessage.show({
                     type: 'success',

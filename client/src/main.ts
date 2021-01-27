@@ -14,16 +14,19 @@ axios.defaults.headers.common['Authorization'] = store.state.jwt;
 //!
 axios.interceptors.response.use(
     (res) => {return res},
-    async (err) => {
+    (err) => {
         if(err && err.response.status === 401){
             if(err.response.data.msg == 'jwt expired' && store.state.userIdentity != null){
-                if(store.state.userIdentity.authDate >= new Date()){
-                    const result: {token: string} = await axios.post('auth/get-token', {id: store.state.userIdentity.id});
-                    store.state.jwt = result.token;
-                    axios.defaults.headers.common['Authorization'] = store.state.jwt;
-                }
+                // if(store.state.userIdentity.authDate >= new Date()){
+                //     const result: {token: string} = await axios.post('auth/get-token', {id: store.state.userIdentity.id});
+                //     store.state.jwt = result.token;
+                //     axios.defaults.headers.common['Authorization'] = store.state.jwt;
+                // }
             }
             router.push('/login');
+            return Promise.reject(err);
+        }else if(err){
+            console.log('interceptors', err.response.status);
             return Promise.reject(err);
         }
     }
