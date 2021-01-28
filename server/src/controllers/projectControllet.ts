@@ -21,12 +21,12 @@ export default class ProjectController{
             projects: Array<Project> = [];
 
         if(POST.take == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('take')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('take')});
             return;
         }
 
         if(POST.skip == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('skip')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('skip')});
             return;
         }
 

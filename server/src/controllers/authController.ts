@@ -28,11 +28,11 @@ export default class AuthController{
             user : User | undefined;
 
         if(POST.email == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('email')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('email')});
         }
 
         if(POST.password == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('password')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('password')});
         }
 
         user = await getRepository(User).findOne({where: {email: POST.email}});
@@ -65,14 +65,14 @@ export default class AuthController{
             POST : POST = req.body;
 
         if(POST.id == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('user.id')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('user.id')});
             return;
         }
 
         user = await getRepository(User).findOne(POST.id);
 
         if(user == undefined){
-            res.status(500).send({error: `User with id = ${POST.id} hasn't founded`});
+            res.status(400).send({error: `User with id = ${POST.id} hasn't founded`});
             return;
         }
 
@@ -143,7 +143,7 @@ export default class AuthController{
         try{
             await getRepository(User).insert(user);
         }catch(err){
-            res.status(500).send({msg: 'Error with datebase'});
+            res.status(400).send({msg: 'Error with datebase'});
             throw new Error(err)
         }
     
