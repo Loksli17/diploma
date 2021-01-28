@@ -1,10 +1,11 @@
-import {validate, ValidationError} from 'class-validator';
 import {Router, Request, Response} from 'express';
-import fileUpload                  from 'express-fileupload';
 
-import {getRepository} from 'typeorm';
-import Parser          from '../libs/parser';
-import User            from '../models/User';
+import {validate, ValidationError} from 'class-validator';
+import fileUpload                  from 'express-fileupload';
+import ErrorMessage                from '../libs/error'; 
+import {getRepository}             from 'typeorm';
+import Parser                      from '../libs/parser';
+import User                        from '../models/User';
 
 
 export default class UserController{
@@ -24,12 +25,12 @@ export default class UserController{
             friends: Array<User> = [];
 
         if(POST.take == undefined){
-            res.status(400).send({error: 'Data about Take has not sended'});
+            res.status(400).send({error: ErrorMessage.dataNotSended('take')});
             return;
         }
 
         if(POST.skip == undefined){
-            res.status(400).send({error: 'Data about Skip has not sended'});
+            res.status(400).send({error: ErrorMessage.dataNotSended('skip')});
             return;
         }
 
@@ -90,7 +91,8 @@ export default class UserController{
         }
 
         if(user == undefined){
-            res.status(200).send({msg: 'User has not been founded'});
+            res.status(200).send({msg: ErrorMessage.notFound('user')});
+            return;
         }
 
         res.status(200).send({user: user});
@@ -115,18 +117,19 @@ export default class UserController{
             POST          : POST = req.body;
 
         if(POST.user == undefined){
-            res.status(400).send({error: 'Data about `user` has not sended'});
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
+            return;
         }
 
         try {
             user = await getRepository(User).findOne(POST.user.id);
         }catch(err){
-            res.status(400).send({error: 'Error with DB'});
+            res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);
         }
         
         if(user == undefined){
-            res.status(400).send({error: 'Data about `user` has not sended'});
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
             return;
         }
 
@@ -135,7 +138,6 @@ export default class UserController{
         validateResult = await validate(user);
 
         if(validateResult.length){
-            console.log(Parser.parseValidateError(validateResult));
             res.status(400).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
             return;
         }
@@ -143,7 +145,7 @@ export default class UserController{
         try{
             await getRepository(User).update(user.id!, user);
         }catch(err){
-            res.status(400).send({error: 'Error with DB'});
+            res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);
         }
 

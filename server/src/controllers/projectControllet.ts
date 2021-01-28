@@ -2,6 +2,7 @@ import {Router, Request, Response} from 'express';
 
 import {getRepository} from 'typeorm';
 import Project         from '../models/Project';
+import ErrorMessage    from '../libs/error';
 
 
 export default class ProjectController{
@@ -20,12 +21,12 @@ export default class ProjectController{
             projects: Array<Project> = [];
 
         if(POST.take == undefined){
-            res.status(500).send({error: 'Data about `take` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('take')});
             return;
         }
 
         if(POST.skip == undefined){
-            res.status(500).send({error: 'Data about `skip` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('skip')});
             return;
         }
 

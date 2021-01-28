@@ -7,6 +7,7 @@ import Parser                      from '../libs/parser';
 import crypto                      from 'crypto-js';
 import jwt                         from 'jsonwebtoken';
 import config                      from '../config';
+import ErrorMessage                from '../libs/error';
 
 
 export default class AuthController{
@@ -22,16 +23,16 @@ export default class AuthController{
         }
 
         let 
-            POST : POST            = req.body,
-            token: string          = '',
+            POST : POST   = req.body,
+            token: string = '',
             user : User | undefined;
 
         if(POST.email == undefined){
-            res.status(500).send({error: 'Data about `email` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('email')});
         }
 
         if(POST.password == undefined){
-            res.status(500).send({error: 'Data about `password` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('password')});
         }
 
         user = await getRepository(User).findOne({where: {email: POST.email}});
@@ -64,7 +65,7 @@ export default class AuthController{
             POST : POST = req.body;
 
         if(POST.id == undefined){
-            res.status(500).send({error: 'Data about `id` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('user.id')});
             return;
         }
 
@@ -93,7 +94,7 @@ export default class AuthController{
         let token: string | undefined = req.headers.authorization;
 
         if(token == undefined){
-            res.status(401).send({msg: `token wasn't found`});
+            res.status(401).send({msg: ErrorMessage.notFound('token')});
             return;
         }
         
@@ -126,10 +127,8 @@ export default class AuthController{
             user          : User; 
 
         if(POST.user == undefined){
-            res.status(500).send({error: 'Data about `user` has not sended'});
+            res.status(500).send({error: ErrorMessage.dataNotSended('user')});
         }
-
-        console.log(POST.user);
 
         user           = new User(POST.user);
         validateResult = await validate(user);
