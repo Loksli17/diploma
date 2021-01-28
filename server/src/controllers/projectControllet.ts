@@ -37,6 +37,7 @@ export default class ProjectController{
                 .orderBy('Project.id', 'DESC')
                 .getMany();
         }catch(err){
+            res.status(400).send({error: 'Error with DB'});
             throw new Error(err);
         }
 

@@ -3,10 +3,15 @@ import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
 import {IsUniq}                                             from '@join-com/typeorm-class-validator-is-uniq';
 import Project                                              from './Project';
 
+
 @Entity()
 export default class User{
 
     constructor(user: Partial<User>){
+        Object.assign(this, user);
+    }
+
+    public changeFields(user: Partial<User>){
         Object.assign(this, user);
     }
 

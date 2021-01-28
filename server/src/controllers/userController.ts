@@ -101,7 +101,7 @@ export default class UserController{
 
         interface POST{
             user: {
-                id       :   number;
+                id       : number;
                 login    : string;
                 email    : string;
                 firstName: string;
@@ -130,9 +130,7 @@ export default class UserController{
             return;
         }
 
-        user.login     = POST.user.login;
-        user.firstName = POST.user.firstName;
-        user.lastName  = POST.user.lastName;
+        user.changeFields(POST.user);
 
         validateResult = await validate(user);
 

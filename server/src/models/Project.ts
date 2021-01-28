@@ -1,9 +1,16 @@
-import {IsEmail, MinLength} from 'class-validator';
+import {IsEmail, MinLength}                                 from 'class-validator';
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
-import User from './User';
 
 @Entity()
 export default class Project{
+
+    constructor(project: Partial<Project>){
+        Object.assign(this, project);
+    }
+
+    public changeFields(project: Partial<Project>){
+        Object.assign(this, project);
+    }
 
     @PrimaryGeneratedColumn()
     public id: number = 1;
