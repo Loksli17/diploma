@@ -11,15 +11,11 @@
         },
 
         mounted: async function(){
-
-            console.log(this.$store.state.userIdentity, this.$store.state.jwt);
             
             try {
-                console.log('azazaza');
-                const result = await this.$axios.post('project/get-projects', {take: 8, skip: 0}); 
-                console.log('whwh', result);      
+                const res = await this.$axios.post('project/get-projects', {take: 8, skip: 0});      
             }catch(err){
-                console.log(err)
+                console.log(err);
             }
         }
     });

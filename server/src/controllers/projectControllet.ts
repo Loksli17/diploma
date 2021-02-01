@@ -12,8 +12,9 @@ export default class ProjectController{
     private static async getProjects(req: Request, res: Response){
         
         interface POST{
-            take: number;
-            skip: number;
+            take  : number;
+            skip  : number;
+            userId: number;
         }
 
         let 
@@ -30,9 +31,14 @@ export default class ProjectController{
             return;
         }
 
+        if(POST.userId == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('userId')});
+            return;
+        }
+
         try{
             projects = await getRepository(Project).createQueryBuilder()
-                .where('authorId = :id', {id: 1})
+                .where('authorId = :id', {id: POST.userId})
                 .skip(POST.skip)
                 .take(POST.take)
                 .orderBy('Project.id', 'DESC')
