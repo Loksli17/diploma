@@ -10,7 +10,7 @@
             
         },
 
-        created: async function(){
+        mounted: async function(){
 
             console.log(this.$store.state.userIdentity, this.$store.state.jwt);
             

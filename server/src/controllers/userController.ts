@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 
 import {validate, ValidationError} from 'class-validator';
-import fileUpload                  from 'express-fileupload';
+import {FileArray, UploadedFile}                 from 'express-fileupload';
 import ErrorMessage                from '../libs/error'; 
 import {getRepository}             from 'typeorm';
 import Parser                      from '../libs/parser';
@@ -153,11 +153,62 @@ export default class UserController{
     }
 
 
-    private static async editAvatar(){
+    private static async editAvatar(req: Request, res: Response){
 
         interface POST{
-
+            userId: number;
         }
+
+        let
+            fullFileName: string,
+            user        : User | undefined,
+            POST        : POST                  = req.body,
+            files       : FileArray | undefined = req.files;
+
+        if(files == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('file')});
+            return;
+        }
+
+        if(POST.userId == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
+            return;
+        }
+
+        user = await getRepository(User).findOne(POST.userId);
+
+        if(user == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
+            return;
+        }
+
+        for (const key in files){
+            if (Object.prototype.hasOwnProperty.call(files, key)) {
+                const file: UploadedFile | Array<UploadedFile> = files[key];
+                if(Array.isArray(file)){
+                    res.status(400).send({error: ErrorMessage.dataNotSended('file')});
+                    return;
+                }
+                try{
+                    fullFileName = Parser.parseFileName(file, POST.userId);
+                    file.mv(`../client/public/${fullFileName}`);
+                    user.avatar = fullFileName;
+                }catch(err){
+                    res.status(400).send({error: 'Error with file moving'});
+                    throw new Error(err);
+                }
+                
+            }
+        }
+
+        try{
+            await getRepository(User).update(user.id!, user);
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        res.status(200).send({msg: 'File has uploaded successfully'});
     }
 
 
@@ -165,7 +216,7 @@ export default class UserController{
         this.router.all('/get-friends', this.getFriends);
         this.router.all('/search-user', this.searchUser);
         this.router.all('/edit',        this.editUser);
-        this.router.all('/editAvatar',  this.editAvatar);
+        this.router.all('/edit-avatar', this.editAvatar);
         this.router.all('/get-id',      this.getById);
         return this.router;
     }

@@ -217,7 +217,6 @@
             },
 
             parseErrors: function(){
-                console.log('paaarser-form', this.result);
                 for(let i = 0; i < this.result.data.errors.length; i++){
                     for(let j = 0; j < this.printRows.length; j++){
                         for(let k = 0; k < this.printRows[j].length; k++){

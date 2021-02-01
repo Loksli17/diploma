@@ -1,4 +1,5 @@
 import {ValidationError} from 'class-validator';
+import crypto            from 'crypto-js';
 
 
 interface ErrorForFront{
@@ -24,5 +25,13 @@ export default {
         }
         
         return result;
+    },
+
+    parseFileName: function(file: any, ident: number | string){
+        let
+            type: string = file.name.substring(file.name.indexOf('.') + 1).toLowerCase(),
+            name: string = crypto.SHA256(`${file.name}${ident}`).toString();
+
+        return `${name}.${type}`;
     }
 }
