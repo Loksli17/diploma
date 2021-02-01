@@ -16,8 +16,9 @@
         <div class="avatar-wrap">
             <form id="fileForm" ref="fileForm" action="/user/editAvatar">
                 <span>Drop new image here</span>
-                <img :src="fileSrc" alt="">
             </form>
+            <img :src="fileSrc" alt="">
+            <progress :value="progressValue" max="100"></progress>
         </div>
 
     </div>
@@ -62,6 +63,7 @@
             return {
                 capableDragAndDrop: false as boolean,
                 fileSrc: '',
+                progressValue: 0,
                 rowsForm: [
                     [{type: 'hidden', name: 'id'}],
                     [{type: 'text',   name: 'login',     label: 'Login'},],
@@ -165,17 +167,35 @@
 
             //? for file Upload
             sendFile: async function(file: any){
-                // let data: {file: any; userId: number};
-
-                // data.file = file;
-                // data.userId = this.$store.state.userIdentity!.id;
-
                 const data: FormData = new FormData()
                 data.append('file', file);
                 data.append('userId', this.$store.state.userIdentity!.id);
 
-                const result = await this.$axios.post('user/edit-avatar', data);
-                console.log(result);
+                const res = await this.$axios.post('user/edit-avatar', data, {
+                    onUploadProgress: (e) => {
+                        this.progressValue = Math.floor(e.loaded * 100 / e.total);
+                    }
+                });
+                
+                if(res.status == 400){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: res.data.error,
+                    });
+                    return;
+                }
+
+                if(res.status == 200){
+                    this.$store.commit('setUserIdentity', res.data.user);
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        text: res.data.msg,
+                    });
+
+                    console.log(this.$store.state.userIdentity);
+                }
+
             },
 
             //* for edit User

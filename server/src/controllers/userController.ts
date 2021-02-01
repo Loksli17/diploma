@@ -6,6 +6,7 @@ import ErrorMessage                from '../libs/error';
 import {getRepository}             from 'typeorm';
 import Parser                      from '../libs/parser';
 import User                        from '../models/User';
+import fs                          from 'fs';
 
 
 export default class UserController{
@@ -160,6 +161,7 @@ export default class UserController{
         }
 
         let
+            oldFileName : string,
             fullFileName: string,
             user        : User | undefined,
             POST        : POST                  = req.body,
@@ -182,15 +184,20 @@ export default class UserController{
             return;
         }
 
+        oldFileName = user.avatar!;
+
         for (const key in files){
             if (Object.prototype.hasOwnProperty.call(files, key)) {
                 const file: UploadedFile | Array<UploadedFile> = files[key];
+
                 if(Array.isArray(file)){
                     res.status(400).send({error: ErrorMessage.dataNotSended('file')});
                     return;
                 }
+
                 try{
                     fullFileName = Parser.parseFileName(file, POST.userId);
+                    if(fullFileName == oldFileName) break;
                     file.mv(`../client/public/${fullFileName}`);
                     user.avatar = fullFileName;
                 }catch(err){
@@ -201,6 +208,16 @@ export default class UserController{
             }
         }
 
+        //!deleting old avatar
+        if(oldFileName != user.avatar && fs.existsSync(`../client/public/${oldFileName}`)){
+            try{
+                fs.unlinkSync(`../client/public/${oldFileName}`);
+            }catch(err){
+                res.status(400).send({error: 'Error with unlik old avatar'});
+                throw new Error(err);
+            }
+        }
+        
         try{
             await getRepository(User).update(user.id!, user);
         }catch(err){
@@ -208,7 +225,7 @@ export default class UserController{
             throw new Error(err);
         }
 
-        res.status(200).send({msg: 'File has uploaded successfully'});
+        res.status(200).send({msg: 'File has uploaded successfully', user: user});
     }
 
 
