@@ -3,22 +3,33 @@
 
         <div class="main-form-wrap">
             <Form
-                v-bind:rows="rowsForm"
+                v-bind:rows="rowsEditForm"
                 v-bind:action="'/user/edit'"
                 v-bind:tableName="'user'"
                 v-bind:className="'change-user-form'"
                 v-bind:successCode="201"
                 v-bind:overloadParseResult="true"
-                v-on:result-parser="formResultParser"
+                v-on:result-parser="editFormResultParser"
             />
         </div>
 
         <div class="avatar-wrap">
-            <form id="fileForm" ref="fileForm" action="/user/editAvatar">
+            <form id="fileForm" ref="fileForm" >
                 <span>Drop new image here</span>
             </form>
             <img :src="fileSrc" alt="">
             <progress :value="progressValue" max="100"></progress>
+        </div>
+
+        <div class="password-form-wrap">
+            <Form
+                v-bind:rows="rowsPasswordForm"
+                v-bind:action="'/user/edit-password'"
+                v-bind:className="'change-password-form'"
+                v-bind:successCode="201"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="passwordFormResultParser"
+            />
         </div>
 
     </div>
@@ -49,6 +60,10 @@
         }
     }
 
+    .password-form-wrap{
+        margin-left: 40px;
+    }
+
 </style>
 
 
@@ -64,21 +79,28 @@
                 capableDragAndDrop: false as boolean,
                 fileSrc: '',
                 progressValue: 0,
-                rowsForm: [
+                rowsEditForm: [
                     [{type: 'hidden', name: 'id'}],
-                    [{type: 'text',   name: 'login',     label: 'Login'},],
-                    [{type: 'text',   name: 'lastName',  label: 'Surname', value: ''}],
-                    [{type: 'text',   name: 'firstName', label: 'Name'}],
-                    [{type: 'submit', name: 'submit',    value: 'Edit user'}],
+                    [{type: 'text', name: 'login', label: 'Login'},],
+                    [{type: 'text', name: 'lastName', label: 'Surname', value: ''}],
+                    [{type: 'text', name: 'firstName', label: 'Name'}],
+                    [{type: 'submit', name: 'submit', value: 'Edit user'}],
+                ] as Array<Array<FormItem>>,
+                rowsPasswordForm: [
+                    [{type: 'hidden', name: 'id'}],
+                    [{type: 'password', name: 'old'}, {type: 'password', name: 'new'}],
+                    [{type: 'submit', name: 'submit', value: 'Edit password'}],
                 ] as Array<Array<FormItem>>,
             }
         },
 
         created: function(){
-            this.rowsForm[0][0].value = this.$store.state.userIdentity!.id;
-            this.rowsForm[1][0].value = this.$store.state.userIdentity!.login;
-            this.rowsForm[2][0].value = this.$store.state.userIdentity!.lastName;
-            this.rowsForm[3][0].value = this.$store.state.userIdentity!.firstName;
+            this.rowsEditForm[0][0].value = this.$store.state.userIdentity!.id;
+            this.rowsEditForm[1][0].value = this.$store.state.userIdentity!.login;
+            this.rowsEditForm[2][0].value = this.$store.state.userIdentity!.lastName;
+            this.rowsEditForm[3][0].value = this.$store.state.userIdentity!.firstName;
+
+            this.rowsPasswordForm[0][0].value = this.$store.state.userIdentity!.id;
         },
 
 
@@ -199,20 +221,37 @@
             },
 
             //* for edit User
-            formResultParser: function(result: any){
+            editFormResultParser: function(res: any){
                 
-                if(result.status == 400){
+                if(res.status == 400){
                     return;
                 }
                 
-                this.$store.commit('setUserIdentity', result.data.user);
+                this.$store.commit('setUserIdentity', res.data.user);
                 
                 this.$flashMessage.show({
                     type: 'success',
                     // image: require("../../assets/flashMessage/fail.svg"),
-                    text: result.data.msg,
+                    text: res.data.msg,
                 });
             },
+
+            passwordFormResultParser: function(res: any){
+
+                if(res.status == 400){
+                    return;
+                }
+                
+                this.$store.commit('setUserIdentity', res.data.user);
+                
+                this.$flashMessage.show({
+                    type: 'success',
+                    // image: require("../../assets/flashMessage/fail.svg"),
+                    text: res.data.msg,
+                });
+
+                console.log(res.data.user.password);
+            }
         },
 
         components: {

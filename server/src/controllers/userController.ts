@@ -1,12 +1,13 @@
 import {Router, Request, Response} from 'express';
 
 import {validate, ValidationError} from 'class-validator';
-import {FileArray, UploadedFile}                 from 'express-fileupload';
+import {FileArray, UploadedFile}   from 'express-fileupload';
 import ErrorMessage                from '../libs/error'; 
 import {getRepository}             from 'typeorm';
 import Parser                      from '../libs/parser';
 import User                        from '../models/User';
 import fs                          from 'fs';
+import crypto                      from 'crypto-js';
 
 
 export default class UserController{
@@ -69,6 +70,7 @@ export default class UserController{
     }
 
 
+    //! method for future
     private static async getById(req: Request, res: Response){
 
         interface POST{
@@ -177,7 +179,12 @@ export default class UserController{
             return;
         }
 
-        user = await getRepository(User).findOne(POST.userId);
+        try {
+            user = await getRepository(User).findOne(POST.userId);
+        }catch(err){
+            
+        }
+        
 
         if(user == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('user')});
@@ -229,12 +236,87 @@ export default class UserController{
     }
 
 
+    private static async editPassword(req: Request, res: Response){
+
+        interface POST{
+            old: string;
+            new: string;
+            id: number;
+        }
+
+        let
+            user  : User | undefined,
+            errors: Array<{msg: string; name: string}> = [],
+            POST  : POST = req.body;
+
+        if(POST.old == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('old password')});
+            return;
+        }
+
+        if(POST.new == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('new password')});
+            return;
+        }
+
+        if(POST.id == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
+            return;
+        }
+
+        //!validation
+        if(POST.old.length < 7){
+            errors.push({msg: `Old password must be longer than or equal to 7 characters`, name: 'old'});
+        }
+
+        if(POST.new.length < 7){
+            errors.push({msg: `New password must be longer than or equal to 7 characters`, name: 'new'});
+        }
+
+        if(errors.length){
+            res.status(400).send({msg: 'Bad validation', errors: errors});
+            return;
+        }
+
+        //!query
+        try{
+           user = await getRepository(User).findOne(POST.id);
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        if(user == undefined){
+            res.status(400).send({error: ErrorMessage.notFound(`user with id = ${POST.id}`)});
+            return;
+        }
+
+        if(user.password! !== crypto.SHA256(POST.old).toString()){
+            res.status(400).send({msg: 'Bad validation', errors: [{name: 'old', msg: 'Old password is not correct'}]});
+            return;
+        }
+        
+        //!edit password
+        user.password = crypto.SHA256(POST.new).toString();
+
+        try {
+            await getRepository(User).update(POST.id, user);  
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+         res.status(200).send({msg: 'Your password has changed successfully', user: user});
+    }
+
+
     public static routes(){
-        this.router.all('/get-friends', this.getFriends);
-        this.router.all('/search-user', this.searchUser);
-        this.router.all('/edit',        this.editUser);
-        this.router.all('/edit-avatar', this.editAvatar);
-        this.router.all('/get-id',      this.getById);
+        this.router.post('/get-friends',   this.getFriends);
+        this.router.post('/search-user',   this.searchUser);
+        this.router.post('/edit',          this.editUser);
+        this.router.post('/edit-avatar',   this.editAvatar);
+        this.router.post('/get-id',        this.getById);
+        this.router.post('/edit-password', this.editPassword);
         return this.router;
     }
 }

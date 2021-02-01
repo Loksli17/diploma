@@ -29,10 +29,12 @@ export default class AuthController{
 
         if(POST.email == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('email')});
+            return;
         }
 
         if(POST.password == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('password')});
+            return;
         }
 
         user = await getRepository(User).findOne({where: {email: POST.email}});
