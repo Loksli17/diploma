@@ -5,6 +5,7 @@ import Router     from './routes';
 import connectDb  from './config/database';
 import cors       from 'cors';
 import fileUpload from 'express-fileupload';
+import io         from 'socket.io';
 
 
 export class App{

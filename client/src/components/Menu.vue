@@ -16,7 +16,7 @@
             </div>
 
             <div class="user-identity" v-on:click="showUserMenu = !showUserMenu">
-                <div class="user-login">
+                <div v-click-outside="hideUserMenu" class="user-login">
                     <span>{{user.login}}</span>
                 </div>
                 <div :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${this.user.avatar}`) + ')'}" class="user-avatar"></div>
@@ -56,12 +56,18 @@
             }           
         },
 
+        methods: {
+            hideUserMenu: function(e: any){
+                this.showUserMenu = false;
+            }
+        },
+
         created: function(){
             if(this.$store.state.userIdentity == null){
                 return;
             }
             this.user = this.$store.state.userIdentity;
-        }
+        },
     });
 </script>
 

@@ -1,4 +1,4 @@
-import {createApp}                        from 'vue';
+import {createApp, Directive}                        from 'vue';
 import App                                from './App.vue';
 import router                             from './router';
 import moment                             from 'moment';
@@ -95,9 +95,21 @@ declare module '@vue/runtime-core'{
     }
 }
 
-
-
 const app = createApp(App);
+
+app.directive('click-outside', {
+    created(el, binding, vnode) {
+        el.clickOutsideEvent = function (e: any) {
+            if (!(el == e.target || el.contains(e.target))){
+                binding.value(e);
+            }
+        };
+        document.body.addEventListener('click', el.clickOutsideEvent)
+    },   
+    unmounted(el: any) {
+        document.body.removeEventListener('click', el.clickOutsideEvent)
+    },
+});
 
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$axios   = axios
