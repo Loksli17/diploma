@@ -126,30 +126,30 @@
                 'drop'
             ];
 
-            events.forEach(function(e){
-                this.$refs.fileForm.addEventListener(e, function(evt){
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                }.bind(this), false);
-            }.bind(this));
+            // events.forEach(function(e: string){
+            //     this.$refs.fileForm.addEventListener(e, function(evt){
+            //         evt.preventDefault();
+            //         evt.stopPropagation();
+            //     }.bind(this), false);
+            // }.bind(this));
 
-            this.$refs.fileForm.addEventListener('drop', function(e){
-                const 
-                    file: any = e.dataTransfer.files[0],
-                    deterFile: {'msg': string; success: boolean} = this.checkFile(file);
+            // this.$refs.fileForm.addEventListener('drop', function(e){
+            //     const 
+            //         file: any = e.dataTransfer.files[0],
+            //         deterFile: {'msg': string; success: boolean} = this.checkFile(file);
 
-                if(!deterFile.success){
-                    this.$flashMessage.show({
-                        type: 'error',
-                        text: deterFile.msg,
-                    });
-                    return;
-                }
+            //     if(!deterFile.success){
+            //         this.$flashMessage.show({
+            //             type: 'error',
+            //             text: deterFile.msg,
+            //         });
+            //         return;
+            //     }
 
-                this.readFile(file);
-                this.sendFile(file);
+            //     this.readFile(file);
+            //     this.sendFile(file);
 
-            }.bind(this));
+            // }.bind(this));
         },
 
 
@@ -180,9 +180,9 @@
             readFile: function(file: any){
                 const fr: FileReader = new FileReader();
 
-                fr.addEventListener('load', function(){
-                    this.fileSrc = fr.result;
-                }.bind(this), false);
+                // fr.addEventListener('load', function(){
+                //     this.fileSrc = fr.result;
+                // }.bind(this), false);
 
                 fr.readAsDataURL(file);
             },
@@ -191,7 +191,7 @@
             sendFile: async function(file: any){
                 const data: FormData = new FormData()
                 data.append('file', file);
-                data.append('userId', this.$store.state.userIdentity!.id);
+                // data.append('userId', this.$store.state.userIdentity!.id);
 
                 const res = await this.$axios.post('user/edit-avatar', data, {
                     onUploadProgress: (e) => {
