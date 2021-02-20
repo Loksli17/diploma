@@ -1,7 +1,9 @@
 <template>
     <div>
         <Menu></Menu>
-        <h1>main page</h1>
+        <div class="page-wrapper">
+            <h1>main page</h1>
+        </div>
     </div>
    
 </template>
@@ -26,3 +28,11 @@
         },
     });
 </script>
+
+<style lang="scss">
+    .page-wrapper{
+        position: absolute;
+        top: 62px;
+        padding: 20px;
+    }
+</style>

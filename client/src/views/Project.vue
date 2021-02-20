@@ -1,7 +1,9 @@
 <template>
     <div>
-            <Menu></Menu>
-        <h1>Project</h1>
+        <Menu></Menu>
+        <div class="page-wrapper">
+            <h1>Project</h1>
+        </div> 
     </div>
 </template>
 

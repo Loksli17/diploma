@@ -7,6 +7,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
+
+*{
+    padding: 0;
+    margin: 0;    
+}
+
 #app {
     font-family: 'Lato', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -15,16 +21,4 @@
     color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>
