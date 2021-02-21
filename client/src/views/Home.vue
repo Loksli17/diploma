@@ -14,7 +14,6 @@
     export default defineComponent({
 
         mounted: async function(){
-            
             try {
                 const res = await this.$axios.post('project/get-projects', {take: 8, skip: 0});      
             }catch(err){

@@ -1,4 +1,4 @@
-import {createApp, Directive}                        from 'vue';
+import {createApp}                        from 'vue';
 import App                                from './App.vue';
 import router                             from './router';
 import moment                             from 'moment';
@@ -7,6 +7,7 @@ import config                             from './config/config';
 import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 import store                              from './store';
 import User                               from './types/User';
+import {io, Socket}                               from 'socket.io-client';
 
 axios.defaults.baseURL = config.axiosPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;
@@ -85,6 +86,7 @@ const filters = {
     }
 }
 
+const socket = io('http://localhost:3000');
 
 declare module '@vue/runtime-core'{
     interface ComponentCustomProperties{
@@ -92,13 +94,15 @@ declare module '@vue/runtime-core'{
         $axios: AxiosInstance;
         $flashMessage: FlashMessagePlugin;
         $store: typeof store;
+        $socket: Socket;
     }
 }
 
 const app = createApp(App);
 
 app.directive('click-outside', {
-    created(el, binding, vnode) {
+
+    mounted(el: any, binding: any) {
         el.clickOutsideEvent = function (e: any) {
             if (!(el == e.target || el.contains(e.target))){
                 binding.value(e);
@@ -106,13 +110,15 @@ app.directive('click-outside', {
         };
         document.body.addEventListener('click', el.clickOutsideEvent)
     },   
+
     unmounted(el: any) {
         document.body.removeEventListener('click', el.clickOutsideEvent)
     },
 });
 
 app.config.globalProperties.$filters = filters;
-app.config.globalProperties.$axios   = axios
+app.config.globalProperties.$axios   = axios;
+app.config.globalProperties.$socket  = socket;
 
 app.use(flashMessage, {
     name    : 'flashMessage',
@@ -120,5 +126,6 @@ app.use(flashMessage, {
     time    : 6000,
     strategy: 'single',
 });
+
 
 app.use(store).use(router).mount('#app');

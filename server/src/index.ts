@@ -1,11 +1,13 @@
 import express, {Request, Response, NextFunction} from 'express';
 
-import config     from './config';
-import Router     from './routes';
-import connectDb  from './config/database';
-import cors       from 'cors';
-import fileUpload from 'express-fileupload';
-import io         from 'socket.io';
+import config                           from './config';
+import Router                           from './routes';
+import connectDb                        from './config/database';
+import cors                             from 'cors';
+import fileUpload                       from 'express-fileupload';
+import {createServer, Server}           from 'http';
+import {Server as socketServer, Socket} from 'socket.io';
+import morgan                           from 'morgan';
 
 
 export class App{
@@ -13,14 +15,25 @@ export class App{
     private static   instance: App;
     private          app     : express.Application;
     private readonly port    : number;
+    private          server  : Server;
+    private          io      : socketServer;
+
     
     private constructor(port: number = config.app.port){
-        this.app  = express();
-        this.port = port;
+        this.app    = express();
+        this.port   = port;
+        this.server = createServer(this.app);
+        this.io     = new socketServer(this.server, {
+            cors: {
+                origin: "http://localhost:8080",
+                methods: ["GET", "POST"]
+            }
+        });
 
         this.createMiddlewares();
         connectDb();
         this.app.use('/', Router.routes);
+        this.ioInit();
 
         this.app.use(this.logErrors);
         this.app.use(this.errorHandler);
@@ -31,7 +44,15 @@ export class App{
     }
 
     public async init(){
-        this.app.listen(3000, () => console.log(`Online corel was started on port: ${this.port}. Stop it now?`));
+        this.server.listen(3000, () => console.log(`Online corel was started on port: ${this.port}. Stop it now?`));
+    }
+
+    private ioInit(){
+        this.io.on('connection', (socket: Socket) => {
+            socket.on('testEvent', (arg: object) => {
+                console.log(arg);
+            });
+        });
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: NextFunction){
@@ -45,10 +66,16 @@ export class App{
     }
 
     private createMiddlewares(){
-        this.app.use(cors());
+        this.app.use(cors(
+            {
+                origin: "http://localhost:8080",
+                methods: ["GET", "POST"]
+            }
+        ));
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
         this.app.use(fileUpload());
+        this.app.use(morgan('combined'));
     }
     
 }
