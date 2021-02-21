@@ -1,37 +1,39 @@
 <template>
-    <div class="page-wrap">
+    <div>
+        <Menu></Menu>
 
-        <div class="main-form-wrap">
-            <Form
-                v-bind:rows="rowsEditForm"
-                v-bind:action="'/user/edit'"
-                v-bind:tableName="'user'"
-                v-bind:className="'change-user-form'"
-                v-bind:successCode="201"
-                v-bind:overloadParseResult="true"
-                v-on:result-parser="editFormResultParser"
-            />
+        <div class="page-wrap">
+            <div class="main-form-wrap">
+                <Form
+                    v-bind:rows="rowsEditForm"
+                    v-bind:action="'/user/edit'"
+                    v-bind:tableName="'user'"
+                    v-bind:className="'change-user-form'"
+                    v-bind:successCode="201"
+                    v-bind:overloadParseResult="true"
+                    v-on:result-parser="editFormResultParser"
+                />
+            </div>
+
+            <div class="avatar-wrap">
+                <form id="fileForm" ref="fileForm" >
+                    <span>Drop new image here</span>
+                </form>
+                <img :src="fileSrc" alt="">
+                <progress :value="progressValue" max="100"></progress>
+            </div>
+
+            <div class="password-form-wrap">
+                <Form
+                    v-bind:rows="rowsPasswordForm"
+                    v-bind:action="'/user/edit-password'"
+                    v-bind:className="'change-password-form'"
+                    v-bind:successCode="201"
+                    v-bind:overloadParseResult="true"
+                    v-on:result-parser="passwordFormResultParser"
+                />
+            </div>
         </div>
-
-        <div class="avatar-wrap">
-            <form id="fileForm" ref="fileForm" >
-                <span>Drop new image here</span>
-            </form>
-            <img :src="fileSrc" alt="">
-            <progress :value="progressValue" max="100"></progress>
-        </div>
-
-        <div class="password-form-wrap">
-            <Form
-                v-bind:rows="rowsPasswordForm"
-                v-bind:action="'/user/edit-password'"
-                v-bind:className="'change-password-form'"
-                v-bind:successCode="201"
-                v-bind:overloadParseResult="true"
-                v-on:result-parser="passwordFormResultParser"
-            />
-        </div>
-
     </div>
 </template>
 
@@ -39,6 +41,9 @@
 
     .page-wrap{
         display: flex;
+        position: absolute;
+        top: 62px;
+        padding: 20px;
     }
 
     .avatar-wrap{
@@ -71,6 +76,7 @@
 
     import {defineComponent} from 'vue';
     import Form, {FormItem}  from '../../components/Form.vue';
+    import Menu              from '../../components/Menu.vue';
     
     export default defineComponent({
 
@@ -256,6 +262,7 @@
 
         components: {
             Form,
+            Menu,
         }
     })
 </script>

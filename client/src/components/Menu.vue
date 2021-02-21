@@ -2,7 +2,7 @@
     <div class="menu">
 
         <div class="col">
-
+            <router-link class="user-show-link" :to="'/'"><img :src="require(`../assets/home-icon.svg`)" alt=""></router-link>
         </div>
 
         <div class="col">
@@ -12,7 +12,7 @@
         <div class="col">
             
             <div class="notific">
-                <img :src="require(`../assets/bell.svg`)" alt="">
+                <img :src="require(`../assets/bell-icon.svg`)" alt="">
             </div>
 
             <div class="user-identity" v-on:click="showUserMenu = !showUserMenu">
@@ -87,6 +87,12 @@
         left: 0;
         grid-template-columns: $menuWidth auto max-content;
         z-index: 9998;
+    }
+
+    .col:nth-child(1){
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .col:nth-child(3){

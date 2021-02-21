@@ -5,7 +5,6 @@
             <h1>main page</h1>
         </div>
     </div>
-   
 </template>
 
 <script lang="ts">
