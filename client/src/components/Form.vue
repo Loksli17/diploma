@@ -89,12 +89,8 @@
                 type    : String,
                 required: true,
             },
-            method: {
-                type    : String,
-                required: true,
-            },
             successCode: {
-                type: Number,
+                type    : Number,
                 required: true,
             },
             id: {
@@ -113,6 +109,10 @@
                 default : [], 
                 type    : Array as () => Array<Array<FormItem>>,
                 required: true,
+            },
+            typeSend: {
+                default: 'axios',
+                type   : String,
             }
         },
 
@@ -177,11 +177,9 @@
                     }
                 }
             },
-            
-            sendData: async function(){
-                this.resetRows();
-                this.pullFormData();
 
+
+            sendAxios: async function(){
                 try {
                     this.result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
                         headers: config.headers,
@@ -213,7 +211,33 @@
                     this.parseErrors();
                     throw new Error(err);
                 }
-                
+            },
+
+            sendSocket: function(){
+                try{
+                    this.result = this.$socket?.emit(this.action, this.formData);
+                }catch(err){
+                    Object.assign(this.result, err.response);
+                    if(this.overloadParseResult){
+                        this.$emit('result-parser', this.result);
+                    }
+                    this.parseErrors();
+                    throw new Error(err);
+                }
+            },
+            
+            sendData: async function(){
+                this.resetRows();
+                this.pullFormData();
+
+                switch(this.typeSend){
+                    case 'socket':
+                        this.sendSocket();
+                        break;
+                    case 'axios':
+                        this.sendAxios();
+                        break;
+                }                
             },
 
             parseErrors: function(){
@@ -227,80 +251,92 @@
                     }
                 }
             },
-        },
 
-        created(){
-            //checking of data
-            for(let i = 0; i < this.rows.length; i++){
-                for(let j = 0; j < this.rows[i].length; j++){
+            checkTypeSend: function(){
+                const whileList: Array<string> = ['axios', 'socket'];
 
-                    const 
-                        selectProp: Array<string> = [
-                            'name',
-                            'type',
-                            'error',
-                            'label',
+                if(!whileList.includes(this.typeSend)){
+                    throw new Error('Type of checkSendType must be axios or socket');
+                }
+            },
 
-                            'selected',
-                            'options',
-                            'multiple',
-                            'disabled',
-                        ],
-                        inputProp: Array<string> = [
-                            'name',
-                            'type',
-                            'error',
-                            'label',
-                            'value',
+            checkRows: function(){
+                for(let i = 0; i < this.rows.length; i++){
+                    for(let j = 0; j < this.rows[i].length; j++){
 
-                            'max',
-                            'min',
-                            'pattern',
-                            'required',
-                            'disabled',
-                            'readonly',
-                            'placeholder',
-                            'step',
-                            'autocomplete',
-                            'autofocus',
-                        ],
-                        textProp: Array<string> = [
-                            'name',
-                            'type',
-                            'error',
-                            'label',
-                            'value',
-                            'cols',
-                            'maxLength',
-                            'rows',
-                            'tabIndex',
-                            'wrap',
-                        ];
+                        const 
+                            selectProp: Array<string> = [
+                                'name',
+                                'type',
+                                'error',
+                                'label',
 
-                    switch(this.rows[i][j].type){
-                        case 'select': 
-                            for(const key in this.rows[i][j]){
-                                if(!selectProp.includes(key)){
-                                    throw new Error(`error select in row: ${i} and elem: ${j} with prop: ${key}`);
+                                'selected',
+                                'options',
+                                'multiple',
+                                'disabled',
+                            ],
+                            inputProp: Array<string> = [
+                                'name',
+                                'type',
+                                'error',
+                                'label',
+                                'value',
+
+                                'max',
+                                'min',
+                                'pattern',
+                                'required',
+                                'disabled',
+                                'readonly',
+                                'placeholder',
+                                'step',
+                                'autocomplete',
+                                'autofocus',
+                            ],
+                            textProp: Array<string> = [
+                                'name',
+                                'type',
+                                'error',
+                                'label',
+                                'value',
+                                'cols',
+                                'maxLength',
+                                'rows',
+                                'tabIndex',
+                                'wrap',
+                            ];
+
+                        switch(this.rows[i][j].type){
+                            case 'select': 
+                                for(const key in this.rows[i][j]){
+                                    if(!selectProp.includes(key)){
+                                        throw new Error(`error select in row: ${i} and elem: ${j} with prop: ${key}`);
+                                    }
                                 }
-                            }
-                            break;
-                        case 'textarea':
-                            for(const key in this.rows[i][j]){
-                                if(!textProp.includes(key)){
-                                    throw new Error(`error text in row: ${i} and elem: ${j} with prop: ${key}`);
+                                break;
+                            case 'textarea':
+                                for(const key in this.rows[i][j]){
+                                    if(!textProp.includes(key)){
+                                        throw new Error(`error text in row: ${i} and elem: ${j} with prop: ${key}`);
+                                    }
                                 }
-                            }
-                            break;
-                        default:
-                            for(const key in this.rows[i][j]){
-                                if(!inputProp.includes(key)){
-                                    throw new Error(`error input in row: ${i} and elem: ${j} with prop: ${key}`);
+                                break;
+                            default:
+                                for(const key in this.rows[i][j]){
+                                    if(!inputProp.includes(key)){
+                                        throw new Error(`error input in row: ${i} and elem: ${j} with prop: ${key}`);
+                                    }
                                 }
-                            }
+                        }
                     }
                 }
             }
+        },
+
+        created(){
+            this.checkRows();
+            this.checkTypeSend();
         }
     });
 </script>

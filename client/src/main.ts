@@ -7,7 +7,11 @@ import config                             from './config/config';
 import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 import store                              from './store';
 import User                               from './types/User';
-import {io, Socket}                               from 'socket.io-client';
+import {Socket, io}                       from 'socket.io-client';
+
+const socket = io('http://localhost:3000', {
+    autoConnect: false,
+});
 
 axios.defaults.baseURL = config.axiosPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;
@@ -30,6 +34,7 @@ axios.interceptors.response.use(
                 }
             }
             //* logout
+            socket.close();
             store.commit('setUserIdentity', null);
             store.commit('setJWT', null);
             router.push('/login');
@@ -85,8 +90,6 @@ const filters = {
         return moment(date).format('h:mm a');
     }
 }
-
-const socket = io('http://localhost:3000');
 
 declare module '@vue/runtime-core'{
     interface ComponentCustomProperties{

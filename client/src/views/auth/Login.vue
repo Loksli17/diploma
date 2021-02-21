@@ -23,6 +23,7 @@
     import User              from '../../types/User';
     import moment            from 'moment';
 
+
     export default defineComponent({
         data(){
             return {
@@ -50,6 +51,8 @@
 
                 this.$store.commit('setUserIdentity', result.data.user);
                 this.$store.commit('setJWT', result.data.token);
+
+                this.$socket.open();
 
                 this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;
                 this.$router.push('/');

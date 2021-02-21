@@ -152,7 +152,6 @@ export default class AuthController{
         res.status(201).send({msg: `User ${user.login} has been registered successfully`});
     }
 
-
     public static routes(){
         this.router.all(`/login`, this.login);
         this.router.all(`/signup`, this.signup);

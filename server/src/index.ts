@@ -49,9 +49,12 @@ export class App{
 
     private ioInit(){
         this.io.on('connection', (socket: Socket) => {
-            socket.on('testEvent', (arg: object) => {
-                console.log(arg);
-            });
+
+            console.log(`socket id=${socket.id}`);
+
+            socket.on('disconnect', (reason: string) => {
+                console.log(reason);
+            })
         });
     }
 
@@ -75,7 +78,7 @@ export class App{
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
         this.app.use(fileUpload());
-        this.app.use(morgan('combined'));
+        // this.app.use(morgan('combined'));
     }
     
 }
