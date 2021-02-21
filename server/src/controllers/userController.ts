@@ -185,7 +185,6 @@ export default class UserController{
             
         }
         
-
         if(user == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('user')});
             return;

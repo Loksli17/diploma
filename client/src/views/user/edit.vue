@@ -2,89 +2,101 @@
     <div>
         <Menu></Menu>
 
+        <ActionBack ref="actionBackData" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Edit`">
+            <Form
+                ref="dataForm"
+                v-bind:rows="rowsEditForm"
+                v-bind:action="'/user/edit'"
+                v-bind:tableName="'user'"
+                v-bind:className="'change-user-form'"
+                v-bind:successCode="201"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="editFormResultParser"
+            />
+        </ActionBack>
+
+        <ActionBack ref="actionBackPassword" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Edit password`">
+            <Form
+                v-bind:rows="rowsPasswordForm"
+                v-bind:action="'/user/edit-password'"
+                v-bind:className="'change-password-form'"
+                v-bind:successCode="201"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="passwordFormResultParser"
+            />
+        </ActionBack>
+
+        <ActionBack ref="actionBackAvatar" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Add avatar`">
+            <form id="fileForm" ref="fileForm" >
+                <span>Drop new image here</span>
+            </form>
+            <img :src="fileSrc" alt="">
+            <progress :value="progressValue" max="100"></progress>
+        </ActionBack>
+
+
         <div class="page-wrap">
-            <div class="main-form-wrap">
-                <Form
-                    v-bind:rows="rowsEditForm"
-                    v-bind:action="'/user/edit'"
-                    v-bind:tableName="'user'"
-                    v-bind:className="'change-user-form'"
-                    v-bind:successCode="201"
-                    v-bind:overloadParseResult="true"
-                    v-on:result-parser="editFormResultParser"
-                />
-            </div>
 
             <div class="avatar-wrap">
-                <form id="fileForm" ref="fileForm" >
-                    <span>Drop new image here</span>
-                </form>
-                <img :src="fileSrc" alt="">
-                <progress :value="progressValue" max="100"></progress>
+                <h2>Avatar</h2>
+                <div class="avatar" :style="{backgroundImage: 'url(' + require(`../../assets/user-avatar/${this.user.avatar}`)+ ')'}"></div>
+                <button @click="editAvatarEvt" class="btn bth-avatar">Edit Avatar</button>
             </div>
 
-            <div class="password-form-wrap">
-                <Form
-                    v-bind:rows="rowsPasswordForm"
-                    v-bind:action="'/user/edit-password'"
-                    v-bind:className="'change-password-form'"
-                    v-bind:successCode="201"
-                    v-bind:overloadParseResult="true"
-                    v-on:result-parser="passwordFormResultParser"
-                />
+            <div class="data-wrap">
+                <h2>Data of user</h2>
+
+                <table class="user-view">
+                    <tr>
+                        <td>Login</td>
+                        <td>{{this.user.login}}</td>
+                    </tr>
+                    <tr>
+                        <td>Surname</td>
+                        <td>{{this.user.lastName}}</td>
+                    </tr>
+                    <tr>
+                        <td>Name</td>
+                        <td>{{this.user.firstName}}</td>
+                    </tr>
+                    <tr>
+                        <td>E-mail</td>
+                        <td>{{this.user.email}}</td>
+                    </tr>
+                </table>
+
+                <button @click="editDataEvt" class="btn">Edit data</button>
+            </div>
+
+            <div class="notific-wrap">
+                <h2>Notifications</h2>
+            </div>
+
+            <div class="add-btn-wrap">
+                <button class="btn" @click="editPasswordEvt">Edit password</button>
+                <button class="btn btn-error" @click="deleteUserEvt">Delete</button>
             </div>
         </div>
     </div>
 </template>
-
-<style lang="scss">
-
-    .page-wrap{
-        display: flex;
-        position: absolute;
-        top: 62px;
-        padding: 20px;
-    }
-
-    .avatar-wrap{
-        max-width: 600px;
-        margin-left: 40px;
-    }
-
-    #fileForm{
-
-        span{
-            display: block;
-            border: 2px dashed #000;
-            padding: 100px;
-            margin: 30px 0px;
-        }
-
-        img{
-            width: 100%
-        }
-    }
-
-    .password-form-wrap{
-        margin-left: 40px;
-    }
-
-</style>
-
 
 <script lang="ts">
 
     import {defineComponent} from 'vue';
     import Form, {FormItem}  from '../../components/Form.vue';
     import Menu              from '../../components/Menu.vue';
+    import User              from "../../types/User";
+    import ActionBack        from '../../components/ActionBack.vue';
     
     export default defineComponent({
 
         data: function(){
             return {
+                user              : {} as User,
                 capableDragAndDrop: false as boolean,
-                fileSrc: '',
-                progressValue: 0,
+                fileSrc           : '',
+                progressValue     : 0,
+
                 rowsEditForm: [
                     [{type: 'hidden', name: 'id'}],
                     [{type: 'text', name: 'login', label: 'Login'},],
@@ -101,14 +113,26 @@
         },
 
         created: function(){
-            this.rowsEditForm[0][0].value = this.$store.state.userIdentity!.id;
-            this.rowsEditForm[1][0].value = this.$store.state.userIdentity!.login;
-            this.rowsEditForm[2][0].value = this.$store.state.userIdentity!.lastName;
-            this.rowsEditForm[3][0].value = this.$store.state.userIdentity!.firstName;
+            this.user = this.$store.state.userIdentity!;
 
-            this.rowsPasswordForm[0][0].value = this.$store.state.userIdentity!.id;
+            this.rowsEditForm[0][0].value = this.user.id;
+            this.rowsEditForm[1][0].value = this.user.login;
+            this.rowsEditForm[2][0].value = this.user.lastName;
+            this.rowsEditForm[3][0].value = this.user.firstName;
+
+            this.rowsPasswordForm[0][0].value = this.user.id;
         },
 
+        updated: function(){
+            this.user = this.$store.state.userIdentity!;
+
+            this.rowsEditForm[0][0].value = this.user.id;
+            this.rowsEditForm[1][0].value = this.user.login;
+            this.rowsEditForm[2][0].value = this.user.lastName;
+            this.rowsEditForm[3][0].value = this.user.firstName;
+
+            this.rowsPasswordForm[0][0].value = this.user.id;
+        },
 
         //? this function are needed for init drag and drop prop
         mounted: async function(){
@@ -160,6 +184,21 @@
 
 
         methods: {
+
+            editDataEvt: function(e: any){
+                const backComp = this.$refs.actionBackData! as any;
+                backComp.show();
+            },
+
+            editPasswordEvt: function(e: any){
+                const background = this.$refs.actionBackPassword! as any;
+                background.show();
+            },
+
+            editAvatarEvt: function(e: any){
+                const background = this.$refs.actionBackAvatar! as any;
+                background.show();
+            },
 
             //? for file Upload
             checkFile: function(file: any): {msg: string; success: boolean}{
@@ -228,12 +267,15 @@
 
             //* for edit User
             editFormResultParser: function(res: any){
-                
+
                 if(res.status == 400){
                     return;
                 }
                 
                 this.$store.commit('setUserIdentity', res.data.user);
+                this.user = res.data.user;
+
+                console.log();
                 
                 this.$flashMessage.show({
                     type: 'success',
@@ -263,6 +305,135 @@
         components: {
             Form,
             Menu,
+            ActionBack,
         }
     })
 </script>
+
+
+<style lang="scss">
+
+    .btn{
+        color: #fff;
+        width: 300px;
+        padding: 15px 0px;
+        text-align: center;
+        font-size: 20px;
+        background: #2DBEFC;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-error{
+        background: #F50A0A;
+    }
+
+    .page-wrap{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 400px auto 385px;
+        column-gap: 50px;
+        position: absolute;
+        top: 62px;
+        padding: 40px 70px;
+        box-sizing: border-box;
+        background: #EFEFF5;
+        height: calc(100vh - 62px);
+    }
+
+    .page-wrap h2{
+        text-align: left;
+        font-size: 29px;
+    }
+
+    .avatar-wrap{
+        display: grid;
+        height: max-content;
+
+        .avatar{
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            margin: 15px 0px 25px 0px;
+            height: 400px;
+        }
+
+        .bth-avatar{
+            width: 100%;
+        }
+    }
+
+    .data-wrap{
+        display: flex;
+        flex-flow: column;
+        
+        .user-view{
+            width: 100%;
+            margin: 15px 0px 62px 0px;
+            border: 2px solid #C2BFBF;
+            border-spacing: 0;
+
+            tr{
+                height: 90px;
+                box-sizing: border-box;
+                color: #000;
+                font-style: normal;
+                font-weight: 500;
+                font-size: 22px;
+
+                td:nth-child(2){
+                    border-left: 2px solid #C2BFBF;
+                }
+            }
+
+            tr:nth-child(odd){
+                background: #fff;
+            }
+            
+            tr:nth-child(even){
+                background: #D8D8DD;
+            }
+        }
+    }
+
+    .add-btn-wrap{
+        display: grid;
+        grid-template-columns: max-content max-content;
+        column-gap: 30px;
+        position: absolute;
+        bottom: 40px;
+        left: 70px;
+    }
+
+
+    .data-from-wrap{
+        display: grid;
+        row-gap: 30px;
+
+        .header{
+            display: grid;
+            justify-items: left;
+
+            span{
+                text-align: left;
+                color: #2DBEFC;
+                font-size: 20px;
+            }
+        }
+    }
+
+    #fileForm{
+
+        span{
+            display: block;
+            border: 2px dashed #000;
+            padding: 100px;
+            margin: 30px 0px;
+        }
+
+        img{
+            width: 100%
+        }
+    }
+
+</style>

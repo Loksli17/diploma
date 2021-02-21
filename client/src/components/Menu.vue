@@ -68,7 +68,6 @@
             }
             this.user = this.$store.state.userIdentity;
         },
-
         
     });
 </script>
@@ -87,8 +86,8 @@
         position: fixed;
         top: 0;
         left: 0;
-        grid-template-columns: $menuWidth auto max-content;
-        z-index: 9998;
+        grid-template-columns: 80px auto max-content;
+        z-index: 9996;
     }
 
     .col:nth-child(1){
