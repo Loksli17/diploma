@@ -1,12 +1,12 @@
 @import '../index';
 
-.page-wrap-404{
+.page-wrap{
     @extend %page-wrap !optional;
     @include pageWrapperTheme($white);
     @include flex(center, center);
     top: 0;
 
-    .btn-404{
+    .btn{
         @extend %btn !optional;
         @include buttonTheme();
         text-decoration: none;

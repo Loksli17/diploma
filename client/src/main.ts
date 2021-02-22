@@ -10,7 +10,7 @@ import User                               from './types/User';
 import {Socket, io}                       from 'socket.io-client';
 
 const socket = io('http://localhost:3000', {
-    autoConnect: false,
+    autoConnect: store.state.userIdentity == null ? false : true,
 });
 
 axios.defaults.baseURL = config.axiosPath;
@@ -57,6 +57,7 @@ router.beforeEach(async (to, from, next) => {
     }else if((to.name === 'Login' || to.name === 'Signup') && isAuth){
         next({name: '404'});
     }else if(to.path === '/logout'){
+        socket.close();
         store.commit('setUserIdentity', null);
         store.commit('setJWT', null);
         router.push('/login');

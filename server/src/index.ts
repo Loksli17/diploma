@@ -54,7 +54,7 @@ export class App{
 
             socket.on('disconnect', (reason: string) => {
                 console.log(reason);
-            })
+            });
         });
     }
 

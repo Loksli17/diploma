@@ -11,7 +11,7 @@
     @include buttonTheme($red, $white, $redHover);
 }
 
-.page-wrap-edit{
+.page-wrap{
     @extend %page-wrap;
     @include pageWrapperTheme($grayMain);
     display: grid;

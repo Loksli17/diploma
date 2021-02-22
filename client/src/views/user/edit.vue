@@ -35,7 +35,7 @@
         </ActionBack>
 
 
-        <div class="page-wrap-edit">
+        <div class="page-wrap">
 
             <div class="avatar-wrap">
                 <h2>Avatar</h2>
