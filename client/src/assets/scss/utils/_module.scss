@@ -1,2 +1,9 @@
-@import 'button.scss';
-@import 'form.scss';
+@import 'layout/column.scss';
+@import 'layout/row.scss';
+
+@import 'themes/buttonTheme.scss';
+@import 'themes/pageWrapperTheme.scss';
+
+@import 'backImage.scss';
+@import 'flex.scss';
+@import 'pageWrapper.scss';

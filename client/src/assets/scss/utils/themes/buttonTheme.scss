@@ -1,0 +1,11 @@
+@import '../../base/colors.scss';
+
+@mixin buttonTheme($backColor: $blue, $fontColor: $white, $backColorHover: $blueHover){
+    background: $backColor;
+    color: $fontColor;
+
+    &:hover{
+        transition: 0.4s;
+        background: $backColorHover;
+    }
+}

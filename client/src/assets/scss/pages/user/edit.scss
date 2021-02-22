@@ -1,0 +1,114 @@
+@import '../../index';
+
+
+.btn{
+    @extend %btn;
+    @include buttonTheme();
+}
+
+.btn-error{
+    @extend %btn;
+    @include buttonTheme($red, $white, $redHover);
+}
+
+.page-wrap-edit{
+    @extend %page-wrap;
+    @include pageWrapperTheme($grayMain);
+    display: grid;
+    grid-template-columns: 400px auto 385px;
+    column-gap: 50px;
+}
+
+.page-wrap h2{
+    text-align: left;
+    font-size: 29px;
+}
+
+.avatar-wrap{
+    display: grid;
+    height: max-content;
+
+    .avatar{
+        @include backImage();
+        width: 100%;
+        margin: 15px 0px 25px 0px;
+        height: 400px;
+    }
+
+    .bth-avatar{
+        width: 100%;
+    }
+}
+
+.data-wrap{
+    @include flex(flex-start, flex-start);
+    flex-flow: column;
+    
+    .user-view{
+        width: 100%;
+        margin: 15px 0px 62px 0px;
+        border: 2px solid #C2BFBF;
+        border-spacing: 0;
+
+        tr{
+            height: 90px;
+            box-sizing: border-box;
+            color: #000;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 22px;
+
+            td:nth-child(2){
+                border-left: 2px solid #C2BFBF;
+            }
+        }
+
+        tr:nth-child(odd){
+            background: #fff;
+        }
+        
+        tr:nth-child(even){
+            background: #D8D8DD;
+        }
+    }
+}
+
+.add-btn-wrap{
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 30px;
+    position: absolute;
+    bottom: 40px;
+    left: 70px;
+}
+
+.data-from-wrap{
+    display: grid;
+    row-gap: 30px;
+
+    .header{
+        display: grid;
+        justify-items: left;
+
+        span{
+            text-align: left;
+            color: #2DBEFC;
+            font-size: 20px;
+        }
+    }
+}
+
+
+#fileForm{
+
+    span{
+        display: block;
+        border: 2px dashed #000;
+        padding: 100px;
+        margin: 30px 0px;
+    }
+
+    img{
+        width: 100%
+    }
+}

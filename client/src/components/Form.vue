@@ -1,37 +1,40 @@
 <template>
     <form :class=className :id=id :action=action method='post' @submit.prevent="sendData">
         <div class="form-row" v-for="row in printRows" :key='row'>
-            <label :class="{'error': item.error}" class="form-col" v-for="item in row" :key='item.name'>
-                <span v-if="item.type != 'submit'">{{item.label ?? $filters.upperFirst(item.name)}}</span>
-                
-                <textarea v-if="item.type == 'textarea'" v-model="item.value" :name=item.name
-                    :maxlength=item.maxLength
-                    :rows=item.rows
-                    :cols=item.cols
-                    :wrap=item.wrap
-                    :tabindex=item.tabIndex
-                >
-                </textarea>
 
-                <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
-                    <option v-for="option in item.options" :key="option.id">{{option.text}}</option>
-                </select>
-                
-                <input v-else :type=item.type :name=item.name v-model="item.value"
-                    :max=item.max
-                    :min=item.min 
-                    :pattern=item.pattern
-                    :required=item.required
-                    :disabled=item.disabled
-                    :readonly=item.readonly
-                    :placeholder=item.placeholder
-                    :step=item.step
-                    :autocomplete=item.autocomplete
-                    :autofocus=item.autofocus
-                />
+            <template v-for="item in row" :key='item.name'>
+                <label v-if="item.type != 'hidden'" :class="{'error': item.error}" class="form-col">
+                    <span v-if="item.type != 'submit'">{{item.label ?? $filters.upperFirst(item.name)}}</span>
+                    
+                    <textarea v-if="item.type == 'textarea'" v-model="item.value" :name=item.name
+                        :maxlength=item.maxLength
+                        :rows=item.rows
+                        :cols=item.cols
+                        :wrap=item.wrap
+                        :tabindex=item.tabIndex
+                    >
+                    </textarea>
 
-                <div v-if="item.error" class="error-msg">{{item.error}}</div>
-            </label>
+                    <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
+                        <option v-for="option in item.options" :key="option.id">{{option.text}}</option>
+                    </select>
+                    
+                    <input v-else :type=item.type :name=item.name v-model="item.value"
+                        :max=item.max
+                        :min=item.min 
+                        :pattern=item.pattern
+                        :required=item.required
+                        :disabled=item.disabled
+                        :readonly=item.readonly
+                        :placeholder=item.placeholder
+                        :step=item.step
+                        :autocomplete=item.autocomplete
+                        :autofocus=item.autofocus
+                    />
+
+                    <div v-if="item.error" class="error-msg">{{item.error}}</div>
+                </label>
+            </template>
         </div>
     </form>
 </template>
@@ -263,7 +266,6 @@
             checkRows: function(){
                 for(let i = 0; i < this.rows.length; i++){
                     for(let j = 0; j < this.rows[i].length; j++){
-
                         const 
                             selectProp: Array<string> = [
                                 'name',
@@ -331,7 +333,7 @@
                         }
                     }
                 }
-            }
+            },
         },
 
         created(){
@@ -340,54 +342,3 @@
         }
     });
 </script>
-
-
-<style lang="scss">
-
-    $heightInput: 50px;
-
-    form{
-        display: grid;
-        row-gap: 45px;
-        max-width: 600px;
-        
-        .form-row{
-            display: grid;
-            column-gap: 15px;
-            grid-auto-flow: column;
-        }
-
-        .form-col{
-            display: grid;
-            row-gap: 10px;
-            position: relative;
-
-            &.error{
-                color: red;
-
-                input{
-                    border: 1.5px solid #f00;
-                }
-            }
-
-            span{
-                text-align: left;
-                font-size: 18px;
-                font-weight: 500;
-            }
-
-            input{
-                box-sizing: border-box;
-                height: $heightInput;
-                padding: 10px;
-                font-size: 15px;
-            }
-
-            .error-msg{
-                position: absolute;
-                top: $heightInput + 5px + 10px + 21px;
-                font-size: 14px;
-            }
-        }
-    }
-</style>

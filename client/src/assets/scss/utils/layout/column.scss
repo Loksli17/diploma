@@ -1,0 +1,5 @@
+@mixin column($gap: 15px){
+    display: grid;
+    row-gap: $gap;
+    grid-auto-flow: row;
+}

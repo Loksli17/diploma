@@ -1,0 +1,65 @@
+@import '../base/colors.scss';
+@import '../utils/themes/buttonTheme.scss';
+@import '../components/button.scss';
+
+$heightInput: 50px;
+$inputGap   : 15px;
+
+form{
+    display: grid;
+    row-gap: 45px;
+    max-width: 600px;
+
+    .form-row{
+        display: grid;
+        column-gap: 15px;
+        grid-auto-flow: column;
+    }
+
+    .form-col{
+        display: grid;
+        row-gap: $inputGap;
+        position: relative;
+
+        &.error{
+            color: $red;
+
+            input{
+                border: 1.5px solid $red;
+            }
+        }
+
+        span{
+            text-align: left;
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        input{
+            box-sizing: border-box;
+            height: $heightInput;
+            padding: 0px $inputGap $inputGap - 5px $inputGap;
+            font-size: 17px;
+            color: $blue;
+            border: 0px;
+            background: rgba($white, $alpha: 0);
+            border-bottom: 2px solid $black;
+            height: max-content;
+
+            &:focus{
+                outline: 0px solid;
+            }
+        }
+
+        input[type="submit"]{
+            @extend %btn;
+            @include buttonTheme();
+        }
+
+        .error-msg{
+            position: absolute;
+            top: $heightInput + 5px + 10px + 21px;
+            font-size: 14px;
+        }
+    }
+}

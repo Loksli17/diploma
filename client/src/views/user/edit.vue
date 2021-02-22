@@ -35,7 +35,7 @@
         </ActionBack>
 
 
-        <div class="page-wrap">
+        <div class="page-wrap-edit">
 
             <div class="avatar-wrap">
                 <h2>Avatar</h2>
@@ -98,15 +98,13 @@
                 progressValue     : 0,
 
                 rowsEditForm: [
-                    [{type: 'hidden', name: 'id'}],
-                    [{type: 'text', name: 'login', label: 'Login'},],
+                    [{type: 'text', name: 'login', label: 'Login'}, {type: 'hidden', name: 'id'}],
                     [{type: 'text', name: 'lastName', label: 'Surname', value: ''}],
                     [{type: 'text', name: 'firstName', label: 'Name'}],
                     [{type: 'submit', name: 'submit', value: 'Edit user'}],
                 ] as Array<Array<FormItem>>,
                 rowsPasswordForm: [
-                    [{type: 'hidden', name: 'id'}],
-                    [{type: 'password', name: 'old'}, {type: 'password', name: 'new'}],
+                    [{type: 'password', name: 'old'}, {type: 'password', name: 'new'}, {type: 'hidden', name: 'id'}],
                     [{type: 'submit', name: 'submit', value: 'Edit password'}],
                 ] as Array<Array<FormItem>>,
             }
@@ -115,23 +113,23 @@
         created: function(){
             this.user = this.$store.state.userIdentity!;
 
-            this.rowsEditForm[0][0].value = this.user.id;
-            this.rowsEditForm[1][0].value = this.user.login;
-            this.rowsEditForm[2][0].value = this.user.lastName;
-            this.rowsEditForm[3][0].value = this.user.firstName;
+            this.rowsEditForm[0][1].value = this.user.id;
+            this.rowsEditForm[0][0].value = this.user.login;
+            this.rowsEditForm[1][0].value = this.user.lastName;
+            this.rowsEditForm[2][0].value = this.user.firstName;
 
-            this.rowsPasswordForm[0][0].value = this.user.id;
+            this.rowsPasswordForm[0][2].value = this.user.id;
         },
 
         updated: function(){
             this.user = this.$store.state.userIdentity!;
 
-            this.rowsEditForm[0][0].value = this.user.id;
-            this.rowsEditForm[1][0].value = this.user.login;
-            this.rowsEditForm[2][0].value = this.user.lastName;
-            this.rowsEditForm[3][0].value = this.user.firstName;
+            this.rowsEditForm[0][1].value = this.user.id;
+            this.rowsEditForm[0][0].value = this.user.login;
+            this.rowsEditForm[1][0].value = this.user.lastName;
+            this.rowsEditForm[2][0].value = this.user.firstName;
 
-            this.rowsPasswordForm[0][0].value = this.user.id;
+            this.rowsPasswordForm[0][2].value = this.user.id;
         },
 
         //? this function are needed for init drag and drop prop
@@ -312,116 +310,5 @@
 
 
 <style lang="scss">
-
-    @import '../../assets/scss/_index.scss';
-
-    .btn{
-        @extend %btn;
-    }
-
-    .btn-error{
-        @extend %bth-error
-    }
-
-    .page-wrap{
-        @extend %page-wrap;
-        display: grid;
-        grid-template-columns: 400px auto 385px;
-        column-gap: 50px;
-    }
-
-    .page-wrap h2{
-        text-align: left;
-        font-size: 29px;
-    }
-
-    .avatar-wrap{
-        display: grid;
-        height: max-content;
-
-        .avatar{
-            @include backImage();
-            width: 100%;
-            margin: 15px 0px 25px 0px;
-            height: 400px;
-        }
-
-        .bth-avatar{
-            width: 100%;
-        }
-    }
-
-    .data-wrap{
-        @include flex(flex-start, flex-start);
-        flex-flow: column;
-        
-        .user-view{
-            width: 100%;
-            margin: 15px 0px 62px 0px;
-            border: 2px solid #C2BFBF;
-            border-spacing: 0;
-
-            tr{
-                height: 90px;
-                box-sizing: border-box;
-                color: #000;
-                font-style: normal;
-                font-weight: 500;
-                font-size: 22px;
-
-                td:nth-child(2){
-                    border-left: 2px solid #C2BFBF;
-                }
-            }
-
-            tr:nth-child(odd){
-                background: #fff;
-            }
-            
-            tr:nth-child(even){
-                background: #D8D8DD;
-            }
-        }
-    }
-
-    .add-btn-wrap{
-        display: grid;
-        grid-template-columns: max-content max-content;
-        column-gap: 30px;
-        position: absolute;
-        bottom: 40px;
-        left: 70px;
-    }
-
-
-    .data-from-wrap{
-        display: grid;
-        row-gap: 30px;
-
-        .header{
-            display: grid;
-            justify-items: left;
-
-            span{
-                text-align: left;
-                color: #2DBEFC;
-                font-size: 20px;
-            }
-        }
-    }
-
-    #fileForm{
-
-        span{
-            display: block;
-            border: 2px dashed #000;
-            padding: 100px;
-            margin: 30px 0px;
-        }
-
-        img{
-            width: 100%
-        }
-    }
-
+    @import '../../assets/scss/pages/user/edit.scss';
 </style>
