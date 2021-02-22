@@ -5,24 +5,25 @@
     @include pageWrapperTheme($white);
     @include flex(center, center);
     top: 0;
+
+    .btn-404{
+        @extend %btn !optional;
+        @include buttonTheme();
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .content{
+        @include column(20px);
+    }
+
+    .message{
+        font-size: 55px;
+    }
+
+    .code{
+        font-size: 220px;
+        color: $blue;
+    }
 }
 
-.btn{
-    @extend %btn !optional;
-    @include buttonTheme();
-    text-decoration: none;
-    width: 100%;
-}
-
-.content{
-    @include column(20px);
-}
-
-.message{
-    font-size: 55px;
-}
-
-.code{
-    font-size: 220px;
-    color: $blue;
-}
