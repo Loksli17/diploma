@@ -1,0 +1,26 @@
+@import '../base/config.scss';
+
+%btn{
+    color: #fff;
+    width: 300px;
+    padding: 15px 0px;
+    text-align: center;
+    font-size: 20px;
+    background: $blue;
+    border: 0;
+    cursor: pointer;
+
+    &:focus{
+        outline: 0px solid;
+    }
+
+    &:hover{
+        transition: 0.4s;
+        background: #68c6e6;
+    }
+}
+
+%bth-error{
+    @extend %bth !optional;
+    background: $red;
+}

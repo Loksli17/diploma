@@ -313,32 +313,21 @@
 
 <style lang="scss">
 
+    @import '../../assets/scss/_index.scss';
+
     .btn{
-        color: #fff;
-        width: 300px;
-        padding: 15px 0px;
-        text-align: center;
-        font-size: 20px;
-        background: #2DBEFC;
-        border: 0;
-        cursor: pointer;
+        @extend %btn;
     }
 
     .btn-error{
-        background: #F50A0A;
+        @extend %bth-error
     }
 
     .page-wrap{
-        width: 100%;
+        @extend %page-wrap;
         display: grid;
         grid-template-columns: 400px auto 385px;
         column-gap: 50px;
-        position: absolute;
-        top: 62px;
-        padding: 40px 70px;
-        box-sizing: border-box;
-        background: #EFEFF5;
-        height: calc(100vh - 62px);
     }
 
     .page-wrap h2{
@@ -351,8 +340,7 @@
         height: max-content;
 
         .avatar{
-            background-size: cover;
-            background-position: center;
+            @include backImage();
             width: 100%;
             margin: 15px 0px 25px 0px;
             height: 400px;
@@ -364,7 +352,7 @@
     }
 
     .data-wrap{
-        display: flex;
+        @include flex(flex-start, flex-start);
         flex-flow: column;
         
         .user-view{

@@ -75,13 +75,13 @@
 
 <style lang="scss">
 
-    $menuWidth: 62px;
+    @import '../assets/scss/_index.scss';
 
     .menu{
         display: grid;
         background: #fff;
         border-bottom: 2px solid #C2BFBF;
-        height: $menuWidth;
+        height: $menuHeigth;
         width: 100%;
         position: fixed;
         top: 0;
@@ -91,9 +91,7 @@
     }
 
     .col:nth-child(1){
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include flex(center, center);
     }
 
     .col:nth-child(3){
@@ -151,16 +149,15 @@
             }
 
             .user-avatar{
-                width: $menuWidth;
-                background-position: center;
-                background-size: cover;
+                @include backImage();
+                width: $menuHeigth;
             }
         }
 
         .user-menu{
             position: absolute;
-            top: $menuWidth + 2px;
-            right: $menuWidth;
+            top: $menuHeigth + 2px;
+            right: $menuHeigth;
             border-left: 1px solid #C2BFBF;
             border-right: 1px solid #C2BFBF;
             border-bottom: 1px solid #C2BFBF;
