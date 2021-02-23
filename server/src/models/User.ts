@@ -42,7 +42,12 @@ export default class User{
     public password: string = '12345678';
 
     @Column()
+    @IsNotEmpty()
     public avatar: string = 'default-user.png';
+
+    @Column()
+    @IsNotEmpty()
+    public status: boolean = false;
 
     @OneToMany(() => Project, project => project.author)
     public ownProjects?: Array<Project> | undefined;

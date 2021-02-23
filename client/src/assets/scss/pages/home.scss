@@ -1,7 +1,7 @@
 @import '../index';
 
-$friendsWrapWidth: 400px;
-$plusButtonSize  : 30px;
+$friendsWrapWidth: 350px;
+$plusButtonSize  : 40px;
 
 .page-home{
     
@@ -13,7 +13,7 @@ $plusButtonSize  : 30px;
         grid-template-columns: auto $friendsWrapWidth;
 
         .section{
-            padding: 50px;
+            padding: 50px 60px;
             @include column(30px);
             grid-template-rows: max-content auto max-content;
 
@@ -25,10 +25,75 @@ $plusButtonSize  : 30px;
         }
 
         .aside{
-            
             @include column(0px);
+            grid-template-rows: max-content 700px auto;
             background: $white;
 
+            .row:nth-child(1){
+                @include row(30px);
+
+                grid-template-columns: max-content max-content;
+                background: $white;
+                padding: 20px;
+                border-bottom: 2px solid $black;
+
+                div{
+                    @include flex(center, center);
+                }
+
+                h1{
+                    font-size: 34px;
+                }
+            }
+
+            .friends-wrap{
+                overflow-y: auto;
+
+                .friend{
+                    @include row(15px);
+                    grid-template-columns: 100px auto;
+                    border-bottom: 2px solid;
+                    height: 84px;
+                    background: $grayMain;
+
+                    & > div:nth-child(2){
+                        @include column(10px);
+                        padding: 10px 0px;
+                        box-sizing: border-box;
+
+                        & > div{
+                            @include flex(flex-start, center);
+                        }
+
+                        .login span{
+                            font-size: 22px;
+                            font-weight: 600;
+                        }
+
+                        .online{
+                            color: $green;
+                        }
+
+                        .offline{
+                            color: $red;
+                        }
+
+                        span{
+                            font-size: 23px;
+                        }
+                    }
+
+                    .avatar{
+                        background: yellow;
+                        height: calc(100% - 1px);
+                    }
+                }
+
+                .friend:last-child{
+                    height: 86px;
+                    border-bottom: 0px solid;
+                }
+            }
         }
     }
 
@@ -52,14 +117,43 @@ $plusButtonSize  : 30px;
             &:before{
                 @extend %pseudoElement;
                 @include pseudoElementTheme($plusButtonSize , 2px, #fff);
-                top: $plusButtonSize / 2 - 1;
+                top: 14px;
             }
 
             &:after{
                 @extend %pseudoElement;
                 @include pseudoElementTheme(2px, $plusButtonSize, #fff);
                 left: $plusButtonSize / 2 - 1;
+                top: -4px;
             }
         }
+    }
+
+    .new-friend-btn{
+        position: relative;
+        width: 60px;
+        height: 60px;
+        padding: 20px;
+
+        &:before{
+            @extend %pseudoElement;
+            @include pseudoElementTheme(40px, 2px, #fff);
+            top: 29px;
+            left: 11px;
+        }
+
+        &:after{
+            @extend %pseudoElement;
+            @include pseudoElementTheme(2px, 40px, #fff);
+            top: 11px;
+            left: 29px;
+        }
+    }
+
+    .more-friends-btn{
+        width: 100%;
+        height: 100%;
+        font-size: 28px;
+        border-top: 2px solid $black;
     }
 }
