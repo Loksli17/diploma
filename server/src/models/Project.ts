@@ -1,5 +1,5 @@
 import {IsEmail, MinLength}                                 from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne} from 'typeorm';
 import User                                                 from './User';
 
 @Entity()
@@ -20,6 +20,9 @@ export default class Project{
     public name: string = 'Project';
 
     @Column()
+    public authorId: number = 1;
+
+    @Column()
     public fileName: string = 'project.json';
 
     @Column()
@@ -27,6 +30,9 @@ export default class Project{
 
     @Column()
     public dateOfEdit: Date = new Date();
+
+    @ManyToOne(() => User, user => user.ownProjects)
+    public author?: User;
 
     @ManyToMany(() => User, user => user.projects)
     users: Array<User> | undefined;

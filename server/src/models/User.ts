@@ -1,5 +1,5 @@
 import {IsEmail, MinLength, IsNotEmpty}                     from 'class-validator';
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany} from 'typeorm';
 import {IsUniq}                                             from '@join-com/typeorm-class-validator-is-uniq';
 import Project                                              from './Project';
 
@@ -44,7 +44,10 @@ export default class User{
     @Column()
     public avatar: string = 'default-user.png';
 
+    @OneToMany(() => Project, project => project.author)
+    public ownProjects?: Array<Project> | undefined;
+
     @ManyToMany(() => Project, project => project.users)
-    public projects: Array<Project> | undefined; 
+    public projects?: Array<Project> | undefined;
 }
 

@@ -21,6 +21,8 @@ export default class ProjectController{
             POST    : POST           = req.body,
             projects: Array<Project> = [];
 
+        console.log(POST);
+
         if(POST.take == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('take')});
             return;
