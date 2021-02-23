@@ -5,7 +5,7 @@
 $heightInput: 50px;
 $inputGap   : 15px;
 
-form{
+%form{
     display: grid;
     row-gap: 45px;
     max-width: 600px;

@@ -105,7 +105,6 @@ declare module '@vue/runtime-core'{
 const app = createApp(App);
 
 app.directive('click-outside', {
-
     mounted(el: any, binding: any) {
         el.clickOutsideEvent = function (e: any) {
             if (!(el == e.target || el.contains(e.target))){

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="page-user-edit">
         <Menu></Menu>
 
         <ActionBack ref="actionBackData" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Edit`">
@@ -103,6 +103,7 @@
                     [{type: 'text', name: 'firstName', label: 'Name'}],
                     [{type: 'submit', name: 'submit', value: 'Edit user'}],
                 ] as Array<Array<FormItem>>,
+                
                 rowsPasswordForm: [
                     [{type: 'password', name: 'old'}, {type: 'password', name: 'new'}, {type: 'hidden', name: 'id'}],
                     [{type: 'submit', name: 'submit', value: 'Edit password'}],

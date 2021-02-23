@@ -1,29 +1,34 @@
 @import '../index';
 
-.page-wrap{
-    @extend %page-wrap !optional;
-    @include pageWrapperTheme($white);
-    @include flex(center, center);
-    top: 0;
+.page-404{
 
-    .btn{
-        @extend %btn !optional;
-        @include buttonTheme();
-        text-decoration: none;
-        width: 100%;
-    }
+    .page-wrap{
+        @extend %page-wrap !optional;
+        @include pageWrapperTheme($white);
+        @include flex(center, center);
+        top: 0;
 
-    .content{
-        @include column(20px);
-    }
+        .btn{
+            @extend %btn !optional;
+            @include buttonTheme();
+            text-decoration: none;
+            width: 100%;
+        }
 
-    .message{
-        font-size: 55px;
-    }
+        .content{
+            @include column(20px);
+        }
 
-    .code{
-        font-size: 220px;
-        color: $blue;
+        .message{
+            font-size: 55px;
+        }
+
+        .code{
+            font-size: 220px;
+            color: $blue;
+        }
     }
 }
+
+
 

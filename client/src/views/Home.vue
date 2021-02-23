@@ -1,8 +1,47 @@
 <template>
-    <div>
+    <div class="page-home">
         <Menu></Menu>
-        <div class="page-wrapper">
-            <h1>main page</h1>
+        <div class="page-wrap">
+
+            <div class="section">
+                <div class="row">
+                    <div>
+                        <button class="btn new-project-btn" @click="newProjectEvt">
+                            <span></span>
+                            <span>New project</span>
+                        </button>
+                    </div>
+
+                    <div>
+                        <form action="" @submit.prevent="sendData">
+                            <input type="search">
+                        </form>
+                    </div>
+
+                    <div>
+                        <form action="">
+                            <select name="" id="">
+                                <option value="all">All projects</option>
+                                <option value="self">My projects</option>
+                            </select>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    
+                </div>
+
+                <div class="row">
+
+                </div>
+            </div>
+
+            <div class="aside">
+
+            </div>
+            
         </div>
     </div>
 </template>
@@ -13,9 +52,20 @@
     
     export default defineComponent({
 
+        data: function(){
+            return {
+                projects: [] as Array<object>,
+            }  
+        },
+
+        methods: {
+            
+        },
+
         mounted: async function(){
             try {
-                const res = await this.$axios.post('project/get-projects', {take: 8, skip: 0});      
+                const res = await this.$axios.post('project/get-projects', {take: 8, skip: 0, userId: this.$store.state.userIdentity!.id});
+                console.log(res.data);    
             }catch(err){
                 console.log(err);
             }
@@ -28,9 +78,5 @@
 </script>
 
 <style lang="scss">
-    .page-wrapper{
-        position: absolute;
-        top: 62px;
-        padding: 20px;
-    }
+    @import '../assets/scss/pages/home.scss';
 </style>

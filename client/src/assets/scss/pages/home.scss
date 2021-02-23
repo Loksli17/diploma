@@ -1,0 +1,65 @@
+@import '../index';
+
+$friendsWrapWidth: 400px;
+$plusButtonSize  : 30px;
+
+.page-home{
+    
+    .page-wrap{
+        @extend %page-wrap !optional;
+        @include pageWrapperTheme($grayMain);
+        @include row(0px);
+        padding: 0;
+        grid-template-columns: auto $friendsWrapWidth;
+
+        .section{
+            padding: 50px;
+            @include column(30px);
+            grid-template-rows: max-content auto max-content;
+
+            .row:first-child{
+                @include row(0px);
+                padding-bottom: 30px;
+                border-bottom: 2px solid $black;
+            }
+        }
+
+        .aside{
+            
+            @include column(0px);
+            background: $white;
+
+        }
+    }
+
+    .btn{
+        @extend %btn !optional;
+        @include buttonTheme();
+    }
+
+    .new-project-btn{
+        @include row(30px);
+
+        width: max-content;
+        padding: 15px 25px;
+        font-size: 26px;
+
+        span:first-child{
+            display: block;
+            width: $plusButtonSize ;
+            position: relative;
+
+            &:before{
+                @extend %pseudoElement;
+                @include pseudoElementTheme($plusButtonSize , 2px, #fff);
+                top: $plusButtonSize / 2 - 1;
+            }
+
+            &:after{
+                @extend %pseudoElement;
+                @include pseudoElementTheme(2px, $plusButtonSize, #fff);
+                left: $plusButtonSize / 2 - 1;
+            }
+        }
+    }
+}
