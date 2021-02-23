@@ -1,0 +1,5 @@
+@mixin pseudoElementTheme($width: 10px, $height: 10px, $backColor: #fff){
+    width: $width;
+    height: $height;
+    background: $backColor;
+}
