@@ -22,6 +22,10 @@ $plusButtonSize  : 40px;
                 padding-bottom: 30px;
                 border-bottom: 2px solid $black;
             }
+
+            .row:nth-child(2){
+                @include column(0px);
+            }
         }
 
         .aside{

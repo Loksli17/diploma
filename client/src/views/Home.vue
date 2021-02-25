@@ -28,6 +28,26 @@
                 </div>
 
                 <div class="row">
+
+                    <table class="projects-wrap" >
+                        <tr>
+                            <th>Image</th>
+                            <th>Project Name</th>
+                            <th>Last modified</th>
+                            <th>Author</th>
+                            <th>Options</th>
+                        </tr>
+                        <tbody>
+                            <tr v-for="project in projects" :key="project.id">
+                                <td></td>
+                                <td>{{project.name}}</td>
+                                <td>{{project.dateOfEdit}}</td>
+                                <td>{{project.author.login}}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <Pagination
                         ref="pagination"
                         :take=this.projectRange
