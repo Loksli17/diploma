@@ -1,5 +1,8 @@
 @import '../../index';
 
+.form{
+    @extend %form;
+}
 
 .page-user-edit{
     

@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 
-import {getRepository} from 'typeorm';
+import {getRepository, QueryBuilder} from 'typeorm';
 import Project         from '../models/Project';
 import ErrorMessage    from '../libs/error';
 
@@ -15,9 +15,11 @@ export default class ProjectController{
             take  : number;
             skip  : number;
             userId: number;
+            filter: number | boolean;
         }
 
         let 
+            where   : string         = "true",
             POST    : POST           = req.body,
             projects: Array<Project> = [];
 
@@ -38,12 +40,25 @@ export default class ProjectController{
             return;
         }
 
+        if(POST.filter == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('filter')});
+            return;
+        }
+
+        if(POST.filter !== true){
+            where = "authorId = :id";
+        }
+
+        console.log("where:", where);
+
         try{
-            projects = await getRepository(Project).createQueryBuilder()
-                .where('authorId = :id', {id: POST.userId})
+            projects = await getRepository(Project).createQueryBuilder('project')
+                .where(where, {id: POST.userId})
+                .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
+                .leftJoinAndSelect("project.author", "user")
                 .skip(POST.skip)
                 .take(POST.take)
-                .orderBy('Project.id', 'DESC')
+                .orderBy('project.dateOfEdit', 'DESC')
                 .getMany();
         }catch(err){
             res.status(400).send({error: 'Error with DB'});

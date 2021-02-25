@@ -8,7 +8,7 @@
                 v-bind:rows="rowsEditForm"
                 v-bind:action="'/user/edit'"
                 v-bind:tableName="'user'"
-                v-bind:className="'change-user-form'"
+                v-bind:className="'change-user-form form'"
                 v-bind:successCode="201"
                 v-bind:overloadParseResult="true"
                 v-on:result-parser="editFormResultParser"
@@ -19,7 +19,7 @@
             <Form
                 v-bind:rows="rowsPasswordForm"
                 v-bind:action="'/user/edit-password'"
-                v-bind:className="'change-password-form'"
+                v-bind:className="'change-password-form form'"
                 v-bind:successCode="201"
                 v-bind:overloadParseResult="true"
                 v-on:result-parser="passwordFormResultParser"

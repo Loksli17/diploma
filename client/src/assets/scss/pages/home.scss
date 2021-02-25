@@ -84,7 +84,7 @@ $plusButtonSize  : 40px;
                     }
 
                     .avatar{
-                        background: yellow;
+                        @include backImage();
                         height: calc(100% - 1px);
                     }
                 }

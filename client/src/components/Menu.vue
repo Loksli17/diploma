@@ -19,7 +19,7 @@
                 <div v-click-outside="hideUserMenu" class="user-login">
                     <span>{{user.login}}</span>
                 </div>
-                <div :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${this.user.avatar}`) + ')'}" class="user-avatar"></div>
+                <div :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${user.avatar}`) + ')'}" class="user-avatar"></div>
             </div>
 
             <transition name="userShow">

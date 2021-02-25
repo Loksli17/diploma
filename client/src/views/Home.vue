@@ -20,8 +20,8 @@
 
                     <div>
                         <select @change="onFilterChange($event)">
-                            <option value="all">All projects</option>
-                            <option value="self">My projects</option>
+                            <option :value="true">All projects</option>
+                            <option :value="this.$store.state.userIdentity.id">My projects</option>
                         </select>
                     </div>
 
@@ -45,7 +45,7 @@
                 <div class="row friends-wrap">
                     <div class="friend" v-for="friend in friends" :key='friend.id'>
                         <div>
-                            <div class="avatar"> {{friend.avatar}} </div>
+                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${friend.avatar}`) + ')'}"></div>
                         </div>
                         <div class="">
                             <div class="login">
@@ -78,10 +78,13 @@
 
         data: function(){
             return {
-                friendsRange: 9 as number,
-                friendsCount: 0 as number,
-                projects    : [] as Array<Project> | undefined,
-                friends     : [] as Array<User> | undefined,
+                friendsRange  : 9 as number,
+                friendsCount  : 0 as number,
+                projectsRange : 6 as number,
+                projectsCount : 0 as number,
+                projectsFilter: true as number | boolean | string,
+                projects      : [] as Array<Project> | undefined,
+                friends       : [] as Array<User> | undefined,
             }  
         },
 
@@ -91,16 +94,36 @@
                 const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
 
                 if(newFriends == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
                     return;
                 }
 
-                this.friends?.concat(newFriends);
-                console.log(this.friends);
+                if(!newFriends.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `You don't have more friends`,
+                    });
+                }
+
+                this.friends = this.friends?.concat(newFriends);
             },
 
-            // getProjects: function(){
-
-            // },
+            getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = 1): Promise<Array<Project> | undefined> {
+                try {
+                    const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    if(res.status == 200){
+                        console.log(this.projects);
+                        return res.data.projects;
+                    }
+                }catch(err){
+                    console.log(err);
+                }
+            },
 
             getFriends: async function(take: number = 10, skip: number = 0): Promise<Array<User> | undefined> {
                 try{
@@ -114,24 +137,42 @@
                 }
             },
 
-            onFilterChange: function(e: any){
-                const filter: string = e.target.value;
-                console.log(filter);
+            onFilterChange: async function(e: any): Promise<void>{
+                this.projectsFilter = e.target.value;
+
+                if(this.projectsFilter == '1'){
+                    this.projectsFilter = 1;
+                }else{
+                    this.projectsFilter = true;
+                }
+
+                const newProjects: Array<Project> | undefined = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                
+                if(newProjects == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;
+                }
+
+                if(!newProjects.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `You don't have more projects`,
+                    });
+                }
+
+                this.projects = newProjects;
+
             }
         },
 
         mounted: async function(){
             this.friends = await this.getFriends(this.friendsRange, this.friendsCount);
-            console.log(this.friends);
-            // try {
-            //     const res = await this.$axios.post('project/get-projects', {take: 8, skip: 0, userId: this.$store.state.userIdentity!.id});
-            //     if(res.status == 200){
-            //         this.projects = res.data.projects;
-            //     }
-            //     console.log(this.projects);
-            // }catch(err){
-            //     console.log(err);
-            // }
+            this.projects = await this.getProjects(this.projectsRange, this.projectsCount);
         },
 
         components: {
