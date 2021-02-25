@@ -1,6 +1,7 @@
 import {createApp}                        from 'vue';
 import App                                from './App.vue';
 import router                             from './router';
+import {Router}                           from 'vue-router';
 import moment                             from 'moment';
 import axios, {AxiosInstance}             from 'axios';
 import config                             from './config/config';
@@ -99,6 +100,7 @@ declare module '@vue/runtime-core'{
         $flashMessage: FlashMessagePlugin;
         $store: typeof store;
         $socket: Socket;
+        // $router: Router;
     }
 }
 

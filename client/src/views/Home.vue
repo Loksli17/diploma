@@ -28,7 +28,13 @@
                 </div>
 
                 <div class="row">
-                    
+                    <Pagination
+                        ref="pagination"
+                        :take=this.projectRange
+                        :currentPage=this.projectCurrentPage
+                        :pageSize="4"
+                        :amountElements="40"
+                    />
                 </div>
 
                 <div class="row">
@@ -73,22 +79,48 @@
     import Menu              from '../components/Menu.vue';
     import Project           from '../types/Project';
     import User              from '../types/User';
+    import Pagination        from '../components/Pagination.vue';
+
     
     export default defineComponent({
-
         data: function(){
             return {
-                friendsRange  : 9 as number,
-                friendsCount  : 0 as number,
-                projectsRange : 6 as number,
-                projectsCount : 0 as number,
-                projectsFilter: true as number | boolean | string,
-                projects      : [] as Array<Project> | undefined,
-                friends       : [] as Array<User> | undefined,
+                projectCurrentPage: 2 as number,
+                friendsRange      : 9 as number,
+                friendsCount      : 0 as number,
+                projectsRange     : 6 as number,
+                projectsCount     : 0 as number,
+                projectsFilter    : true as number | boolean | string,
+                projects          : [] as Array<Project> | undefined,
+                friends           : [] as Array<User> | undefined,
             }  
         },
 
         methods: {
+
+            
+            getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
+                try {
+                    const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    if(res.status == 200){
+                        return res.data.projects;
+                    }
+                }catch(err){
+                    console.log(err);
+                }
+            },
+
+            getFriends: async function(take: number = 10, skip: number = 0): Promise<Array<User> | undefined> {
+                try{
+                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip});
+                    if(res.status == 200){
+                        this.friendsCount += res.data.friends.length;
+                        return res.data.friends;
+                    }
+                }catch(err){
+                    throw new Error(err);
+                }
+            },
 
             moreFriendsEvt: async function(){
                 const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
@@ -111,30 +143,6 @@
                 }
 
                 this.friends = this.friends?.concat(newFriends);
-            },
-
-            getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = 1): Promise<Array<Project> | undefined> {
-                try {
-                    const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
-                    if(res.status == 200){
-                        console.log(this.projects);
-                        return res.data.projects;
-                    }
-                }catch(err){
-                    console.log(err);
-                }
-            },
-
-            getFriends: async function(take: number = 10, skip: number = 0): Promise<Array<User> | undefined> {
-                try{
-                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip});
-                    if(res.status == 200){
-                        this.friendsCount += res.data.friends.length;
-                        return res.data.friends;
-                    }
-                }catch(err){
-                    throw new Error(err);
-                }
             },
 
             onFilterChange: async function(e: any): Promise<void>{
@@ -163,20 +171,23 @@
                         // image: require("../../assets/flashMessage/fail.svg"),
                         text: `You don't have more projects`,
                     });
-                }
+                }   
+
+                console.log('newProjects', newProjects);
 
                 this.projects = newProjects;
-
             }
         },
 
         mounted: async function(){
             this.friends = await this.getFriends(this.friendsRange, this.friendsCount);
             this.projects = await this.getProjects(this.projectsRange, this.projectsCount);
+            console.log(this.$router);
         },
 
         components: {
             Menu,
+            Pagination
         },
     });
 </script>

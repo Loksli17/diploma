@@ -49,8 +49,6 @@ export default class ProjectController{
             where = "authorId = :id";
         }
 
-        console.log("where:", where);
-
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
