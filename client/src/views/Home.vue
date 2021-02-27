@@ -50,9 +50,11 @@
 
                     <Pagination
                         ref="pagination"
-                        :take=this.projectRange
+                        :take=this.projectsRange
                         :currentPage=this.projectCurrentPage
                         :pageSize="4"
+                        :endButton="true"
+                        :startButton="true"
                         :amountElements="40"
                     />
                 </div>
@@ -103,21 +105,23 @@
 
     
     export default defineComponent({
+
         data: function(){
             return {
-                projectCurrentPage: 2 as number,
+                projectCurrentPage: 4 as number,
                 friendsRange      : 9 as number,
                 friendsCount      : 0 as number,
                 projectsRange     : 6 as number,
                 projectsCount     : 0 as number,
-                projectsFilter    : true as number | boolean | string,
+                projectsFilter    : true as number | boolean,
                 projects          : [] as Array<Project> | undefined,
                 friends           : [] as Array<User> | undefined,
+                amountProjects    : 0 as number | undefined,
+                amountFriends     : 0 as number | undefined,
             }  
         },
 
         methods: {
-
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {
@@ -126,7 +130,18 @@
                         return res.data.projects;
                     }
                 }catch(err){
-                    console.log(err);
+                    throw new Error(err);
+                }
+            },
+
+            getAmountProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<number | undefined> {
+                try {
+                    const res = await this.$axios.post('project/get-amount-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    if(res.status == 200){
+                        return res.data.amount;
+                    }
+                }catch(err){
+                    throw new Error(err);
                 }
             },
 
@@ -166,15 +181,16 @@
             },
 
             onFilterChange: async function(e: any): Promise<void>{
-                this.projectsFilter = e.target.value;
 
-                if(this.projectsFilter == '1'){
+                if(e.target.value == '1'){
                     this.projectsFilter = 1;
                 }else{
                     this.projectsFilter = true;
                 }
 
-                const newProjects: Array<Project> | undefined = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                const 
+                    newProjects: Array<Project> | undefined = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter),
+                    amountProjects: number | undefined      = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
                 
                 if(newProjects == undefined){
                     this.$flashMessage.show({
@@ -191,18 +207,32 @@
                         // image: require("../../assets/flashMessage/fail.svg"),
                         text: `You don't have more projects`,
                     });
-                }   
+                    return;
+                }
+
+                if(amountProjects == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;
+                }
 
                 console.log('newProjects', newProjects);
+                console.log('amountProjects', amountProjects);
 
-                this.projects = newProjects;
+                this.projects       = newProjects;
+                this.amountProjects = amountProjects;
             }
         },
 
         mounted: async function(){
-            this.friends = await this.getFriends(this.friendsRange, this.friendsCount);
-            this.projects = await this.getProjects(this.projectsRange, this.projectsCount);
-            console.log(this.$router);
+            this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
+            this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
+            this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+            
+            console.log(this.amountProjects);
         },
 
         components: {
