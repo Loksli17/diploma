@@ -50,12 +50,13 @@
 
                     <Pagination
                         ref="pagination"
-                        :take=this.projectsRange
-                        :currentPage=this.projectCurrentPage
-                        :pageSize="4"
+                        :take=projectsRange
+                        :currentPage=projectCurrentPage
+                        :pageSize="6"
                         :endButton="true"
                         :startButton="true"
-                        :amountElements="40"
+                        :amountElements=amountProjects
+                        v-on:page-change="pageChangeEvt"
                     />
                 </div>
 
@@ -108,7 +109,7 @@
 
         data: function(){
             return {
-                projectCurrentPage: 4 as number,
+                projectCurrentPage: 1 as number,
                 friendsRange      : 9 as number,
                 friendsCount      : 0 as number,
                 projectsRange     : 6 as number,
@@ -178,6 +179,30 @@
                 }
 
                 this.friends = this.friends?.concat(newFriends);
+            },
+
+            pageChangeEvt: async function(data: {take: number; skip: number}){
+                const newProjects: Array<Project> | undefined = await this.getProjects(data.take, data.skip, this.projectsFilter);
+
+                if(newProjects == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;
+                }
+
+                if(!newProjects.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `You don't have more projects`,
+                    });
+                    return;
+                }
+
+                this.projects = newProjects;
             },
 
             onFilterChange: async function(e: any): Promise<void>{

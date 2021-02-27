@@ -82,6 +82,14 @@
             },
         },
 
+        watch: {
+            //! MOUNTED HERE BECAUSE amontElements are always changed
+            amountElements: function(newVal: number){
+                this.init();
+                this.render();
+            }
+        },
+
         data: function(){
             return {
                 skip               : 0 as number,
@@ -98,14 +106,11 @@
             }
         },
 
-        mounted: function(){
-            this.init();
-            this.render();
-        },
-
         methods: {
 
             render: function(): void{
+                this.skip = this.take * (this.currentPageData - 1);
+
                 const pageEndPoints: {first: number; last: number} = this.countEndPoints();
                 this.pages = this.createPages(pageEndPoints.first, pageEndPoints.last);
 
@@ -126,7 +131,6 @@
             
             init: function(): void{
                 this.maxPage = Math.ceil(this.amountElements / this.take);
-                this.skip    = this.take * (this.currentPage - 1);
                 
                 this.classNameData       = this.className       == undefined ? 'pages-wrap' : this.className;
                 this.itemClassData       = this.itemClass       == undefined ? 'page' : this.itemClass;
@@ -222,6 +226,9 @@
 
                 this.currentPageData = newPage;
                 this.render();
+
+                console.log('page', e);
+                this.$emit('page-change', {skip: this.skip, take: this.take});
             },
 
             getCurrentPage: function(){
