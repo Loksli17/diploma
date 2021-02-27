@@ -1,9 +1,37 @@
 <template>
     <div class="pages">
-        <div :class="classNameData" v-for="page in pages" :key="page">
-            <a :href="page.link" :class="page.class" @click.prevent="setCurrentPageEvt">
-                {{page.content}}
-            </a>
+        <div :class="classNameData">
+
+            <div v-if="firstPage">
+                <a :href="firstPage.link" :class="firstPage.class" @click.prevent="setCurrentPageEvt">
+                    {{firstPage.content}}
+                </a>
+            </div>
+
+            <div v-if="prevPage">
+                <a :href="prevPage.link" :class="prevPage.class" @click.prevent="setCurrentPageEvt">
+                    {{prevPage.content}}
+                </a>
+            </div>
+
+            <template v-for="page in pages" :key="page">
+                <a :href="page.link" :class="page.class" @click.prevent="setCurrentPageEvt">
+                    {{page.content}}
+                </a>
+            </template>
+
+            <div v-if="nextPage">
+                <a :href="nextPage.link" :class="nextPage.class" @click.prevent="setCurrentPageEvt">
+                    {{nextPage.content}}
+                </a>
+            </div>
+
+            <div v-if="lastPage">
+                <a :href="lastPage.link" :class="lastPage.class" @click.prevent="setCurrentPageEvt">
+                    {{lastPage.content}}
+                </a>
+            </div>
+
         </div>
     </div>
 </template>
@@ -72,11 +100,29 @@
 
         mounted: function(){
             this.init();
-            const pageEndPoints: {first: number; last: number} = this.countEndPoints();
-            this.pages = this.createPages(pageEndPoints.first, pageEndPoints.last);
+            this.render();
         },
 
         methods: {
+
+            render: function(): void{
+                const pageEndPoints: {first: number; last: number} = this.countEndPoints();
+                this.pages = this.createPages(pageEndPoints.first, pageEndPoints.last);
+
+                const stepPages: {next: Page | undefined; prev: Page | undefined} = this.createStepPages();
+                this.nextPage = stepPages.next;
+                this.prevPage = stepPages.prev;
+
+                const endPointPages: {last: Page | undefined; first: Page | undefined} = this.createEndPointsPages();
+
+                if(this.endButton){
+                    this.lastPage = endPointPages.last;
+                }
+
+                if(this.startButton){
+                    this.firstPage = endPointPages.first;
+                }
+            },
             
             init: function(): void{
                 this.maxPage = Math.ceil(this.amountElements / this.take);
@@ -93,24 +139,20 @@
                 }
             },
 
-            // edit: function(): void{
-
-            // },
-
             countEndPoints: function(): {first: number; last: number}{
 
                 let 
                     first: number = 0,
                     last: number = 0;
 
-                if(Number(this.currentPage) + (this.pageSize / 2) >= this.maxPage){
+                if(Number(this.currentPageData) + (this.pageSize / 2) >= this.maxPage){
                     last = this.maxPage;
                     first = this.maxPage - this.pageSize + 1;
-                }else if(Number(this.currentPage) - (this.pageSize / 2) <= 1){
+                }else if(Number(this.currentPageData) - (this.pageSize / 2) <= 1){
                     first = 1;
                     last = this.pageSize;
                 }else{
-                    first = Math.ceil(Number(this.currentPage) - this.pageSize / 2);
+                    first = Math.ceil(Number(this.currentPageData) - this.pageSize / 2);
                     last = first + this.pageSize - 1;
                 }
 
@@ -129,6 +171,7 @@
             },
 
             createPages: function(first: number, last: number): Array<Page>{
+
                 if(this.amountElements <= this.take){return [];}
 
                 const pages: Array<Page> = [];
@@ -147,23 +190,38 @@
                 return pages;
             },
 
-            setCurrentPageEvt: function(e: any){
-                const
-                    reg: RegExp     = /\d+/g, 
-                    newPage: number = e.target.href.match(reg)[1];
+            createStepPages: function(): {next: Page | undefined; prev: Page | undefined}{
 
-                // delete this.pages[this.currentPageData - 1].current;
-                // this.pages[this.currentPageData - 1].class = this.itemClassData;
+                if(this.amountElements <= this.take){return {next: undefined, prev: undefined};}
+
+                const
+                    nextNum: number = (this.currentPageData + 1) > this.maxPage ? this.maxPage : this.currentPageData + 1,
+                    prevNum: number = (this.currentPageData - 1) < 1            ? 1            : this.currentPageData - 1;
+
+                return {
+                    next: {link: nextNum, content: '>', class: this.itemClassData},
+                    prev: {link: prevNum, content: '<', class: this.itemClassData},
+                };
+            },
+            
+            createEndPointsPages: function(): {last: Page | undefined; first: Page | undefined}{
+
+                if(this.amountElements <= this.take){return {last: undefined, first: undefined};}
+
+                return {
+                    first: {link: 1,            content: 'First', class: this.itemClassData},
+                    last : {link: this.maxPage, content: 'Last',  class: this.itemClassData},
+                };
+                
+            },
+
+            setCurrentPageEvt: function(e: any){
+                const 
+                    reg: RegExp     = /\d+/g,
+                    newPage: number = Number(e.target.href.match(reg)[1]);
 
                 this.currentPageData = newPage;
-                // this.pages[newPage - 1].current = true;
-                // this.pages[newPage - 1].class = this.itemClassData + " " + this.activePageClassData;
-                
-                const pageEndPoints: {first: number; last: number} = this.countEndPoints();
-                this.pages = this.createPages(pageEndPoints.first, pageEndPoints.last);
-
-                console.log(this.pages);
-                
+                this.render();
             },
 
             getCurrentPage: function(){
