@@ -2,6 +2,7 @@ import {Router, Request, Response} from 'express';
 
 import {getRepository} from 'typeorm';
 import Project         from '../models/Project';
+import User            from '../models/User';
 import ErrorMessage    from '../libs/error';
 import PostModule      from '../libs/post';
 
@@ -132,10 +133,52 @@ export default class ProjectController{
     }
 
 
+    public static async getCollaborators(req: Request, res: Response){
+
+        interface POST{
+            id: number;
+        }
+
+        let
+            postErrors   : Array<keyof POST> = [],
+            POST         : POST = req.body,
+            collaborators: Array<User> = [],
+            project      : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['id']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+        }
+
+        try{
+            project = await getRepository(Project).findOne(POST.id);
+        }catch(err){
+            throw new Error(err);
+        }
+
+        if(project == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('project')});
+        }
+
+        console.log(POST);
+
+        try{
+            collaborators = await getRepository(User).createQueryBuilder('user')
+                .innerJoin('user_has_project', 'uhp', 'uhp.projectId = :id and uhp.userId = user.id', {id: POST.id})
+                .getMany();
+        }catch(err){
+            throw new Error(err);
+        }
+
+        res.status(200).send({collaborators: collaborators});
+    }
+
     public static routes(){
         this.router.all('/get-projects' ,       this.getProjects);
         this.router.all('/get-amount-projects', this.getAmountProjects);
         this.router.all('/search-project',      this.searchProject);
+        this.router.all('/get-collaborators',   this.getCollaborators);
         return this.router;
     }
 }

@@ -50,31 +50,8 @@
         flex-flow: column;
         
         .user-view{
-            width: 100%;
+            @extend %grid-view;
             margin: 15px 0px 62px 0px;
-            border: 2px solid #C2BFBF;
-            border-spacing: 0;
-
-            tr{
-                height: 90px;
-                box-sizing: border-box;
-                color: #000;
-                font-style: normal;
-                font-weight: 500;
-                font-size: 22px;
-
-                td:nth-child(2){
-                    border-left: 2px solid #C2BFBF;
-                }
-            }
-
-            tr:nth-child(odd){
-                background: #fff;
-            }
-            
-            tr:nth-child(even){
-                background: #D8D8DD;
-            }
         }
     }
 

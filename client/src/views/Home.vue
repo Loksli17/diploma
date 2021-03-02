@@ -47,7 +47,20 @@
                                 <td>{{project.name}}</td>
                                 <td>{{project.dateOfEdit}}</td>
                                 <td>{{project.author.login}}</td>
-                                <td></td>
+                                <td>
+                                    <div>
+                                        <div>
+                                            <a href="" @click.prevent="projectViewEvt(project.id)">
+                                                <img :src="require('../assets/view-icon.svg')" alt="">
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <a href="" >
+                                                <img :src="require('../assets/edit-icon.svg')" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -96,8 +109,75 @@
             </div>
             
         </div>
+        
+        <ActionBack ref="actionBackView" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`View`">
+            <div class="project-view">
+
+                <div class="col-1">
+                    <div class="row">
+                        <div :style="{backgroundImage: 'url(' + require(`@/assets/projects/img/${projectView.image}`) + ')'}" class="project-img"></div>
+                    </div>
+
+                    <div class="row">
+                        
+                        <div class="wrap-header">
+                            <h2>Information</h2>
+                        </div>
+                        
+                        <table class="project-grid-view">
+                            <tr>
+                                <td>Name</td>
+                                <td>{{projectView.name}}</td>
+                            </tr>
+                            <tr>
+                                <td>Author</td>
+                                <td>{{projectView.author.login}}</td>
+                            </tr>
+                            <tr>
+                                <td>Date of creation</td>
+                                <td>{{projectView.dateOfCreate}}</td>
+                            </tr>
+                            <tr>
+                                <td>Last modified</td>
+                                <td>{{projectView.dateOfEdit}}</td>
+                            </tr>
+                            <tr>
+                                <td>View status</td>
+                                <td>{{projectView.name}}</td>
+                            </tr>
+                        </table>
+                        <button class="btn">Edit data</button>
+                    </div>
+
+                    <div class="row">
+                        <div class="coll-header">
+                            <h2>Collaborators ({{projectViewCollabs.length}}/10)</h2>
+                            <button class="btn"><span></span></button>
+                        </div>
+
+                        <div class="collaborators-wrap">
+                            <template v-for="collaborator in projectViewCollabs" :key="collaborator.id">
+                                <div class="collaborator">
+                                    <div class="avatar"></div>
+                                    <div>
+                                        {{collaborator.firstName}} {{collaborator.lastName}}
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="col-2">
+                    <button class="btn btn-error">Delete</button>
+                </div>
+
+            </div>
+        </ActionBack>
     </div>
 </template>
+
 
 <script lang="ts">
     import {defineComponent} from 'vue';
@@ -105,23 +185,31 @@
     import Project           from '../types/Project';
     import User              from '../types/User';
     import Pagination        from '../components/Pagination.vue';
+    import ActionBack        from '../components/ActionBack.vue';
 
     
     export default defineComponent({
 
         data: function(){
             return {
-                projectCurrentPage: 1 as number,
+                friends           : [] as Array<User> | undefined,
                 friendsRange      : 9 as number,
                 friendsCount      : 0 as number,
+                
+                projectCurrentPage: 1 as number,
                 projectsRange     : 9 as number,
                 projectsCount     : 0 as number,
                 projectsFilter    : true as number | boolean,
                 projects          : [] as Array<Project> | undefined,
-                friends           : [] as Array<User> | undefined,
+                
                 amountProjects    : 0 as number | undefined,
                 amountFriends     : 0 as number | undefined,
+                
                 searchValue       : "" as string,
+
+                //project view
+                projectView       : {} as Project | undefined,
+                projectViewCollabs: [] as Array<User> | undefined,
             }  
         },
 
@@ -132,9 +220,16 @@
                     const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
                     if(res.status == 200){
                         res.data.projects.forEach((elem: Project) => {
-                            elem.dateOfEdit = this.$filters.datetimeToView(elem.dateOfEdit);
+                            elem.dateOfEdit   = this.$filters.datetimeToView(elem.dateOfEdit);
+                            elem.dateOfCreate = this.$filters.datetimeToView(elem.dateOfCreate!);
                         });
                         return res.data.projects;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: `Error with query`,
+                        });
                     }
                 }catch(err){
                     throw new Error(err);
@@ -235,8 +330,6 @@
                     return;
                 }
 
-                console.log(projects);
-
                 this.projects = projects;
             },
 
@@ -279,25 +372,57 @@
                     return;
                 }
 
-                console.log('newProjects', newProjects);
-                console.log('amountProjects', amountProjects);
-
                 this.projects       = newProjects;
                 this.amountProjects = amountProjects;
-            }
+            },
+
+
+            
+            projectViewEvt: async function(id: number){
+                const background = this.$refs.actionBackView! as any;
+                let collaborators: Array<User> = [];
+                
+                this.projectView = this.projects!.find((project) => project.id === id);
+
+                if(this.projectView == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Unexpected error`,
+                    });
+                }
+                
+                try {
+                    const res = await this.$axios.post('project/get-collaborators', {id: id});
+                    if(res.status == 200){
+                        collaborators = res.data.collaborators;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: `Error with query`,
+                        });
+                    }
+                }catch(err){
+                    throw new Error(err);
+                }
+                
+                this.projectViewCollabs = collaborators;
+
+                background.show();
+            },
         },
 
         mounted: async function(){
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-            
-            console.log(this.amountProjects);
         },
 
         components: {
             Menu,
-            Pagination
+            Pagination,
+            ActionBack,
         },
     });
 </script>

@@ -1,4 +1,6 @@
 @import '../base/config.scss';
+@import '../utils/pseudoElement.scss';
+@import '../utils/themes/pseudoElementTheme.scss';
 
 %btn{
     width: 300px;
@@ -10,5 +12,38 @@
 
     &:focus{
         outline: 0px solid;
+    }
+}
+
+%btn-plus{
+    position: relative;
+    width: 60px;
+    height: 60px;
+    padding: 20px;
+
+    &:before{
+        @extend %pseudoElement;
+        @include pseudoElementTheme(40px, 2px, #fff);
+        top: 29px;
+        left: 11px;
+    }
+
+    &:after{
+        @extend %pseudoElement;
+        @include pseudoElementTheme(2px, 40px, #fff);
+        top: 11px;
+        left: 29px;
+    }
+
+    &:hover{
+        &:before{
+            transition: 0.4s;
+            background: $black;
+        }
+
+        &:after{
+            transition: 0.4s;
+            background: $black;
+        }
     }
 }

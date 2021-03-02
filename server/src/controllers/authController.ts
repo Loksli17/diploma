@@ -129,7 +129,7 @@ export default class AuthController{
             user          : User; 
 
         if(POST.user == undefined){
-            res.status(500).send({error: ErrorMessage.dataNotSended('user')});
+            res.status(400).send({error: ErrorMessage.dataNotSended('user')});
         }
 
         user           = new User(POST.user);

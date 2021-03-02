@@ -107,6 +107,10 @@ $plusButtonSize  : 40px;
         @include buttonTheme();
     }
 
+    .btn-error{
+        @include buttonTheme($red, $white, $redHover, $white);
+    }
+
     .new-project-btn{
         @include row(30px);
 
@@ -132,27 +136,22 @@ $plusButtonSize  : 40px;
                 top: -4px;
             }
         }
+
+        &:hover{
+            span:before{
+                transition: 0.4s;
+                background: $black;
+            }
+
+            span:after{
+                transition: 0.4s;
+                background: $black;
+            }
+        }
     }
 
     .new-friend-btn{
-        position: relative;
-        width: 60px;
-        height: 60px;
-        padding: 20px;
-
-        &:before{
-            @extend %pseudoElement;
-            @include pseudoElementTheme(40px, 2px, #fff);
-            top: 29px;
-            left: 11px;
-        }
-
-        &:after{
-            @extend %pseudoElement;
-            @include pseudoElementTheme(2px, 40px, #fff);
-            top: 11px;
-            left: 29px;
-        }
+        @extend %btn-plus !optional;
     }
 
     .more-friends-btn{
@@ -184,5 +183,99 @@ $plusButtonSize  : 40px;
             @include backImage();
             min-height: 56px;
         }
+    }
+    
+    td:last-child{
+        padding-top: 0px;
+        padding-bottom: 0px;
+
+        div{
+            @include row(5px);
+            grid-template-columns: max-content max-content;
+            justify-content: center;
+
+            a{
+                display: block;
+                width: 30px;
+
+                img{
+                    width: 100%;
+                }
+            }
+        } 
+    }
+}
+
+.project-view{
+    @include column(30px);
+
+    .col-1{
+        @include row(50px);
+
+        .row:nth-child(1){
+            @include column(20px);
+
+            div.project-img{
+                height: 100%;
+                width: 450px;
+                @include backImage();
+            }
+        }
+
+        .row:nth-child(2){
+            @include column(20px);
+
+            .wrap-header{
+                @include flex(flex-start, center);
+                height: 60px;
+                
+                h2{
+                    text-align: left;
+                }
+            }
+
+            .project-grid-view{
+                @extend %grid-view;
+            }
+        }
+
+        .row:nth-child(3){
+            height: max-content;
+            @include column(20px);
+
+            .coll-header{
+                @include row(20px);
+                align-items: center;
+
+                h2{
+                    height: max-content;
+                }
+
+                .btn{
+                    @extend %btn-plus !optional;
+                }
+            }        
+
+            .collaborator{
+                @include row(15px);
+                grid-template-columns: 60px auto;
+                height: 60px;
+                background: $white;
+
+                & > div:nth-child(2){
+
+                }
+
+                .avatar{
+                    @include backImage();
+                    height: calc(100% - 1px);
+                }
+            }
+        }
+    }
+
+    .col-2{
+        @include row(0px);
+        justify-content: flex-start;
     }
 }

@@ -9,4 +9,5 @@ export default interface Project{
     dateOfCreate?: Date | string;
     dateOfEdit: Date | string;
     author?: User;
+    image: string;
 }
