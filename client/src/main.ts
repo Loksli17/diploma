@@ -77,7 +77,7 @@ const filters = {
         return moment(date).format('YYYY-MM-DD hh:mm:ss');
     },
     datetimeToView: function(date: Date | string){
-        return moment(date).format('MMMM Do YYYY h:mm a');
+        return moment(date).format('YYYY.MM.DD h:mm a');
     },
     dateToDb: function(date: Date | string){
         return moment(date).format('YYYY-MM-DD');

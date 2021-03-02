@@ -1,0 +1,37 @@
+@import '../base/colors.scss';
+
+$gap: 12px;
+
+@mixin th($back, $color, $fontSize){
+    padding: 15px 20px;
+    background: $back;
+    color: $color;
+    font-weight: normal;
+    font-size: $fontSize;
+
+    // &:first-child{
+    //     padding-left: $gap;
+    // }
+
+    // &:last-child{
+    //     padding-right: $gap;
+    // }
+}
+
+
+@mixin td($back, $color, $fontSize){
+    padding: 15px 0px;
+    background: $back;
+    color: $color;
+    font-weight: normal;
+    font-size: $fontSize;
+    border-top: 1px solid $black;
+
+    // &:first-child{
+    //     padding-left: $gap;
+    // }
+
+    // &:last-child{
+    //     padding-right: $gap;
+    // }
+}

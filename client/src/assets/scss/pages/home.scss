@@ -13,18 +13,20 @@ $plusButtonSize  : 40px;
         grid-template-columns: auto $friendsWrapWidth;
 
         .section{
-            padding: 50px 60px;
             @include column(30px);
+            padding: 50px 50px;
+            box-sizing: border-box;
             grid-template-rows: max-content auto max-content;
 
             .row:first-child{
                 @include row(0px);
                 padding-bottom: 30px;
-                border-bottom: 2px solid $black;
+                border-bottom: 2px solid $grayBorder;
             }
 
             .row:nth-child(2){
-                @include column(0px);
+                @include column(15px);
+                grid-template-rows: max-content max-content;
             }
         }
 
@@ -35,7 +37,6 @@ $plusButtonSize  : 40px;
 
             .row:nth-child(1){
                 @include row(30px);
-
                 grid-template-columns: max-content max-content;
                 background: $white;
                 padding: 20px;
@@ -159,5 +160,29 @@ $plusButtonSize  : 40px;
         height: 100%;
         font-size: 28px;
         border-top: 2px solid $black;
+    }
+}
+
+.projects-wrap{
+
+    border-spacing: 0px;
+    
+    th{
+        @include th($blue, $white, 21px);
+    }
+
+    td{
+        @include td($white, $black, 18px);
+    }
+
+    td:nth-child(2){
+        @include flex(center, center);
+        padding: 0px;
+
+        div{
+            width: 70px;
+            @include backImage();
+            min-height: 56px;
+        }
     }
 }

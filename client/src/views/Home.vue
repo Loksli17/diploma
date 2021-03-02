@@ -31,6 +31,7 @@
 
                     <table class="projects-wrap" >
                         <tr>
+                            <th>Id</th>
                             <th>Image</th>
                             <th>Project Name</th>
                             <th>Last modified</th>
@@ -39,7 +40,10 @@
                         </tr>
                         <tbody>
                             <tr v-for="project in projects" :key="project.id">
-                                <td></td>
+                                <td>{{project.id}}</td>
+                                <td>
+                                    <div :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}"></div>
+                                </td>
                                 <td>{{project.name}}</td>
                                 <td>{{project.dateOfEdit}}</td>
                                 <td>{{project.author.login}}</td>
@@ -47,7 +51,9 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
 
+                <div class="row">
                     <Pagination
                         ref="pagination"
                         :take=projectsRange
@@ -58,10 +64,6 @@
                         :amountElements=amountProjects
                         v-on:page-change="pageChangeEvt"
                     />
-                </div>
-
-                <div class="row">
-
                 </div>
             </div>
 
@@ -112,7 +114,7 @@
                 projectCurrentPage: 1 as number,
                 friendsRange      : 9 as number,
                 friendsCount      : 0 as number,
-                projectsRange     : 6 as number,
+                projectsRange     : 9 as number,
                 projectsCount     : 0 as number,
                 projectsFilter    : true as number | boolean,
                 projects          : [] as Array<Project> | undefined,
@@ -126,13 +128,11 @@
         methods: {
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
-
-                console.log(filter);
                 try {
                     const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
                     if(res.status == 200){
                         res.data.projects.forEach((elem: Project) => {
-                            // elem.dateOfEdit = this.$filters.datetimeToView(elem.dateOfEdit);
+                            elem.dateOfEdit = this.$filters.datetimeToView(elem.dateOfEdit);
                         });
                         return res.data.projects;
                     }

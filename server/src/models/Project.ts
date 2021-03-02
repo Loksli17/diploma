@@ -26,6 +26,9 @@ export default class Project{
     public fileName: string = 'project.json';
 
     @Column()
+    public image: string = 'default-img.png';
+
+    @Column()
     public dateOfCreate: Date = new Date();
 
     @Column()
