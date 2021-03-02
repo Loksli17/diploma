@@ -8,6 +8,7 @@ import Parser                      from '../libs/parser';
 import User                        from '../models/User';
 import fs                          from 'fs';
 import crypto                      from 'crypto-js';
+import PostModule                  from '../libs/post';
 
 
 export default class UserController{
@@ -23,16 +24,14 @@ export default class UserController{
         }
 
         let
-            POST   : POST        = req.body,
-            friends: Array<User> = [];
+            postErrors: Array<keyof POST> = [],
+            POST      : POST              = req.body,
+            friends   : Array<User>       = [];
 
-        if(POST.take == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('take')});
-            return;
-        }
+        postErrors = PostModule.checkData(POST, ['take', 'skip']);
 
-        if(POST.skip == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('skip')});
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
 
@@ -61,8 +60,11 @@ export default class UserController{
 
         // TODO DON'T FORGET ABOUT LIKE
         let 
-            POST: POST         = req.body,
-            users: Array<User> = await getRepository(User).createQueryBuilder()
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [],
+            users     : Array<User>       = [];
+            
+            users = await getRepository(User).createQueryBuilder()
                 .where('user.login = :login', {login: POST.login})
                 .getMany();
 
@@ -77,12 +79,15 @@ export default class UserController{
             id: number;
         }
 
-        let 
-            POST: POST = req.body,
-            user: User | undefined;
+        let
+            postErrors: Array<keyof POST> = [],
+            POST      : POST              = req.body,
+            user      : User | undefined  = undefined;
 
-        if(POST.id == undefined){
-            res.status(400).send({error: 'Data about `id` has not sended'});
+        postErrors = PostModule.checkData(POST, ['id']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
 

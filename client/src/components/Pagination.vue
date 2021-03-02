@@ -15,9 +15,11 @@
             </div>
 
             <template v-for="page in pages" :key="page">
-                <a :href="page.link" :class="page.class" @click.prevent="setCurrentPageEvt">
-                    {{page.content}}
-                </a>
+                <div>
+                    <a :href="page.link" :class="page.class" @click.prevent="setCurrentPageEvt">
+                        {{page.content}}
+                    </a>
+                </div>
             </template>
 
             <div v-if="nextPage">
@@ -31,7 +33,6 @@
                     {{lastPage.content}}
                 </a>
             </div>
-
         </div>
     </div>
 </template>
@@ -203,8 +204,8 @@
                     prevNum: number = (this.currentPageData - 1) < 1            ? 1            : this.currentPageData - 1;
 
                 return {
-                    next: {link: nextNum, content: '>', class: this.itemClassData},
-                    prev: {link: prevNum, content: '<', class: this.itemClassData},
+                    next: {link: nextNum, content: '>>', class: this.itemClassData},
+                    prev: {link: prevNum, content: '<<', class: this.itemClassData},
                 };
             },
             
@@ -244,7 +245,4 @@
 </script>
 
 <style lang="scss">
-    .active-page{
-        color: rgb(241, 129, 0);
-    }
 </style>

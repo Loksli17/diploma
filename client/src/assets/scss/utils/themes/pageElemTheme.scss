@@ -1,0 +1,5 @@
+@mixin pageElemTheme($back, $color, $fontSize){
+    background: $back;
+    color: $color;
+    font-size: $fontSize; 
+}

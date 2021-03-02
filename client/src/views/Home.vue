@@ -13,8 +13,8 @@
                     </div>
 
                     <div>
-                        <form action="" @submit.prevent="sendData">
-                            <input type="search">
+                        <form action="" @submit.prevent="searchProjectsEvt">
+                            <input v-model="searchValue" type="search">
                         </form>
                     </div>
 
@@ -119,15 +119,21 @@
                 friends           : [] as Array<User> | undefined,
                 amountProjects    : 0 as number | undefined,
                 amountFriends     : 0 as number | undefined,
+                searchValue       : "" as string,
             }  
         },
 
         methods: {
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
+
+                console.log(filter);
                 try {
                     const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
                     if(res.status == 200){
+                        res.data.projects.forEach((elem: Project) => {
+                            // elem.dateOfEdit = this.$filters.datetimeToView(elem.dateOfEdit);
+                        });
                         return res.data.projects;
                     }
                 }catch(err){
@@ -203,6 +209,35 @@
                 }
 
                 this.projects = newProjects;
+            },
+
+            searchProjectsEvt: async function(e: any){
+                
+                if(this.searchValue == ""){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Input some data`,
+                    });
+                    return;
+                }
+
+                const 
+                    res = await this.$axios.post('project/search-project', {searchData: this.searchValue, userId: this.$store.state.userIdentity!.id}),
+                    projects: Array<Project> = res.data.projects;
+
+                if(!projects.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `No projects to display`,
+                    });
+                    return;
+                }
+
+                console.log(projects);
+
+                this.projects = projects;
             },
 
             onFilterChange: async function(e: any): Promise<void>{

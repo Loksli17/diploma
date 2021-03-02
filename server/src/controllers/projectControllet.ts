@@ -1,8 +1,9 @@
 import {Router, Request, Response} from 'express';
 
-import {getRepository, QueryBuilder} from 'typeorm';
+import {getRepository} from 'typeorm';
 import Project         from '../models/Project';
 import ErrorMessage    from '../libs/error';
+import PostModule      from '../libs/post';
 
 
 export default class ProjectController{
@@ -19,29 +20,15 @@ export default class ProjectController{
         }
 
         let 
-            where   : string         = "true",
-            POST    : POST           = req.body,
-            projects: Array<Project> = [];
+            postErrors: Array<keyof POST> = [],
+            where     : string            = "true",
+            POST      : POST              = req.body,
+            projects  : Array<Project>    = [];
+        
+        postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId']);
 
-        console.log(POST);
-
-        if(POST.take == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('take')});
-            return;
-        }
-
-        if(POST.skip == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('skip')});
-            return;
-        }
-
-        if(POST.userId == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('userId')});
-            return;
-        }
-
-        if(POST.filter == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('filter')});
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
 
@@ -59,7 +46,7 @@ export default class ProjectController{
                 .orderBy('project.dateOfEdit', 'DESC')
                 .getMany();
         }catch(err){
-            res.status(400).send({error: 'Error with DB'});
+            res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);
         }
 
@@ -77,27 +64,15 @@ export default class ProjectController{
         }
 
         let 
-            where: string = "true",
-            POST : POST   = req.body,
-            count: number = 0;
+            postErrors: Array<keyof POST> = [],
+            where     : string            = "true",
+            POST      : POST              = req.body,
+            count     : number            = 0;
 
-        if(POST.take == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('take')});
-            return;
-        }
+        postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId']);
 
-        if(POST.skip == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('skip')});
-            return;
-        }
-
-        if(POST.userId == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('userId')});
-            return;
-        }
-
-        if(POST.filter == undefined){
-            res.status(400).send({error: ErrorMessage.dataNotSended('filter')});
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
 
@@ -115,17 +90,52 @@ export default class ProjectController{
                 .orderBy('project.dateOfEdit', 'DESC')
                 .getCount();
         }catch(err){
-            res.status(400).send({error: 'Error with DB'});
+            res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);
         }
 
         res.status(200).send({amount: count});
     }
 
+    
+    public static async searchProject(req: Request, res: Response){
+        
+        interface POST{
+            searchData: string;
+            userId    : number,
+        }
+
+        let
+            postErrors: Array<keyof POST> = [],
+            projects  : Array<Project>    = [],
+            POST      : POST              = req.body;
+        
+        postErrors = PostModule.checkData<POST>(POST, ['searchData', 'userId']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try{
+            projects = await getRepository(Project).createQueryBuilder('project')
+                .where('name like :name', {name: `%${POST.searchData}%`})
+                .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
+                .leftJoinAndSelect("project.author", "user")
+                .getMany();
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        res.status(200).send({projects: projects});
+    }
+
 
     public static routes(){
-        this.router.all('/get-projects' ,    this.getProjects);
-        this.router.all('/get-amount-projects' , this.getAmountProjects);
+        this.router.all('/get-projects' ,       this.getProjects);
+        this.router.all('/get-amount-projects', this.getAmountProjects);
+        this.router.all('/search-project',      this.searchProject);
         return this.router;
     }
 }

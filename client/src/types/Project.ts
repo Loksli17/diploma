@@ -6,7 +6,7 @@ export default interface Project{
     name: string;
     authorId?: number;
     fileName?: string;
-    dateOfCreate?: Date;
-    dateOfEdit: Date;
+    dateOfCreate?: Date | string;
+    dateOfEdit: Date | string;
     author?: User;
 }

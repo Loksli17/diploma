@@ -1,0 +1,39 @@
+@import '../utils/flex.scss';
+@import '../utils/layout/row.scss';
+@import '../utils/themes/pageElemTheme.scss';
+@import '../base/colors.scss';
+
+.pages{
+    @include flex(flex-start, flex-start);
+
+    .pages-wrap{
+        @include row(0px);
+
+        > div{
+            &:first-child{
+                a{
+                    border-left: 0px solid $grayBorder;
+                }
+            }
+
+            a{
+                @include pageElemTheme($white, $black, 21px);
+                font-weight: 600;
+                display: block;
+                padding: 17px 25px;
+                text-decoration: none;
+                border-left: 1.5px solid $grayBorder;
+
+                &.active-page{
+                    @include pageElemTheme($blue, $white, 21px);
+                }
+
+                &:hover{
+                    transition: 0.4s;
+                    @include pageElemTheme($blueHover, $black, 21px);
+                }
+            }
+        }
+    }
+
+}
