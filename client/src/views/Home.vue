@@ -55,7 +55,7 @@
                                             </a>
                                         </div>
                                         <div>
-                                            <a href="" >
+                                            <a href="" @click.prevent="projectEditEvt">
                                                 <img :src="require('../assets/edit-icon.svg')" alt="">
                                             </a>
                                         </div>
@@ -143,10 +143,10 @@
                             </tr>
                             <tr>
                                 <td>View status</td>
-                                <td>{{projectView.name}}</td>
+                                <td>{{projectView.viewStatus.name}}</td>
                             </tr>
                         </table>
-                        <button class="btn">Edit data</button>
+                        <button class="btn" @click="projectEditEvt(projectView.id)">Edit data</button>
                     </div>
 
                     <div class="row">
@@ -158,9 +158,12 @@
                         <div class="collaborators-wrap">
                             <template v-for="collaborator in projectViewCollabs" :key="collaborator.id">
                                 <div class="collaborator">
-                                    <div class="avatar"></div>
+                                    <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${collaborator.avatar}`)+ ')'}"></div>
                                     <div>
                                         {{collaborator.firstName}} {{collaborator.lastName}}
+                                    </div>
+                                    <div class="close">
+                                        <span></span>
                                     </div>
                                 </div>
                             </template>
@@ -175,6 +178,17 @@
 
             </div>
         </ActionBack>
+
+        <ActionBack ref="actionBackEdit" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`Edit`">
+            <Form
+                v-bind:rows="rowsEditProjectForm"
+                v-bind:action="'/project/edit'"
+                v-bind:className="'edit-project-form form'"
+                v-bind:successCode="201"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="editProjectFormResultParser"
+            />
+        </ActionBack>
     </div>
 </template>
 
@@ -186,6 +200,7 @@
     import User              from '../types/User';
     import Pagination        from '../components/Pagination.vue';
     import ActionBack        from '../components/ActionBack.vue';
+    import Form, {FormItem}  from '../components/Form.vue';
 
     
     export default defineComponent({
@@ -210,6 +225,12 @@
                 //project view
                 projectView       : {} as Project | undefined,
                 projectViewCollabs: [] as Array<User> | undefined,
+
+                rowsEditProjectForm: [
+                    [{type: 'text', name: 'name', label: 'Name', value: 'Name'}],
+                    [{type: 'select', name: 'view Status', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 'Public'}],
+                    [{type: 'submit', name: 'submit', value: 'Edit project'}]
+                ] as Array<Array<FormItem>>
             }  
         },
 
@@ -411,7 +432,20 @@
 
                 background.show();
             },
+
+            projectEditEvt: async function(id: number){
+
+                const 
+                    backView = this.$refs.actionBackView! as any,
+                    backEdit = this.$refs.actionBackEdit! as any;
+                
+                backView.hide();
+                backEdit.show();
+
+                this.rowsEditProjectForm[0][0].value = this.projectView!.name;
+            }
         },
+
 
         mounted: async function(){
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
@@ -423,6 +457,7 @@
             Menu,
             Pagination,
             ActionBack,
+            Form,
         },
     });
 </script>

@@ -1,9 +1,14 @@
 @import '../index';
 
+
 $friendsWrapWidth: 350px;
 $plusButtonSize  : 40px;
 
 .page-home{
+
+    .form{
+        @extend %form;
+    }
     
     .page-wrap{
         @extend %page-wrap !optional;
@@ -254,7 +259,13 @@ $plusButtonSize  : 40px;
                 .btn{
                     @extend %btn-plus !optional;
                 }
-            }        
+            }
+            
+            .collaborators-wrap{
+                @include column(20px);
+                max-height: 607px;
+                overflow-y: auto;
+            }
 
             .collaborator{
                 @include row(15px);
@@ -263,12 +274,18 @@ $plusButtonSize  : 40px;
                 background: $white;
 
                 & > div:nth-child(2){
-
+                    @include flex(flex-start, center);
+                    font-size: 21px;
+                    font-weight: 600px;
                 }
 
                 .avatar{
                     @include backImage();
                     height: calc(100% - 1px);
+                }
+
+                div.close{
+                    
                 }
             }
         }

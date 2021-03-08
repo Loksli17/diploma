@@ -2,10 +2,12 @@ import {getConnectionManager} from 'typeorm';
 import config                 from '../config';
 import Project                from '../models/Project';
 import User                   from '../models/User';
+import ViewStatus             from '../models/ViewStatus';
 
 
 const
     connectionManager = getConnectionManager(),
+    
     connection        = connectionManager.create({
         name    : 'default',
         type    : 'mysql',
@@ -14,8 +16,9 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User, Project],
+        entities: [User, Project, ViewStatus],
     }),
+
     init = async (): Promise<void> => {
         try{
             await connection.connect();

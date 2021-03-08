@@ -1,6 +1,9 @@
-import {IsEmail, MinLength}                                 from 'class-validator';
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne} from 'typeorm';
-import User                                                 from './User';
+
+
+import {IsNotEmpty} from 'class-validator';
+import User         from './User';
+import ViewStatus   from './ViewStatus';
 
 @Entity()
 export default class Project{
@@ -16,6 +19,7 @@ export default class Project{
     @PrimaryGeneratedColumn()
     public id: number = 1;
 
+    @IsNotEmpty()
     @Column()
     public name: string = 'Project';
 
@@ -24,7 +28,7 @@ export default class Project{
 
     @Column()
     public fileName: string = 'project.json';
-
+    
     @Column()
     public image: string = 'default-img.png';
 
@@ -39,4 +43,7 @@ export default class Project{
 
     @ManyToMany(() => User, user => user.projects)
     users: Array<User> | undefined;
+
+    @ManyToOne(() => ViewStatus, viewStatus => viewStatus.projects)
+    public viewStatus?: ViewStatus;
 }

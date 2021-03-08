@@ -42,6 +42,7 @@ export default class ProjectController{
                 .where(where, {id: POST.userId})
                 .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
                 .leftJoinAndSelect("project.author", "user")
+                .leftJoinAndSelect("project.viewStatus", "viewStatus")
                 .skip(POST.skip)
                 .take(POST.take)
                 .orderBy('project.dateOfEdit', 'DESC')

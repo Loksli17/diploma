@@ -1,5 +1,5 @@
-import './User';
-import User from './User';
+import User       from './User';
+import ViewStatus from './ViewStatus';
 
 export default interface Project{
     id: number;
@@ -8,6 +8,7 @@ export default interface Project{
     fileName?: string;
     dateOfCreate?: Date | string;
     dateOfEdit: Date | string;
+    viewStatus: ViewStatus;
     author?: User;
     image: string;
 }
