@@ -55,7 +55,7 @@
                                             </a>
                                         </div>
                                         <div>
-                                            <a href="" @click.prevent="projectEditEvt">
+                                            <a href="" @click.prevent="projectEditEvt(project.id)">
                                                 <img :src="require('../assets/edit-icon.svg')" alt="">
                                             </a>
                                         </div>
@@ -185,6 +185,7 @@
                 v-bind:action="'/project/edit'"
                 v-bind:className="'edit-project-form form'"
                 v-bind:successCode="201"
+                v-bind:tableName="'project'"
                 v-bind:overloadParseResult="true"
                 v-on:result-parser="editProjectFormResultParser"
             />
@@ -194,13 +195,15 @@
 
 
 <script lang="ts">
-    import {defineComponent} from 'vue';
-    import Menu              from '../components/Menu.vue';
-    import Project           from '../types/Project';
-    import User              from '../types/User';
-    import Pagination        from '../components/Pagination.vue';
-    import ActionBack        from '../components/ActionBack.vue';
-    import Form, {FormItem}  from '../components/Form.vue';
+    import {defineComponent}        from 'vue';
+    import Menu                     from '../components/Menu.vue';
+    import Project                  from '../types/Project';
+    import User                     from '../types/User';
+    import Pagination               from '../components/Pagination.vue';
+    import ActionBack               from '../components/ActionBack.vue';
+    import Form, {FormItem, Option} from '../components/Form.vue';
+    import ViewStatus               from '../types/ViewStatus';
+    import Vue                      from 'vue';
 
     
     export default defineComponent({
@@ -227,8 +230,8 @@
                 projectViewCollabs: [] as Array<User> | undefined,
 
                 rowsEditProjectForm: [
-                    [{type: 'text', name: 'name', label: 'Name', value: 'Name'}],
-                    [{type: 'select', name: 'view Status', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 'Public'}],
+                    [{type: 'text', name: 'name', label: 'Name', value: 'Name'}, {type: 'hidden', name: 'id', value: 1}],
+                    [{type: 'select', name: 'viewStatus', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 1}],
                     [{type: 'submit', name: 'submit', value: 'Edit project'}]
                 ] as Array<Array<FormItem>>
             }  
@@ -397,7 +400,6 @@
                 this.amountProjects = amountProjects;
             },
 
-
             
             projectViewEvt: async function(id: number){
                 const background = this.$refs.actionBackView! as any;
@@ -433,7 +435,10 @@
                 background.show();
             },
 
+
             projectEditEvt: async function(id: number){
+
+                this.projectView = this.projects!.find((project) => project.id === id);
 
                 const 
                     backView = this.$refs.actionBackView! as any,
@@ -442,7 +447,32 @@
                 backView.hide();
                 backEdit.show();
 
-                this.rowsEditProjectForm[0][0].value = this.projectView!.name;
+                this.rowsEditProjectForm[0][0].value    = this.projectView!.name;
+                this.rowsEditProjectForm[0][1].value    = Number(this.projectView!.id);
+                this.rowsEditProjectForm[1][0].selected = this.projectView!.viewStatus.id;
+            },
+
+            setProject: function(index: number, newVal: Project){
+                this.$set(this.projects, index, newVal);
+            },
+
+            editProjectFormResultParser: function(res: any){
+
+                if(res.status == 400){
+                    return;
+                }
+
+                if(res.status == 200){
+                    const index: number = this.projects!.findIndex((project) => project.id === res.data.project.id);
+                    
+                    this.projectView = res.data.project;
+                    this.setProject(index, res.data.project);
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        text: res.data.msg,
+                    });
+                }
             }
         },
 
@@ -451,6 +481,36 @@
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+        },
+
+
+
+        created: async function(){
+            
+            const viewStatusElements: Array<Option> = [];
+
+            try {
+                const res = await this.$axios.post('project/get-view-status');
+                
+                if(res.status == 200){
+                    res.data.viewStatusElements.forEach((elem: any) => {
+                        console.log(elem);
+                        viewStatusElements.push({text: elem.name, id: elem.id});
+                    });
+                }else{
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                }
+                console.log(viewStatusElements);   
+            }catch(err){
+                throw new Error(err);
+            }
+            
+            this.rowsEditProjectForm[1][0].options  = viewStatusElements;
+            this.rowsEditProjectForm[1][0].selected = viewStatusElements[0].id
         },
 
         components: {

@@ -16,7 +16,7 @@
                     </textarea>
 
                     <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
-                        <option v-for="option in item.options" :key="option.id">{{option.text}}</option>
+                        <option v-for="option in item.options" :key="option.id" :value="option.id">{{option.text}}</option>
                     </select>
                     
                     <input v-else :type=item.type :name=item.name v-model="item.value"

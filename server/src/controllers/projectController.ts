@@ -5,6 +5,7 @@ import Project         from '../models/Project';
 import User            from '../models/User';
 import ErrorMessage    from '../libs/error';
 import PostModule      from '../libs/post';
+import ViewStatus      from '../models/ViewStatus';
 
 
 export default class ProjectController{
@@ -160,6 +161,7 @@ export default class ProjectController{
 
         if(project == undefined){
             res.status(400).send({error: ErrorMessage.dataNotSended('project')});
+            return;
         }
 
         console.log(POST);
@@ -175,11 +177,75 @@ export default class ProjectController{
         res.status(200).send({collaborators: collaborators});
     }
 
+
+    public static async getStatus(req: Request, res: Response){
+
+        let viewStatusElements: Array<ViewStatus> = [];
+
+        try {
+            viewStatusElements = await getRepository(ViewStatus).find();   
+        }catch(err){
+            throw new Error(err);
+        }
+        
+        res.status(200).send({viewStatusElements: viewStatusElements});
+    }
+
+    public static async editProject(req: Request, res: Response){
+
+        interface POST{
+            project: {
+                id        : number;
+                name      : string;
+                viewStatus: number;
+            }, 
+        }
+
+        let
+            postErrors: Array<keyof POST> = [],
+            POST      : POST = req.body,
+            project   : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['project']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+        }
+
+        POST.project.id = Number(POST.project.id);
+        console.log(POST);
+
+        try {
+            project = await getRepository(Project).findOne(POST.project.id);  
+        }catch(err){
+            throw new Error(err);
+        }
+
+        if(project == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('project')});
+            return;
+        }
+        
+        project.changeFields(POST.project);
+
+        try{
+            await getRepository(Project).update(project!.id, project);
+        }catch(err){
+            throw new Error(err);
+        }
+
+        project = await getRepository(Project).findOne(POST.project.id);
+
+        res.status(200).send({project: project, msg: 'Project has changed successfully'});
+    }
+
     public static routes(){
         this.router.all('/get-projects' ,       this.getProjects);
         this.router.all('/get-amount-projects', this.getAmountProjects);
         this.router.all('/search-project',      this.searchProject);
         this.router.all('/get-collaborators',   this.getCollaborators);
+        this.router.all('/get-view-status',     this.getStatus);
+        this.router.all('/edit',                this.editProject);
         return this.router;
     }
 }

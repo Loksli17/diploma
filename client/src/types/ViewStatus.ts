@@ -1,4 +1,6 @@
-export default interface ViewStatus{
+import {Option} from '../components/Form';
+
+export default interface ViewStatus extends Option{
     id: number;
-    name: String;
+    name: string;
 }

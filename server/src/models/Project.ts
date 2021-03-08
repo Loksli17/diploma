@@ -45,5 +45,5 @@ export default class Project{
     users: Array<User> | undefined;
 
     @ManyToOne(() => ViewStatus, viewStatus => viewStatus.projects)
-    public viewStatus?: ViewStatus;
+    public viewStatus?: ViewStatus | number;
 }

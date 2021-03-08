@@ -1,6 +1,6 @@
 import {Router as ExpressRouter} from 'express';
 import userController    from '../controllers/userController';
-import projectController from '../controllers/projectControllet';
+import projectController from '../controllers/projectController';
 import authController    from '../controllers/authController';
 
 export default class Router{
