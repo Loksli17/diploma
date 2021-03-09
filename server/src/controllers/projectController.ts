@@ -337,6 +337,28 @@ export default class ProjectController{
     }
 
 
+    private static async addCollaborators(req: Request, res: Response){
+
+        interface POST{
+            usersIds: Array<number>,
+            id      : number
+        }
+
+        let 
+            POST          : POST              = req.body,
+            postErrors    : Array<keyof POST> = [], 
+            userHasProject: Array<any>;
+
+        postErrors = PostModule.checkData<POST>(POST, ['id']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        
+    }
+
     public static routes(){
         this.router.all('/get-projects' ,       this.getProjects);
         this.router.all('/get-amount-projects', this.getAmountProjects);

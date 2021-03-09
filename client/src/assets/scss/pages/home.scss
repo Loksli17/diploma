@@ -296,3 +296,72 @@ $plusButtonSize  : 40px;
         justify-content: flex-start;
     }
 }
+
+
+.action-add-wrap{
+    
+    @include column(30px);
+    justify-content: flex-start;
+
+    > div{
+        @include row(30px);
+        justify-content: flex-start
+    }
+
+    .row-2{
+        grid-template-columns: 450px 450px;
+
+        div{
+            @include flex(flex-start, center);
+        }
+
+        h3{
+            font-size: 23px;
+        }
+    }
+
+    .row-3{
+        $heigthUser: 55px;
+        grid-template-columns: 450px 450px;
+        height: 450px;
+        overflow-y: auto;
+
+        .search-result-wrap{
+            @include column(15px);
+            height: 100%;
+            box-sizing: border-box;
+            grid-template-rows: repeat(auto-fit, $heigthUser);
+            border-right: 2px dashed $black;
+            padding-right: 30px;
+        }
+
+        .new-users{
+            @include column(15px);
+            height: 100%;
+            box-sizing: border-box;
+            grid-template-rows: repeat(auto-fit, $heigthUser);
+        }
+
+        .user{
+            cursor: grab;
+
+            @include row(10px);
+            justify-content: flex-start;
+            background: $white;
+
+            .avatar{
+                @include backImage();
+                height: $heigthUser;
+                width: $heigthUser;
+            }
+
+            .name{
+                line-height: $heigthUser;
+                box-sizing: border-box;
+                font-size: 21px;
+                font-weight: 600;
+                user-select: none;
+            }
+        }
+    }
+}

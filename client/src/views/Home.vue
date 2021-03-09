@@ -205,28 +205,40 @@
 
         <ActionBack ref="actionBackCollaborators" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`Add collaborators`">
             
-            <div class="action-add-coll-">
+            <div class="action-add-wrap">
                 <div class="row-1">
                     <form action="" @submit.prevent="searchUsersEvt">
-                        <input v-model="searchValueUser" type="search">
+                        <input v-model="searchValueUser" type="search" placeholder="Input e-mail or login here..">
                     </form>
                 </div>
 
                 <div class="row-2">
-
-                    <div class="search-result-wrap" v-for="user in searchCollabsRes" :key="user.id">
-                        <div class="user">
-                            <div class="user-avatar"></div>
-                            <div class="user-name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
-                        </div>
+                    <div>
+                        <h3>Result of search</h3>
                     </div>
 
-                    <div class="new-users">
-
+                    <div>
+                        <h3>Potential collaborators</h3>
                     </div>
                 </div>
 
                 <div class="row-3">
+                    <draggable :list="searchCollabsRes" group="users" class="search-result-wrap" @change="log" >
+                        <div class="user" :id="user.id" v-for="user in searchCollabsRes" :key="user.id">
+                            <div :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}" class="avatar"></div>
+                            <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
+                        </div>
+                    </draggable>
+
+                    <draggable :list="newCollabs" group="users" class="new-users" @change="log">
+                        <div class="user" :id="user.id" v-for="user in newCollabs" :key="user.id">
+                            <div :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}" class="avatar"></div>
+                            <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
+                        </div>
+                    </draggable>
+                </div>
+
+                <div class="row-4">
                     <button class="btn" @click="addCollaboratorsEvt(projectView.id)">Add collaborators</button>
                 </div>
             </div>
@@ -243,7 +255,7 @@
     import Pagination               from '../components/Pagination.vue';
     import ActionBack               from '../components/ActionBack.vue';
     import Form, {FormItem, Option} from '../components/Form.vue';
-    import ViewStatus               from '../types/ViewStatus';
+    import {VueDraggableNext}       from 'vue-draggable-next'
 
     
     export default defineComponent({
@@ -270,7 +282,7 @@
                 projectView       : {} as Project | undefined,
                 projectViewCollabs: [] as Array<User> | undefined,
                 searchCollabsRes  : [] as Array<User> | undefined,
-                newCollaborators  : [] as Array<User> | undefined,
+                newCollabs        : [] as Array<User> | undefined,
 
                 rowsEditProjectForm: [
                     [{type: 'text', name: 'name', label: 'Name', value: 'Name'}, {type: 'hidden', name: 'id', value: 1}],
@@ -282,11 +294,18 @@
                     [{type: 'text', name: 'name', label: 'Name', value: 'Name'}, {type: 'hidden', name: 'authorId', value: 1}],
                     [{type: 'select', name: 'viewStatusId', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 1}],
                     [{type: 'submit', name: 'submit', value: 'Add new project'}]
-                ] as Array<Array<FormItem>>
+                ] as Array<Array<FormItem>>,
+
+                enabled : true,
+                dragging: false,
             }  
         },
 
         methods: {
+
+            log(event: any) {
+                console.log(event)
+            },
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {
@@ -609,6 +628,10 @@
                     collabsIds.push(elem.id);
                 });
 
+                this.newCollabs!.forEach((elem) => {
+                    collabsIds.push(elem.id);
+                });
+
                 try {
                     res = await this.$axios.post('user/search-collaborators', {searchData: this.searchValueUser, authUserId: this.$store.state.userIdentity!.id, collabsIds: collabsIds});
                 }catch(err){
@@ -642,7 +665,36 @@
 
             addCollaboratorsEvt: async function(id: number){
 
-                console.log(id);
+                if(!this.newCollabs!.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `At first, add new collaborators`,
+                    });
+                    return;
+                }
+
+                const collabsIds: Array<number> = [];
+
+                this.newCollabs!.forEach((elem) => {
+                    collabsIds.push(elem.id);
+                });
+
+                try {
+                    const res: any = await this.$axios.post('project/add-collaborators', {
+                        usersIds: collabsIds, 
+                        id      : this.projectView!.id
+                    });
+
+                    
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;               
+                }
             }
         },
 
@@ -652,7 +704,6 @@
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
         },
-
 
 
         created: async function(){
@@ -673,8 +724,7 @@
                         // image: require("../../assets/flashMessage/fail.svg"),
                         text: `Error with query`,
                     });
-                }
-                console.log(viewStatusElements);   
+                }  
             }catch(err){
                 throw new Error(err);
             }
@@ -688,6 +738,7 @@
             Pagination,
             ActionBack,
             Form,
+            draggable: VueDraggableNext,
         },
     });
 </script>
