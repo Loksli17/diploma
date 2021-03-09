@@ -3,7 +3,7 @@ import {Router, Request, Response} from 'express';
 import {validate, ValidationError} from 'class-validator';
 import {FileArray, UploadedFile}   from 'express-fileupload';
 import ErrorMessage                from '../libs/error'; 
-import {getRepository}             from 'typeorm';
+import {getRepository, Brackets}   from 'typeorm';
 import Parser                      from '../libs/parser';
 import User                        from '../models/User';
 import fs                          from 'fs';
@@ -64,9 +64,47 @@ export default class UserController{
             postErrors: Array<keyof POST> = [],
             users     : Array<User>       = [];
             
-            users = await getRepository(User).createQueryBuilder()
+        users = await getRepository(User).createQueryBuilder()
                 .where('user.login = :login', {login: POST.login})
                 .getMany();
+
+        res.status(200).send({users: users});
+    }
+
+
+    private static async searchCollaborators(req: Request, res: Response){
+        interface POST{
+            searchData: string;
+            collabsIds: Array<number>,
+            authUserId: number,
+        }
+
+        let 
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [],
+            users     : Array<User>       = [];
+
+        postErrors = PostModule.checkData<POST>(POST, ['searchData', 'collabsIds', 'authUserId']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        POST.collabsIds.push(POST.authUserId);
+
+        try{
+            users = await getRepository(User).createQueryBuilder()
+                    .where('id not in (:...ids)', {ids: POST.collabsIds})
+                    .andWhere(new Brackets(qb => {
+                        qb.where('email like :data', {data: `%${POST.searchData}%`})
+                        .orWhere('login like :data', {data: `%${POST.searchData}%`})
+                    }))
+                    .getMany();
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
 
         res.status(200).send({users: users});
     }
@@ -315,12 +353,13 @@ export default class UserController{
 
 
     public static routes(){
-        this.router.post('/get-friends',   this.getFriends);
-        this.router.post('/search-user',   this.searchUser);
-        this.router.post('/edit',          this.editUser);
-        this.router.post('/edit-avatar',   this.editAvatar);
-        this.router.post('/get-id',        this.getById);
-        this.router.post('/edit-password', this.editPassword);
+        this.router.post('/get-friends',          this.getFriends);
+        this.router.post('/search-user',          this.searchUser);
+        this.router.post('/edit',                 this.editUser);
+        this.router.post('/edit-avatar',          this.editAvatar);
+        this.router.post('/get-id',               this.getById);
+        this.router.post('/edit-password',        this.editPassword);
+        this.router.post('/search-collaborators', this.searchCollaborators);
         return this.router;
     }
 }

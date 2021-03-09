@@ -208,14 +208,17 @@
             <div class="action-add-coll-">
                 <div class="row-1">
                     <form action="" @submit.prevent="searchUsersEvt">
-                        <input v-model="searchValue" type="search">
+                        <input v-model="searchValueUser" type="search">
                     </form>
                 </div>
 
                 <div class="row-2">
 
-                    <div class="search-result-wrap">
-
+                    <div class="search-result-wrap" v-for="user in searchCollabsRes" :key="user.id">
+                        <div class="user">
+                            <div class="user-avatar"></div>
+                            <div class="user-name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
+                        </div>
                     </div>
 
                     <div class="new-users">
@@ -261,11 +264,12 @@
                 amountFriends     : 0 as number | undefined,
                 
                 searchValueProject: "" as string,
+                searchValueUser   : "" as string,
 
                 //project view
                 projectView       : {} as Project | undefined,
                 projectViewCollabs: [] as Array<User> | undefined,
-                searchUser        : [] as Array<User> | undefined,
+                searchCollabsRes  : [] as Array<User> | undefined,
                 newCollaborators  : [] as Array<User> | undefined,
 
                 rowsEditProjectForm: [
@@ -582,6 +586,58 @@
 
                 backAddColl.show();
                 backView.hide();
+            },
+
+            searchUsersEvt: async function(e: any){
+
+                if(this.searchValueUser == ""){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Input some data`,
+                    });
+                    return;
+                }
+
+                const collabsIds: Array<number> = [];
+
+                let
+                    res: any,
+                    users: Array<User> = [];
+
+                this.projectViewCollabs!.forEach((elem) => {
+                    collabsIds.push(elem.id);
+                });
+
+                try {
+                    res = await this.$axios.post('user/search-collaborators', {searchData: this.searchValueUser, authUserId: this.$store.state.userIdentity!.id, collabsIds: collabsIds});
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                    });
+                }
+                
+                if(res.status === 400){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: res.data.msg,
+                    });
+                    return;
+                }
+
+                users = res.data.users;
+
+                if(!users.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `No users to display`,
+                    });
+                    return;
+                }
+
+                this.searchCollabsRes = users;
             },
 
             addCollaboratorsEvt: async function(id: number){

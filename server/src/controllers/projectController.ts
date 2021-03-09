@@ -59,7 +59,7 @@ export default class ProjectController{
     }
 
     
-    public static async getAmountProjects(req: Request, res: Response){
+    private static async getAmountProjects(req: Request, res: Response){
 
         interface POST{
             take  : number;
@@ -103,7 +103,7 @@ export default class ProjectController{
     }
 
     
-    public static async searchProject(req: Request, res: Response){
+    private static async searchProject(req: Request, res: Response){
         
         interface POST{
             searchData: string;
@@ -137,7 +137,7 @@ export default class ProjectController{
     }
 
 
-    public static async getCollaborators(req: Request, res: Response){
+    private static async getCollaborators(req: Request, res: Response){
 
         interface POST{
             id: number;
@@ -182,7 +182,7 @@ export default class ProjectController{
     }
 
 
-    public static async getStatus(req: Request, res: Response){
+    private static async getStatus(req: Request, res: Response){
 
         let viewStatusElements: Array<ViewStatus> = [];
 
@@ -197,7 +197,7 @@ export default class ProjectController{
     }
 
 
-    public static async addProject(req: Request, res: Response){
+    private static async addProject(req: Request, res: Response){
 
         interface POST{
             project: {
@@ -245,7 +245,7 @@ export default class ProjectController{
     }
 
 
-    public static async editProject(req: Request, res: Response){
+    private static async editProject(req: Request, res: Response){
 
         interface POST{
             project: {
@@ -298,7 +298,7 @@ export default class ProjectController{
     }
 
 
-    public static async deleteProject(req: Request, res: Response){
+    private static async deleteProject(req: Request, res: Response){
 
         interface POST{
             id: number;
