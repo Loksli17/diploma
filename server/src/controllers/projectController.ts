@@ -1,11 +1,13 @@
 import {Router, Request, Response} from 'express';
 
-import {getRepository} from 'typeorm';
-import Project         from '../models/Project';
-import User            from '../models/User';
-import ErrorMessage    from '../libs/error';
-import PostModule      from '../libs/post';
-import ViewStatus      from '../models/ViewStatus';
+import {getRepository}             from 'typeorm';
+import Project                     from '../models/Project';
+import User                        from '../models/User';
+import ErrorMessage                from '../libs/error';
+import PostModule                  from '../libs/post';
+import ViewStatus                  from '../models/ViewStatus';
+import {validate, ValidationError} from 'class-validator';
+import Parser                      from '../libs/parser';
 
 
 export default class ProjectController{
@@ -156,6 +158,7 @@ export default class ProjectController{
         try{
             project = await getRepository(Project).findOne(POST.id);
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
@@ -171,6 +174,7 @@ export default class ProjectController{
                 .innerJoin('user_has_project', 'uhp', 'uhp.projectId = :id and uhp.userId = user.id', {id: POST.id})
                 .getMany();
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
@@ -185,20 +189,70 @@ export default class ProjectController{
         try {
             viewStatusElements = await getRepository(ViewStatus).find();   
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
         
         res.status(200).send({viewStatusElements: viewStatusElements});
     }
 
+
+    public static async addProject(req: Request, res: Response){
+
+        interface POST{
+            project: {
+                name        : string;
+                viewStatusId: number;
+                authorId    : number;
+                dateOfEdit  : Date;
+                dateOfCreate: Date;
+            }
+        }
+
+        let
+            postErrors    : Array<keyof POST> = [],
+            POST          : POST = req.body,
+            validateResult: Array<ValidationError>,
+            project       : Project | undefined;
+            
+        postErrors = PostModule.checkData<POST>(POST, ['project']);
+
+        if(postErrors.length){
+            res.status(400).send({msg: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+        
+        POST.project!.dateOfEdit   = new Date();
+        POST.project!.dateOfCreate = new Date();
+
+        project = new Project(POST.project);
+
+        validateResult = await validate(project);
+
+        if(validateResult.length){
+            res.status(400).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
+            return;
+        }
+
+        try{
+            await getRepository(Project).insert(project);
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        res.status(201).send({project: project, msg: 'Project has created successfully'});
+    }
+
+
     public static async editProject(req: Request, res: Response){
 
         interface POST{
             project: {
-                id        : number;
-                name      : string;
-                viewStatus: number;
-            }, 
+                id          : number | undefined;
+                name        : string;
+                viewStatusid: number;
+            } 
         }
 
         let
@@ -210,14 +264,15 @@ export default class ProjectController{
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
         }
 
         POST.project.id = Number(POST.project.id);
-        console.log(POST);
 
         try {
             project = await getRepository(Project).findOne(POST.project.id);  
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
@@ -228,16 +283,59 @@ export default class ProjectController{
         
         project.changeFields(POST.project);
 
+        console.log(project);
+
         try{
-            await getRepository(Project).update(project!.id, project);
+            await getRepository(Project).update(project.id!, project);
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
         project = await getRepository(Project).findOne(POST.project.id);
 
-        res.status(200).send({project: project, msg: 'Project has changed successfully'});
+        res.status(201).send({project: project, msg: 'Project has changed successfully'});
     }
+
+
+    public static async deleteProject(req: Request, res: Response){
+
+        interface POST{
+            id: number;
+        }
+
+        let 
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [], 
+            project   : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['id']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            project = await getRepository(Project).findOne(POST.id);  
+        }catch(err){
+            throw new Error(err);
+        }
+
+        if(project == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended('project')});
+            return;
+        }
+
+        try{
+            await getRepository(Project).delete(POST.id);
+        }catch(err){
+            throw new Error(err);
+        }
+
+        res.status(200).send({msg: `Project with name: ${project.name} has deleted successfully`});
+    }
+
 
     public static routes(){
         this.router.all('/get-projects' ,       this.getProjects);
@@ -245,7 +343,9 @@ export default class ProjectController{
         this.router.all('/search-project',      this.searchProject);
         this.router.all('/get-collaborators',   this.getCollaborators);
         this.router.all('/get-view-status',     this.getStatus);
+        this.router.all('/add',                this.addProject);
         this.router.all('/edit',                this.editProject);
+        this.router.all('/delete',              this.deleteProject);
         return this.router;
     }
 }

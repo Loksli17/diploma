@@ -17,7 +17,7 @@ export default class Project{
     }
 
     @PrimaryGeneratedColumn()
-    public id: number = 1;
+    public id?: number;
 
     @IsNotEmpty()
     @Column()
@@ -25,6 +25,9 @@ export default class Project{
 
     @Column()
     public authorId: number = 1;
+
+    @Column()
+    public viewStatusId: number = 1;
 
     @Column()
     public fileName: string = 'project.json';
@@ -38,8 +41,9 @@ export default class Project{
     @Column()
     public dateOfEdit: Date = new Date();
 
+
     @ManyToOne(() => User, user => user.ownProjects)
-    public author?: User;
+    public author?: User | number;
 
     @ManyToMany(() => User, user => user.projects)
     users: Array<User> | undefined;

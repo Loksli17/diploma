@@ -37,6 +37,7 @@ export default class AuthController{
             return;
         }
 
+        //TODO: !!add TRY CATCH
         user = await getRepository(User).findOne({where: {email: POST.email}});
 
         if(user == undefined){
@@ -145,7 +146,7 @@ export default class AuthController{
         try{
             await getRepository(User).insert(user);
         }catch(err){
-            res.status(400).send({msg: 'Error with datebase'});
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err)
         }
     

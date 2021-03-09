@@ -1,8 +1,8 @@
 <template>
     <div class="page-home">
         <Menu></Menu>
+        
         <div class="page-wrap">
-
             <div class="section">
                 <div class="row">
                     <div>
@@ -14,7 +14,7 @@
 
                     <div>
                         <form action="" @submit.prevent="searchProjectsEvt">
-                            <input v-model="searchValue" type="search">
+                            <input v-model="searchValueProject" type="search">
                         </form>
                     </div>
 
@@ -152,7 +152,7 @@
                     <div class="row">
                         <div class="coll-header">
                             <h2>Collaborators ({{projectViewCollabs.length}}/10)</h2>
-                            <button class="btn"><span></span></button>
+                            <button class="btn" @click="addCollaboratorsShowBack"><span></span></button>
                         </div>
 
                         <div class="collaborators-wrap">
@@ -173,7 +173,7 @@
                 </div>
                 
                 <div class="col-2">
-                    <button class="btn btn-error">Delete</button>
+                    <button class="btn btn-error" @click="projectDeleteEvt(projectView.id)">Delete</button>
                 </div>
 
             </div>
@@ -190,6 +190,44 @@
                 v-on:result-parser="editProjectFormResultParser"
             />
         </ActionBack>
+
+        <ActionBack ref="actionBackAdd" v-bind:headerMainText="'Project'" v-bind:headerAddText="`Add`">
+            <Form
+                v-bind:rows="rowsAddProjectForm"
+                v-bind:action="'/project/add'"
+                v-bind:className="'add-project-form form'"
+                v-bind:successCode="201"
+                v-bind:tableName="'project'"
+                v-bind:overloadParseResult="true"
+                v-on:result-parser="addProjectFormResultParser"
+            />
+        </ActionBack>
+
+        <ActionBack ref="actionBackCollaborators" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`Add collaborators`">
+            
+            <div class="action-add-coll-">
+                <div class="row-1">
+                    <form action="" @submit.prevent="searchUsersEvt">
+                        <input v-model="searchValue" type="search">
+                    </form>
+                </div>
+
+                <div class="row-2">
+
+                    <div class="search-result-wrap">
+
+                    </div>
+
+                    <div class="new-users">
+
+                    </div>
+                </div>
+
+                <div class="row-3">
+                    <button class="btn" @click="addCollaboratorsEvt(projectView.id)">Add collaborators</button>
+                </div>
+            </div>
+        </ActionBack>
     </div>
 </template>
 
@@ -203,7 +241,6 @@
     import ActionBack               from '../components/ActionBack.vue';
     import Form, {FormItem, Option} from '../components/Form.vue';
     import ViewStatus               from '../types/ViewStatus';
-    import Vue                      from 'vue';
 
     
     export default defineComponent({
@@ -223,16 +260,24 @@
                 amountProjects    : 0 as number | undefined,
                 amountFriends     : 0 as number | undefined,
                 
-                searchValue       : "" as string,
+                searchValueProject: "" as string,
 
                 //project view
                 projectView       : {} as Project | undefined,
                 projectViewCollabs: [] as Array<User> | undefined,
+                searchUser        : [] as Array<User> | undefined,
+                newCollaborators  : [] as Array<User> | undefined,
 
                 rowsEditProjectForm: [
                     [{type: 'text', name: 'name', label: 'Name', value: 'Name'}, {type: 'hidden', name: 'id', value: 1}],
-                    [{type: 'select', name: 'viewStatus', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 1}],
+                    [{type: 'select', name: 'viewStatusId', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 1}],
                     [{type: 'submit', name: 'submit', value: 'Edit project'}]
+                ] as Array<Array<FormItem>>,
+
+                rowsAddProjectForm: [
+                    [{type: 'text', name: 'name', label: 'Name', value: 'Name'}, {type: 'hidden', name: 'authorId', value: 1}],
+                    [{type: 'select', name: 'viewStatusId', options: [{id: 1, text: 'Public'}, {id: '2', text: 'Private'}], selected: 1}],
+                    [{type: 'submit', name: 'submit', value: 'Add new project'}]
                 ] as Array<Array<FormItem>>
             }  
         },
@@ -332,7 +377,7 @@
 
             searchProjectsEvt: async function(e: any){
                 
-                if(this.searchValue == ""){
+                if(this.searchValueProject == ""){
                     this.$flashMessage.show({
                         type: 'warning',
                         // image: require("../../assets/flashMessage/fail.svg"),
@@ -342,7 +387,7 @@
                 }
 
                 const 
-                    res = await this.$axios.post('project/search-project', {searchData: this.searchValue, userId: this.$store.state.userIdentity!.id}),
+                    res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$store.state.userIdentity!.id}),
                     projects: Array<Project> = res.data.projects;
 
                 if(!projects.length){
@@ -400,6 +445,36 @@
                 this.amountProjects = amountProjects;
             },
 
+            newProjectEvt: function(res: any){
+                const backAdd = this.$refs.actionBackAdd! as any;
+                backAdd.show();
+            },
+
+            addProjectFormResultParser: async function(res: any){
+
+                const backAdd = this.$refs.actionBackAdd! as any;
+
+                if(res.status == 400 && res.data.msg != "Bad validation"){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: res.data.msg,
+                    });
+                    return;
+                }else if(res.status == 400 && res.data.msg == "Bad validation"){
+                    return;
+                }
+
+                backAdd.hide();
+
+                if(res.status == 201){
+                    this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    this.$flashMessage.show({
+                        type: 'success',
+                        text: res.data.msg,
+                    });
+                    return;
+                }
+            },
             
             projectViewEvt: async function(id: number){
                 const background = this.$refs.actionBackView! as any;
@@ -435,7 +510,6 @@
                 background.show();
             },
 
-
             projectEditEvt: async function(id: number){
 
                 this.projectView = this.projects!.find((project) => project.id === id);
@@ -452,27 +526,67 @@
                 this.rowsEditProjectForm[1][0].selected = this.projectView!.viewStatus.id;
             },
 
-            setProject: function(index: number, newVal: Project){
-                this.$set(this.projects, index, newVal);
-            },
-
             editProjectFormResultParser: function(res: any){
 
                 if(res.status == 400){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: res.data.msg,
+                    });
                     return;
                 }
 
-                if(res.status == 200){
+                if(res.status == 201){
                     const index: number = this.projects!.findIndex((project) => project.id === res.data.project.id);
                     
                     this.projectView = res.data.project;
-                    this.setProject(index, res.data.project);
+                    // this.$set(this.projects, index, res.data.project);
 
                     this.$flashMessage.show({
                         type: 'success',
                         text: res.data.msg,
                     });
                 }
+            },
+
+            projectDeleteEvt: async function(id: number){
+
+                const
+                    backView: any = this.$refs.actionBackView! as any, 
+                    res: any      = await this.$axios.post('project/delete', {id: id});
+
+                if(res.status === 400){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: res.data.msg,
+                    });
+                    return;
+                }
+
+                if(res.status === 200){
+                    backView.hide();
+                    this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    this.$flashMessage.show({
+                        type: 'success',
+                        text: res.data.msg,
+                    });
+                }
+
+            },
+
+            addCollaboratorsShowBack: function(){
+
+                const
+                    backView: any    = this.$refs.actionBackView! as any,  
+                    backAddColl: any = this.$refs.actionBackCollaborators as any;
+
+                backAddColl.show();
+                backView.hide();
+            },
+
+            addCollaboratorsEvt: async function(id: number){
+
+                console.log(id);
             }
         },
 
