@@ -358,8 +358,8 @@ export default class ProjectController{
             return;
         }
 
-        for(let i: number = 0; i < userHasProject.length; i++){
-            userHasProject.push(new UserHasProject({projectId: POST.id, userId: userHasProject[0].userId}));
+        for(let i: number = 0; i < POST.usersIds.length; i++){
+            userHasProject.push(new UserHasProject({projectId: POST.id, userId: POST.usersIds[i]}));
         };
 
         try {
@@ -385,7 +385,7 @@ export default class ProjectController{
             POST          : POST              = req.body,
             postErrors    : Array<keyof POST> = [], 
             userHasProject: UserHasProject,
-            project       : Project;
+            project       : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['userId', 'projectId']);
 
@@ -394,7 +394,19 @@ export default class ProjectController{
             return;
         }
 
-        userHasProject = new UserHasProject({userId: POST.userId, projectId: POST.projectId});
+        try {
+            project = await getRepository(Project).findOne(POST.projectId);
+
+            if(project == undefined){
+                res.status(401).send({});
+                return;
+            }
+            
+        }catch(err){
+            throw new Error(err);   
+        }
+
+        userHasProject = new UserHasProject({userId: POST.userId, projectId: project.id});
 
         try {
             await getRepository(UserHasProject).remove(userHasProject);
