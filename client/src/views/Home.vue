@@ -686,6 +686,7 @@
                         id      : this.projectView!.id
                     });
 
+                    console.log(res.status, res.data);
                     
                 }catch(err){
                     this.$flashMessage.show({

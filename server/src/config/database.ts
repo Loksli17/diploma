@@ -2,6 +2,7 @@ import {getConnectionManager} from 'typeorm';
 import config                 from '../config';
 import Project                from '../models/Project';
 import User                   from '../models/User';
+import UserHasProject         from '../models/UserHasProject';
 import ViewStatus             from '../models/ViewStatus';
 
 
@@ -16,7 +17,7 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User, Project, ViewStatus],
+        entities: [User, Project, ViewStatus, UserHasProject],
     }),
 
     init = async (): Promise<void> => {

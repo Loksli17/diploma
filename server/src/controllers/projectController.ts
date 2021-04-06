@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 
-import {getRepository}             from 'typeorm';
+import {Any, FindOperator, getRepository, InsertResult}             from 'typeorm';
 import Project                     from '../models/Project';
 import User                        from '../models/User';
 import ErrorMessage                from '../libs/error';
@@ -8,6 +8,8 @@ import PostModule                  from '../libs/post';
 import ViewStatus                  from '../models/ViewStatus';
 import {validate, ValidationError} from 'class-validator';
 import Parser                      from '../libs/parser';
+import { brotliDecompressSync } from 'zlib';
+import UserHasProject from '../models/UserHasProject';
 
 
 export default class ProjectController{
@@ -345,18 +347,63 @@ export default class ProjectController{
         }
 
         let 
-            POST          : POST              = req.body,
-            postErrors    : Array<keyof POST> = [], 
-            userHasProject: Array<any>;
+            POST          : POST                  = req.body,
+            postErrors    : Array<keyof POST>     = [], 
+            userHasProject: Array<UserHasProject> = [];
 
-        postErrors = PostModule.checkData<POST>(POST, ['id']);
+        postErrors = PostModule.checkData<POST>(POST, ['id', 'usersIds']);
         
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
 
+        for(let i: number = 0; i < userHasProject.length; i++){
+            userHasProject.push(new UserHasProject({projectId: POST.id, userId: userHasProject[0].userId}));
+        };
+
+        try {
+            let result: InsertResult = await getRepository(UserHasProject).insert(userHasProject);
+            console.log(result);
+        }catch(err) {
+            throw new Error(err);
+        }
+
+        //TODO send smth: see message in top of file
+        res.status(200).send({});
+    }
+
+
+    public static async removeCollaborator(req: Request, res: Response){
         
+        interface POST{
+            userId   : number;
+            projectId: number;
+        }
+
+        let
+            POST          : POST              = req.body,
+            postErrors    : Array<keyof POST> = [], 
+            userHasProject: UserHasProject,
+            project       : Project;
+
+        postErrors = PostModule.checkData<POST>(POST, ['userId', 'projectId']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        userHasProject = new UserHasProject({userId: POST.userId, projectId: POST.projectId});
+
+        try {
+            await getRepository(UserHasProject).remove(userHasProject);
+        }catch(err){
+            throw new Error(err);
+        }
+
+        //TODO send smth: see message in top of file
+        res.status(200).send({});
     }
 
     public static routes(){
@@ -365,9 +412,10 @@ export default class ProjectController{
         this.router.all('/search-project',      this.searchProject);
         this.router.all('/get-collaborators',   this.getCollaborators);
         this.router.all('/get-view-status',     this.getStatus);
-        this.router.all('/add',                this.addProject);
+        this.router.all('/add',                 this.addProject);
         this.router.all('/edit',                this.editProject);
         this.router.all('/delete',              this.deleteProject);
+        this.router.all('/add-collaborators',   this.addCollaborators);
         return this.router;
     }
 }

@@ -179,7 +179,7 @@ export default class UserController{
             return;
         }
 
-        user.changeFields(POST.user);
+        user = new User(POST.user);
 
         validateResult = await validate(user);
 
