@@ -401,7 +401,7 @@
                         text: `You don't have more projects`,
                     });
                     return;
-                }
+                }``
 
                 this.projects = newProjects;
             },

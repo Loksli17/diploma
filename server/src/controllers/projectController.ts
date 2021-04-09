@@ -387,7 +387,7 @@ export default class ProjectController{
             POST          : POST              = req.body,
             postErrors    : Array<keyof POST> = [], 
             user          : User | undefined,
-            userHasProject: UserHasProject,
+            userHasProject: Array<UserHasProject>,
             project       : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['userId', 'projectId']);
@@ -415,16 +415,16 @@ export default class ProjectController{
             throw new Error(err);   
         }
 
-        userHasProject = new UserHasProject({userId: POST.userId, projectId: project.id});
+        userHasProject = await getRepository(UserHasProject).find({where: {userId: user.id, projectId: project.id}});
 
         try{
-            // await getRepository(UserHasProject).remove(userHasProject);
+            await getRepository(UserHasProject).remove(userHasProject[0]);
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from `});
+        res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from project: ${project.name}`});
     }
 
     public static routes(){
