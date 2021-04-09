@@ -71,7 +71,7 @@ export default class UserController{
         res.status(200).send({users: users});
     }
 
-
+    //!! insert id of ideentity user in query!!
     private static async searchCollaborators(req: Request, res: Response){
         interface POST{
             searchData: string;

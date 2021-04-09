@@ -26,6 +26,14 @@ export default defineComponent({
         headerAddText: {
             type    : String,
             required: true,
+        },
+        overloadCloseEvt: {
+            default: false,
+            type   : Boolean,
+        },
+        overloadOpenEvt: {
+            default: false,
+            type   : Boolean,
         }
     },
 

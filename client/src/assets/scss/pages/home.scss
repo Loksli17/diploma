@@ -272,6 +272,7 @@ $plusButtonSize  : 40px;
                 grid-template-columns: 60px auto;
                 height: 60px;
                 background: $white;
+                position: relative;
 
                 & > div:nth-child(2){
                     @include flex(flex-start, center);
@@ -285,7 +286,17 @@ $plusButtonSize  : 40px;
                 }
 
                 div.close{
-                    
+                    @extend %pseudoElement;
+                    position: absolute;
+                    top: -2px;
+                    right: 5px;
+                    font-size: 22px;
+                    cursor: pointer;
+
+                    &:hover{
+                        transition: 0.4s;
+                        color: $blue;
+                    }
                 }
             }
         }
@@ -306,6 +317,13 @@ $plusButtonSize  : 40px;
     > div{
         @include row(30px);
         justify-content: flex-start
+    }
+
+    .row-1{
+        .small-btn{
+            width: 150px;
+            border-radius: 2px;
+        }
     }
 
     .row-2{

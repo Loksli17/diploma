@@ -156,15 +156,13 @@
                         </div>
 
                         <div class="collaborators-wrap">
-                            <template v-for="collaborator in projectViewCollabs" :key="collaborator.id">
+                            <template v-for="(collaborator, ind) in projectViewCollabs" :key="collaborator.id">
                                 <div class="collaborator">
                                     <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${collaborator.avatar}`)+ ')'}"></div>
                                     <div>
                                         {{collaborator.firstName}} {{collaborator.lastName}}
                                     </div>
-                                    <div class="close">
-                                        <span></span>
-                                    </div>
+                                    <div class="close" @click="removeCollaborator(ind)">&#10006;</div>
                                 </div>
                             </template>
                         </div>
@@ -203,13 +201,23 @@
             />
         </ActionBack>
 
-        <ActionBack ref="actionBackCollaborators" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`Add collaborators`">
+        <ActionBack 
+            ref="actionBackCollaborators" 
+            v-bind:headerMainText="projectView.name" 
+            v-bind:headerAddText="`Add collaborators`" 
+            v-bind:overloadCloseEvt="true"
+            v-on:close-back="clearAllCollaborators">
             
             <div class="action-add-wrap">
                 <div class="row-1">
                     <form action="" @submit.prevent="searchUsersEvt">
                         <input v-model="searchValueUser" type="search" placeholder="Input e-mail or login here..">
                     </form>
+
+                    <div class="btn small-btn" @click="clearSearchCollaboratorsResult">Clear search</div>
+
+                    <div class="btn small-btn" @click="clearPotentialCollaboratorsResult">Clear potential</div>
+                    
                 </div>
 
                 <div class="row-2">
@@ -398,6 +406,7 @@
                 this.projects = newProjects;
             },
 
+            //!! insert id of ideentity user in query!!
             searchProjectsEvt: async function(e: any){
                 
                 if(this.searchValueProject == ""){
@@ -607,9 +616,10 @@
                 backView.hide();
             },
 
-            searchUsersEvt: async function(e: any){
+            searchUsersEvt: async function(){
 
                 if(this.searchValueUser == ""){
+                    this.searchCollabsRes = [];
                     this.$flashMessage.show({
                         type: 'warning',
                         // image: require("../../assets/flashMessage/fail.svg"),
@@ -657,7 +667,6 @@
                         // image: require("../../assets/flashMessage/fail.svg"),
                         text: `No users to display`,
                     });
-                    return;
                 }
 
                 this.searchCollabsRes = users;
@@ -686,7 +695,28 @@
                         id      : this.projectView!.id
                     });
 
-                    console.log(res.status, res.data);
+                    if(res.status == 400){
+                        this.$flashMessage.show({
+                            type: 'warning',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: res.data.msg,
+                        });
+                        return;
+                    }
+                    
+                    this.newCollabs!.forEach((elem) => {
+                        this.projectViewCollabs!.push(elem);
+                    });
+                    this.newCollabs = [];
+
+                    if(!this.newCollabs!.length){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: res.data.msg,
+                        });
+                        return;
+                    }
                     
                 }catch(err){
                     this.$flashMessage.show({
@@ -696,7 +726,60 @@
                     });
                     return;               
                 }
-            }
+            },
+
+            clearPotentialCollaboratorsResult: function(){
+                this.newCollabs = [];
+                this.searchUsersEvt();
+            },
+
+            clearSearchCollaboratorsResult: function(){
+                this.searchValueUser  = "";
+                this.searchCollabsRes = [];
+            },
+
+            clearAllCollaborators: function(){
+                this.newCollabs       = [];
+                this.searchValueUser  = "";
+                this.searchCollabsRes = [];
+            },
+
+            removeCollaborator: async function(ind: number){
+
+                try {
+
+                    if(this.projectViewCollabs == undefined || !this.projectViewCollabs.length || this.projectView == undefined){
+                        return;
+                    }
+
+                    const res: any = await this.$axios.post('project/remove-collaborator', {userId: this.projectViewCollabs[ind].id, projectId: this.projectView.id});
+
+                    if(res.status == 400){
+                        this.$flashMessage.show({
+                            type: 'error',
+                            // image: require("../../assets/flashMessage/fail.svg"),
+                            text: res.data.msg,
+                        });
+                        return;  
+                    }
+
+                    this.projectViewCollabs.splice(ind, 1);
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: res.data.msg,
+                    });
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // image: require("../../assets/flashMessage/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;   
+                }
+            },
+
         },
 
 

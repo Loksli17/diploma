@@ -300,7 +300,7 @@ export default class ProjectController{
     }
 
 
-    private static async deleteProject(req: Request, res: Response){
+    private static async removeProject(req: Request, res: Response){
 
         interface POST{
             id: number;
@@ -332,6 +332,7 @@ export default class ProjectController{
         try{
             await getRepository(Project).delete(POST.id);
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
@@ -366,14 +367,15 @@ export default class ProjectController{
             let result: InsertResult = await getRepository(UserHasProject).insert(userHasProject);
             console.log(result);
         }catch(err) {
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        //TODO send smth: see message in top of file
-        res.status(200).send({});
+        res.status(200).send({msg: 'Collaborators were added'});
     }
 
 
+    //TODO notificatons to another about removed
     public static async removeCollaborator(req: Request, res: Response){
         
         interface POST{
@@ -384,6 +386,7 @@ export default class ProjectController{
         let
             POST          : POST              = req.body,
             postErrors    : Array<keyof POST> = [], 
+            user          : User | undefined,
             userHasProject: UserHasProject,
             project       : Project | undefined;
 
@@ -398,24 +401,30 @@ export default class ProjectController{
             project = await getRepository(Project).findOne(POST.projectId);
 
             if(project == undefined){
-                res.status(401).send({});
+                res.status(400).send({msg: ErrorMessage.notFound('project')});
                 return;
             }
+
+            user = await getRepository(User).findOne(POST.userId);
             
+            if(user == undefined){
+                res.status(400).send({msg: ErrorMessage.notFound('user')});
+                return;
+            }
         }catch(err){
             throw new Error(err);   
         }
 
         userHasProject = new UserHasProject({userId: POST.userId, projectId: project.id});
 
-        try {
-            await getRepository(UserHasProject).remove(userHasProject);
+        try{
+            // await getRepository(UserHasProject).remove(userHasProject);
         }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        //TODO send smth: see message in top of file
-        res.status(200).send({});
+        res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from `});
     }
 
     public static routes(){
@@ -426,8 +435,9 @@ export default class ProjectController{
         this.router.all('/get-view-status',     this.getStatus);
         this.router.all('/add',                 this.addProject);
         this.router.all('/edit',                this.editProject);
-        this.router.all('/delete',              this.deleteProject);
+        this.router.all('/delete',              this.removeProject);
         this.router.all('/add-collaborators',   this.addCollaborators);
+        this.router.all('/remove-collaborator', this.removeCollaborator);
         return this.router;
     }
 }

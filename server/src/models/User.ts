@@ -11,7 +11,6 @@ export default class User{
         Object.assign(this, user);
     }
 
-    //TODO I MUST REFUCTOR THIS FUCKING SHIT ПОМЕНЯТЬ В ВЫЗОВАХ ИНИЦИАЛИЗАЦИЮ ОБЪЕКТА НА ВЫЗОВ ЧЕРЕЗ NEW
     public changeFields(user: Partial<User>){
         Object.assign(this, user);
     }
