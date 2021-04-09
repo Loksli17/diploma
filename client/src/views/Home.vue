@@ -266,6 +266,11 @@
     import {VueDraggableNext}       from 'vue-draggable-next'
 
     
+    // TODO
+    // fix edit with change data
+    // try catch in search + fix
+    // add img in flash message + create styles for flash
+
     export default defineComponent({
 
         data: function(){
@@ -332,6 +337,10 @@
                         });
                     }
                 }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                    });
                     throw new Error(err);
                 }
             },
@@ -343,6 +352,10 @@
                         return res.data.amount;
                     }
                 }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                    });
                     throw new Error(err);
                 }
             },
@@ -355,6 +368,10 @@
                         return res.data.friends;
                     }
                 }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                    });
                     throw new Error(err);
                 }
             },
@@ -406,7 +423,7 @@
                 this.projects = newProjects;
             },
 
-            //!! insert id of ideentity user in query!!
+            //!! insert id of ideentity user in query!! + TODO try catch
             searchProjectsEvt: async function(e: any){
                 
                 if(this.searchValueProject == ""){
@@ -558,6 +575,8 @@
                 this.rowsEditProjectForm[1][0].selected = this.projectView!.viewStatus.id;
             },
 
+
+            //TODO EDIT
             editProjectFormResultParser: function(res: any){
 
                 if(res.status == 400){
@@ -583,27 +602,34 @@
 
             projectDeleteEvt: async function(id: number){
 
-                const
-                    backView: any = this.$refs.actionBackView! as any, 
-                    res: any      = await this.$axios.post('project/delete', {id: id});
+                const backView: any = this.$refs.actionBackView! as any;
 
-                if(res.status === 400){
-                    this.$flashMessage.show({
-                        type: 'error',
-                        text: res.data.msg,
-                    });
-                    return;
-                }
+                try {
+                    const res: any = await this.$axios.post('project/delete', {id: id});
 
-                if(res.status === 200){
-                    backView.hide();
-                    this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    if(res.status === 400){
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: res.data.msg,
+                        });
+                        return;
+                    }
+
+                    if(res.status === 200){
+                        backView.hide();
+                        this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                        });
+                    }
+                }catch(err){
                     this.$flashMessage.show({
                         type: 'success',
-                        text: res.data.msg,
+                        text: 'Error with query',
                     });
                 }
-
+                    
             },
 
             addCollaboratorsShowBack: function(){

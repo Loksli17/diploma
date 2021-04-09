@@ -299,7 +299,7 @@ export default class ProjectController{
         res.status(201).send({project: project, msg: 'Project has changed successfully'});
     }
 
-
+    //TODO: remove UserHasProject with id of project
     private static async removeProject(req: Request, res: Response){
 
         interface POST{
