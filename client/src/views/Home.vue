@@ -256,6 +256,7 @@
 
 
 <script lang="ts">
+    declare const require: any
     import {defineComponent}        from 'vue';
     import Menu                     from '../components/Menu.vue';
     import Project                  from '../types/Project';
@@ -267,8 +268,6 @@
 
     
     // TODO
-    // fix edit with change data
-    // try catch in search + fix
     // add img in flash message + create styles for flash
 
     export default defineComponent({
@@ -315,14 +314,11 @@
         },
 
         methods: {
-
-            log(event: any) {
-                console.log(event)
-            },
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {
                     const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+
                     if(res.status == 200){
                         res.data.projects.forEach((elem: Project) => {
                             elem.dateOfEdit   = this.$filters.datetimeToView(elem.dateOfEdit);
@@ -332,7 +328,7 @@
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
-                            // image: require("../../assets/flashMessage/fail.svg"),
+                            image: require("../assets/flash/fail.svg"),
                             text: `Error with query`,
                         });
                     }
@@ -340,6 +336,7 @@
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
+                        image: require("../assets/flash/fail.svg"),
                     });
                     throw new Error(err);
                 }
@@ -354,6 +351,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
+                        image: require("../assets/flash/fail.svg"),
                         text: 'Error with query',
                     });
                     throw new Error(err);
@@ -370,6 +368,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
+                        image: require("../assets/flash/fail.svg"),
                         text: 'Error with query',
                     });
                     throw new Error(err);
@@ -382,7 +381,7 @@
                 if(newFriends == undefined){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;
@@ -391,7 +390,7 @@
                 if(!newFriends.length){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `You don't have more friends`,
                     });
                 }
@@ -405,7 +404,7 @@
                 if(newProjects == undefined){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;
@@ -414,7 +413,7 @@
                 if(!newProjects.length){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `You don't have more projects`,
                     });
                     return;
@@ -423,32 +422,36 @@
                 this.projects = newProjects;
             },
 
-            //!! insert id of ideentity user in query!! + TODO try catch
             searchProjectsEvt: async function(e: any){
                 
                 if(this.searchValueProject == ""){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `Input some data`,
                     });
                     return;
                 }
 
-                const 
-                    res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$store.state.userIdentity!.id}),
-                    projects: Array<Project> = res.data.projects;
+                try{
+                    const 
+                        res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$store.state.userIdentity!.id}),
+                        projects: Array<Project> = res.data.projects;
 
-                if(!projects.length){
-                    this.$flashMessage.show({
-                        type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
-                        text: `No projects to display`,
-                    });
-                    return;
-                }
+                    if(!projects.length){
+                        this.$flashMessage.show({
+                            type: 'warning',
+                            image: require("../assets/flash/warning.svg"),
+                            text: `No projects to display`,
+                        });
+                        return;
+                    }
 
-                this.projects = projects;
+                    this.projects = projects;
+                    this.amountProjects = 0;
+                }catch(err){
+                    throw new Error(err);
+                }   
             },
 
             onFilterChange: async function(e: any): Promise<void>{
@@ -466,7 +469,7 @@
                 if(newProjects == undefined){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;
@@ -475,7 +478,7 @@
                 if(!newProjects.length){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `You don't have more projects`,
                     });
                     return;
@@ -484,7 +487,7 @@
                 if(amountProjects == undefined){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;
@@ -506,6 +509,7 @@
                 if(res.status == 400 && res.data.msg != "Bad validation"){
                     this.$flashMessage.show({
                         type: 'error',
+                        image: require("../assets/flash/fail.svg"),
                         text: res.data.msg,
                     });
                     return;
@@ -517,8 +521,11 @@
 
                 if(res.status == 201){
                     this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    this.amountProjects!++;
+
                     this.$flashMessage.show({
                         type: 'success',
+                        image: require("../assets/flash/success.svg"),
                         text: res.data.msg,
                     });
                     return;
@@ -534,7 +541,7 @@
                 if(this.projectView == undefined){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Unexpected error`,
                     });
                 }
@@ -546,7 +553,7 @@
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
-                            // image: require("../../assets/flashMessage/fail.svg"),
+                            image: require("../assets/flash/fail.svg"),
                             text: `Error with query`,
                         });
                     }
@@ -575,9 +582,11 @@
                 this.rowsEditProjectForm[1][0].selected = this.projectView!.viewStatus.id;
             },
 
-
-            //TODO EDIT
             editProjectFormResultParser: function(res: any){
+
+                if(this.projects == undefined){
+                    return;
+                }
 
                 if(res.status == 400){
                     this.$flashMessage.show({
@@ -588,13 +597,18 @@
                 }
 
                 if(res.status == 201){
-                    const index: number = this.projects!.findIndex((project) => project.id === res.data.project.id);
                     
+                    const index: number = this.projects.findIndex((project) => project.id === res.data.project.id);
+                   
                     this.projectView = res.data.project;
-                    // this.$set(this.projects, index, res.data.project);
+                    this.projects.splice(index, 1, res.data.project);
+
+                    res.data.project.dateOfEdit   = this.$filters.datetimeToView(res.data.project.dateOfEdit);
+                    res.data.project.dateOfCreate = this.$filters.datetimeToView(res.data.project.dateOfCreate!);
 
                     this.$flashMessage.show({
                         type: 'success',
+                        image: require("../assets/flash/success.svg"),
                         text: res.data.msg,
                     });
                 }
@@ -609,6 +623,7 @@
 
                     if(res.status === 400){
                         this.$flashMessage.show({
+                            image: require("../assets/flash/fail.svg"),
                             type: 'error',
                             text: res.data.msg,
                         });
@@ -617,15 +632,20 @@
 
                     if(res.status === 200){
                         backView.hide();
+
+                        this.amountProjects!--;
                         this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+
                         this.$flashMessage.show({
                             type: 'success',
+                            image: require("../assets/flash/success.svg"),
                             text: res.data.msg,
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'success',
+                        image: require("../assets/flash/success.svg"),
                         text: 'Error with query',
                     });
                 }
@@ -648,7 +668,7 @@
                     this.searchCollabsRes = [];
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `Input some data`,
                     });
                     return;
@@ -668,11 +688,14 @@
                     collabsIds.push(elem.id);
                 });
 
+                collabsIds.push(this.$store.state.userIdentity!.id);
+
                 try {
                     res = await this.$axios.post('user/search-collaborators', {searchData: this.searchValueUser, authUserId: this.$store.state.userIdentity!.id, collabsIds: collabsIds});
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
+                        image: require("../assets/flash/fail.svg"),
                         text: 'Error with query',
                     });
                 }
@@ -680,6 +703,7 @@
                 if(res.status === 400){
                     this.$flashMessage.show({
                         type: 'error',
+                        image: require("../assets/flash/fail.svg"),
                         text: res.data.msg,
                     });
                     return;
@@ -690,7 +714,7 @@
                 if(!users.length){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `No users to display`,
                     });
                 }
@@ -703,7 +727,7 @@
                 if(!this.newCollabs!.length){
                     this.$flashMessage.show({
                         type: 'warning',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/warning.svg"),
                         text: `At first, add new collaborators`,
                     });
                     return;
@@ -724,7 +748,7 @@
                     if(res.status == 400){
                         this.$flashMessage.show({
                             type: 'warning',
-                            // image: require("../../assets/flashMessage/fail.svg"),
+                            image: require("../assets/flash/warning.svg"),
                             text: res.data.msg,
                         });
                         return;
@@ -738,7 +762,7 @@
                     if(!this.newCollabs!.length){
                         this.$flashMessage.show({
                             type: 'success',
-                            // image: require("../../assets/flashMessage/fail.svg"),
+                            image: require("../assets/flash/success.svg"),
                             text: res.data.msg,
                         });
                         return;
@@ -747,7 +771,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;               
@@ -783,7 +807,7 @@
                     if(res.status == 400){
                         this.$flashMessage.show({
                             type: 'error',
-                            // image: require("../../assets/flashMessage/fail.svg"),
+                            image: require("../assets/flash/fail.svg"),
                             text: res.data.msg,
                         });
                         return;  
@@ -793,13 +817,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/success.svg"),
                         text: res.data.msg,
                     });
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                     return;   
@@ -825,13 +849,12 @@
                 
                 if(res.status == 200){
                     res.data.viewStatusElements.forEach((elem: any) => {
-                        console.log(elem);
                         viewStatusElements.push({text: elem.name, id: elem.id});
                     });
                 }else{
                     this.$flashMessage.show({
                         type: 'error',
-                        // image: require("../../assets/flashMessage/fail.svg"),
+                        image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
                     });
                 }  

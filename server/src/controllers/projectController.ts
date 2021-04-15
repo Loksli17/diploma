@@ -126,9 +126,10 @@ export default class ProjectController{
 
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
-                .where('name like :name', {name: `%${POST.searchData}%`})
+                .where('project.name like :name', {name: `%${POST.searchData}%`})
                 .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
                 .leftJoinAndSelect("project.author", "user")
+                .leftJoinAndSelect("project.viewStatus", "viewStatus")
                 .getMany();
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
@@ -285,8 +286,6 @@ export default class ProjectController{
         
         project.changeFields(POST.project);
 
-        console.log(project);
-
         try{
             await getRepository(Project).update(project.id!, project);
         }catch(err){
@@ -294,10 +293,17 @@ export default class ProjectController{
             throw new Error(err);
         }
 
-        project = await getRepository(Project).findOne(POST.project.id);
+        project = await getRepository(Project).createQueryBuilder('project')
+            .where("project.id = :id", {id: project.id})
+            .leftJoinAndSelect("project.author", "user")
+            .leftJoinAndSelect("project.viewStatus", "viewStatus")
+            .getOne();
 
-        res.status(201).send({project: project, msg: 'Project has changed successfully'});
+        console.log(project)
+
+        res.status(201).json({project: project, msg: 'Project has changed successfully'});
     }
+
 
     //TODO: remove UserHasProject with id of project
     private static async removeProject(req: Request, res: Response){
@@ -330,6 +336,11 @@ export default class ProjectController{
         }
 
         try{
+            await getRepository(UserHasProject).createQueryBuilder()
+                .where("projectId = :id", {id: POST.id})
+                .delete()
+                .execute();
+
             await getRepository(Project).delete(POST.id);
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
@@ -375,7 +386,7 @@ export default class ProjectController{
     }
 
 
-    //TODO notificatons to another about removed
+    //TODO notificatons to another user about removed
     public static async removeCollaborator(req: Request, res: Response){
         
         interface POST{
