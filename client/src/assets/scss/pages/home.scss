@@ -1,6 +1,5 @@
 @import '../index';
 
-
 $friendsWrapWidth: 350px;
 $plusButtonSize  : 40px;
 
@@ -23,10 +22,8 @@ $plusButtonSize  : 40px;
             box-sizing: border-box;
             grid-template-rows: max-content auto max-content;
 
-            .row:first-child{
-                @include row(0px);
-                padding-bottom: 30px;
-                border-bottom: 2px solid $grayBorder;
+            .section-header{
+                @extend %projectsSectionHeader;
             }
 
             .row:nth-child(2){
@@ -208,6 +205,10 @@ $plusButtonSize  : 40px;
                 }
             }
         } 
+    }
+
+    td.own{
+        color: $blue;
     }
 }
 

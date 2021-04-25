@@ -50,4 +50,14 @@ export default class Project{
 
     @ManyToOne(() => ViewStatus, viewStatus => viewStatus.projects)
     public viewStatus?: ViewStatus | number;
+
+
+    public isOwn?: boolean;
+
+    public static mapOwnProjects(projects: Array<Project>, userId: number){
+        return projects.map((elem: Project) => {
+            elem.isOwn = elem.authorId == userId ? true : false;
+            return elem;
+        });
+    }
 }

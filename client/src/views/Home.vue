@@ -3,27 +3,35 @@
         <Menu></Menu>
         
         <div class="page-wrap">
+
             <div class="section">
-                <div class="row">
-                    <div>
+                <div class="row section-header">
+                    
+                    <div class="col-2">
                         <button class="btn new-project-btn" @click="newProjectEvt">
                             <span></span>
                             <span>New project</span>
                         </button>
                     </div>
 
-                    <div>
-                        <form action="" @submit.prevent="searchProjectsEvt">
-                            <input v-model="searchValueProject" type="search">
+                    <div class="search-header">
+                        <form class="header-border" action="" @submit.prevent="searchProjectsEvt">
+                            <div><img :src=" require(`../assets/search-icon.svg`)"></div>
+                            <input v-model="searchValueProject" type="search" placeholder="Project's name">
                         </form>
                     </div>
 
-                    <div>
-                        <select @change="onFilterChange($event)">
+                    <div class="select-header header-border">
+                        <div><img :src=" require(`../assets/select-icon.svg`)"></div>
+                        <select class="select-header" @change="onFilterChange($event)">
                             <option :value="true">All projects</option>
                             <option :value="this.$store.state.userIdentity.id">My projects</option>
                         </select>
                     </div>
+
+                    <div class="header-border table-btn section-header-btn"><img :src=" require(`../assets/table-icon.svg`)"></div>
+
+                    <div class="header-border grid-btn section-header-btn"><img :src=" require(`../assets/grid-icon.svg`)"></div>
 
                 </div>
 
@@ -46,17 +54,17 @@
                                 </td>
                                 <td>{{project.name}}</td>
                                 <td>{{project.dateOfEdit}}</td>
-                                <td>{{project.author.login}}</td>
+                                <td :class="{own: project.isOwn}">{{project.author.login}}</td>
                                 <td>
                                     <div>
                                         <div>
                                             <a href="" @click.prevent="projectViewEvt(project.id)">
-                                                <img :src="require('../assets/view-icon.svg')" alt="">
+                                                <img :src="require('../assets/view-icon.svg')" draggable="false">
                                             </a>
                                         </div>
                                         <div>
                                             <a href="" @click.prevent="projectEditEvt(project.id)">
-                                                <img :src="require('../assets/edit-icon.svg')" alt="">
+                                                <img :src="require('../assets/edit-icon.svg')" draggable="false">
                                             </a>
                                         </div>
                                     </div>
@@ -269,6 +277,7 @@
     
     // TODO
     // add img in flash message + create styles for flash
+    //fix all in css to camelCase
 
     export default defineComponent({
 
@@ -837,6 +846,8 @@
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+
+            console.log(this.projects);
         },
 
 

@@ -52,6 +52,9 @@ export default class ProjectController{
                 .take(POST.take)
                 .orderBy('project.dateOfEdit', 'DESC')
                 .getMany();
+
+            projects = Project.mapOwnProjects(projects, POST.userId);
+
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);
@@ -131,6 +134,8 @@ export default class ProjectController{
                 .leftJoinAndSelect("project.author", "user")
                 .leftJoinAndSelect("project.viewStatus", "viewStatus")
                 .getMany();
+
+            projects = Project.mapOwnProjects(projects, POST.userId);
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             throw new Error(err);

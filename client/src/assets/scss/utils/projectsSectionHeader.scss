@@ -1,0 +1,106 @@
+%projectsSectionHeader{
+
+    @include row(15px);
+    grid-template-columns: auto repeat(4, max-content);
+    padding-bottom: 30px;
+    border-bottom: 2px solid $grayBorder;
+
+    .header-border{
+        outline: 1.5px solid $grayBorder;
+    }
+
+    .section-header-btn{
+        @include flex(center, center);
+        background: $white;
+        box-sizing: border-box;
+        padding: 8px;
+        width: 61px;
+        user-select: none;
+        cursor: pointer;
+
+        img{
+            width: 100%;
+        }
+
+        &:hover{
+            background: $blueHover;
+            transition: 0.4s;
+        }
+    }
+
+    .search-header{
+
+        form{
+            @include row(15px);
+            height: 100%;
+            padding: 0 10px;
+            background: $white;
+
+            &:focus-within{
+                transition: 0.4s;
+                outline-color: $blue;
+            }
+
+            div{
+                @include flex(center, center);
+                height: 100%;
+            }
+
+            img{
+                width: 30px;
+            }
+
+            input{
+                display: block;
+                height: 100%;
+                border: 0px;
+                font-size: 18px;
+                width: 180px;
+
+                &:focus{
+                    outline: none;
+                }
+            }
+        }
+    }
+
+
+    .select-header{
+
+        @include row(10px);
+        height: 100%;
+        padding: 0 15px;
+        background: $white;
+
+        div{
+            @include flex(center, center);
+            height: 100%;
+        }
+
+        img{
+            width: 30px;
+        }
+        
+        &:focus-within{
+            transition: 0.4s;
+            outline-color: $blue;
+        }
+
+        select{
+            padding: 0px 15px;
+            height: 100%;
+            border: 0;
+            font-size: 20px;
+            appearance: none;
+
+            &:focus{
+                outline: none;
+            }
+            
+            option{
+                width: 203px;
+            }
+        }
+    }
+}         
+                
