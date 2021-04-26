@@ -29,49 +29,91 @@
                         </select>
                     </div>
 
-                    <div class="table-btn section-header-btn"><img :src=" require(`../assets/table-icon.svg`)"></div>
+                    <div class="table-btn section-header-btn" :class="{'section-header-active': projectsTableView}" @click="tableViewEvt"><img :src=" require(`../assets/table-icon.svg`)"></div>
 
-                    <div class="grid-btn section-header-btn"><img :src=" require(`../assets/grid-icon.svg`)"></div>
+                    <div class="grid-btn section-header-btn" :class="{'section-header-active': projectsGridView}" @click="gridViewEvt"><img :src=" require(`../assets/grid-icon.svg`)"></div>
 
                 </div>
 
                 <div class="row">
 
-                    <table class="projects-wrap" >
-                        <tr>
-                            <th>Id</th>
-                            <th>Image</th>
-                            <th>Project Name</th>
-                            <th>Last modified</th>
-                            <th>Author</th>
-                            <th>Options</th>
-                        </tr>
-                        <tbody>
-                            <tr v-for="project in projects" :key="project.id">
-                                <td>{{project.id}}</td>
-                                <td>
-                                    <div :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}"></div>
-                                </td>
-                                <td>{{project.name}}</td>
-                                <td>{{project.dateOfEdit}}</td>
-                                <td :class="{own: project.isOwn}">{{project.author.login}}</td>
-                                <td>
-                                    <div>
-                                        <div>
-                                            <a href="" @click.prevent="projectViewEvt(project.id)">
-                                                <img :src="require('../assets/view-icon.svg')" draggable="false">
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <a href="" @click.prevent="projectEditEvt(project.id)">
-                                                <img :src="require('../assets/edit-icon.svg')" draggable="false">
-                                            </a>
-                                        </div>
+                    <div class="projects-wrap">
+
+                        <div class="projects-grid-wrap" v-if="projectsGridView">
+                            
+                            <div class="project" v-for="project in projects" :key="project.id">
+                                <div class="project-wrap">
+
+                                    <div class="project-img" :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}">
+                                        
                                     </div>
-                                </td>
+
+                                    <div class="project-info">
+
+                                        <div class="name">
+                                            <h3>{{project.name}}</h3>
+                                        </div>
+
+                                        <div class="edited">
+                                            <span>Edited: {{project.dateOfEdit}}</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="options">
+                                        <div class="login">
+                                            <span :class="{own: project.isOwn}">{{project.author.login}}</span>
+                                        </div>
+                                        
+                                        <a href="" @click.prevent="projectViewEvt(project.id)">
+                                            <img :src="require('../assets/view-icon.svg')" draggable="false">
+                                        </a>
+                                        <a href="" @click.prevent="projectEditEvt(project.id)">
+                                            <img :src="require('../assets/edit-icon.svg')" draggable="false">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table v-if="projectsTableView">
+                            <tr>
+                                <th>Id</th>
+                                <th>Image</th>
+                                <th>Project Name</th>
+                                <th>Last modified</th>
+                                <th>Author</th>
+                                <th>Options</th>
                             </tr>
-                        </tbody>
-                    </table>
+                            <tbody>
+                                <tr v-for="project in projects" :key="project.id">
+                                    <td>{{project.id}}</td>
+                                    <td>
+                                        <div :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}"></div>
+                                    </td>
+                                    <td>{{project.name}}</td>
+                                    <td>{{project.dateOfEdit}}</td>
+                                    <td :class="{own: project.isOwn}">{{project.author.login}}</td>
+                                    <td class="options">
+                                        <div>
+                                            <div>
+                                                <a href="" @click.prevent="projectViewEvt(project.id)">
+                                                    <img :src="require('../assets/view-icon.svg')" draggable="false">
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="" @click.prevent="projectEditEvt(project.id)">
+                                                    <img :src="require('../assets/edit-icon.svg')" draggable="false">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    
                 </div>
 
                 <div class="row">
@@ -919,6 +961,16 @@
                 }
             },
 
+
+            tableViewEvt: async function(){
+                this.projectsTableView  = true;
+                this.projectsGridView   = false;
+            },
+
+            gridViewEvt: async function(){
+                this.projectsTableView  = false;
+                this.projectsGridView   = true;
+            },
         },
 
 
@@ -926,8 +978,6 @@
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-
-            console.log(this.projects);
         },
 
 

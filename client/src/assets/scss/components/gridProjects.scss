@@ -1,0 +1,78 @@
+
+@import '../utils/layout/column.scss';
+
+%gridProjects{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, auto));
+    gap: 30px;
+
+    .project{
+        background: $white;
+        outline: 1.5px solid $grayBorder;
+
+        .project-wrap{
+            @include row(0px);
+            grid-template-columns: 3fr 4fr;
+            cursor: pointer;
+            height: 100%;
+            position: relative;
+
+            .project-img{
+                @include backImage();
+            }
+
+            .project-info{
+                box-sizing: border-box;
+                padding: 20px;
+                padding-bottom: 70px;
+                @include column(18px);
+                justify-content: left;
+
+                > div{
+                    @include flex(flex-start, flex-start)
+                }
+
+                .name{
+                    font-size: 22px;
+                    text-align: left;
+                }
+
+                .edited{
+                    font-size: 17px;
+                    text-align: left;
+                }
+            }
+
+            .options{
+                position: absolute;
+                bottom: 10px;
+                right: 15px;
+                @include row(10px);
+                justify-content: right;
+                
+                .login{
+                    background: $grayMain;
+                    box-sizing: border-box;
+                    padding: 10px;
+                    font-size: 18px;
+
+                    .own{
+                        color: $blueDark;
+                    }
+                }
+                
+                > a{
+                    @include flex(center, center);
+                }
+
+                img{
+                    width: 30px;
+                }
+            }
+        }
+
+        &:hover{
+            outline: 2px solid $blue;
+        }
+    }
+}

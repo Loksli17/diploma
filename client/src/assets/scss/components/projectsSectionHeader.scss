@@ -31,6 +31,10 @@
         }
     }
 
+    .section-header-active{
+        outline: 2.5px solid $blue;
+    }
+
     .search-header{
 
         form{

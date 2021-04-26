@@ -25,7 +25,7 @@ $plusButtonSize  : 40px;
 
             .section-header{
                 @extend %projectsSectionHeader;
-            }
+            }  
 
             .row:nth-child(2){
                 @include column(15px);
@@ -167,50 +167,19 @@ $plusButtonSize  : 40px;
 
 .projects-wrap{
 
-    border-spacing: 0px;
-    
-    th{
-        @include th($blue, $white, 21px);
+    padding: 2px;
+    box-sizing: border-box;
+    height: 580px;
+    overflow-y: auto;
+
+    table{
+       @extend %tableProjects !optional;
     }
 
-    td{
-        @include td($white, $black, 18px);
+    .projects-grid-wrap{
+        @extend %gridProjects !optional;
     }
 
-    td:nth-child(2){
-        @include flex(center, center);
-        padding: 0px;
-
-        div{
-            width: 70px;
-            @include backImage();
-            min-height: 56px;
-        }
-    }
-    
-    td:last-child{
-        padding-top: 0px;
-        padding-bottom: 0px;
-
-        div{
-            @include row(5px);
-            grid-template-columns: max-content max-content;
-            justify-content: center;
-
-            a{
-                display: block;
-                width: 30px;
-
-                img{
-                    width: 100%;
-                }
-            }
-        } 
-    }
-
-    td.own{
-        color: $blue;
-    }
 }
 
 .project-view{
