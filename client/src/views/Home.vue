@@ -119,7 +119,12 @@
             
         </div>
         
-        <ActionBack ref="actionBackView" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`View`">
+        <ActionBack 
+            ref="actionBackView" 
+            v-bind:headerMainText="projectView.name" 
+            v-bind:headerAddText="`View`" 
+            >
+            
             <div class="project-view">
 
                 <div class="col-1">
@@ -186,7 +191,14 @@
             </div>
         </ActionBack>
 
-        <ActionBack ref="actionBackEdit" v-bind:headerMainText="projectView.name" v-bind:headerAddText="`Edit`">
+        <ActionBack 
+            ref="actionBackEdit" 
+            v-bind:headerMainText="projectView.name" 
+            v-bind:headerAddText="`Edit`" 
+            v-bind:backButton="true"
+            v-on:go-view="goViewEvt"
+            >
+
             <Form
                 v-bind:rows="rowsEditProjectForm"
                 v-bind:action="'/project/edit'"
@@ -215,6 +227,8 @@
             v-bind:headerMainText="projectView.name" 
             v-bind:headerAddText="`Add collaborators`" 
             v-bind:overloadCloseEvt="true"
+            v-bind:backButton="true"
+            v-on:go-view="goViewEvt"
             v-on:close-back="clearAllCollaborators">
             
             <div class="action-add-wrap">
@@ -282,6 +296,10 @@
 
         data: function(){
             return {
+
+                projectsTableView: true  as boolean,
+                projectsGridView : false as boolean,
+
                 friends           : [] as Array<User> | undefined,
                 friendsRange      : 9 as number,
                 friendsCount      : 0 as number,
@@ -503,6 +521,17 @@
 
                 this.projects       = newProjects;
                 this.amountProjects = amountProjects;
+            },
+
+            goViewEvt: function(){
+                const 
+                    backView    = this.$refs.actionBackView! as any,
+                    backAddColl = this.$refs.actionBackCollaborators! as any,
+                    backEdit    = this.$refs.actionBackEdit! as any;
+                
+                backAddColl.hide();
+                backEdit.hide();
+                backView.show();
             },
 
             newProjectEvt: function(res: any){

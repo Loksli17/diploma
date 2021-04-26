@@ -63,7 +63,8 @@
         }
 
         select{
-            padding: 0px 15px;
+            padding: 15px 15px;
+            box-sizing: border-box;
             height: 100%;
             outline: 0;
             border: 0;
@@ -74,9 +75,10 @@
                 outline: none;
             }
             
-            option{
-                width: 203px;
-            }
+            // option{
+            //     display: block;
+            //     padding: 0px 15px;
+            // }
         }
     }
 }         

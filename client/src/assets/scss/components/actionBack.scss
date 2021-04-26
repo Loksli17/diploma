@@ -1,0 +1,59 @@
+$offset: 50px;
+
+%actionBack{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9997;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .action-back-wrap{
+        position: relative;
+        background: #EFEFF5;
+        padding: $offset;
+        display: grid;
+        row-gap: 40px;
+
+        .header{
+            display: grid;
+            justify-items: left;
+
+            div{
+                margin-top: 5px;
+                @include row(5px);
+                align-items: center;
+                
+                .go-view-link{
+                    color: $blue;
+                    text-decoration: none;
+                    font-size: 20px;
+
+                    &:hover{
+                        transition: 0.4s;
+                        color: $blueDark;
+                    }
+                }
+
+                .separ{
+                    font-size: 20px;
+                }
+            }
+
+            .add-text{
+                text-align: left;
+                color: $black;
+                font-size: 20px;
+            }
+
+            .add-text-one{
+                color: $blue;
+            }
+        }
+    }
+}
+

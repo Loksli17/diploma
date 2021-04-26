@@ -4,7 +4,14 @@
 
             <div class="header">
                 <h1>{{this.headerMainText}}</h1>
-                <span>{{this.headerAddText}}</span>
+                <div>
+                    <template v-if="backButton">
+                        <a href="" class="go-view-link" @click.prevent="goViewEvt">Go View</a>
+                        <span class="separ">/</span>
+                        <span class="add-text">{{this.headerAddText}}</span>
+                    </template>
+                    <span class="add-text add-text-one" v-else>{{this.headerAddText}}</span>
+                </div>
             </div>
 
             <slot></slot>
@@ -34,6 +41,10 @@ export default defineComponent({
         overloadOpenEvt: {
             default: false,
             type   : Boolean,
+        },
+        backButton: {
+            default: false,
+            type   : Boolean,
         }
     },
 
@@ -46,11 +57,16 @@ export default defineComponent({
     methods: {
         hide: function(){
             this.showStatus = false;
+            this.$emit('close-back');
         },
 
         show: function(){
             this.showStatus = true;
-        }
+        },
+
+        goViewEvt: function(){
+            this.$emit('go-view');
+        },
     },
 
 });
@@ -59,34 +75,12 @@ export default defineComponent({
 
 <style lang="scss">
 
+    @import '../assets/scss/base/colors.scss';
+    @import '../assets/scss/utils/layout/row.scss';
+    @import '../assets/scss/components/actionBack.scss';
+    
+
     .action-back{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.85);
-        z-index: 9997;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .action-back-wrap{
-        background: #EFEFF5;
-        padding: 50px;
-        display: grid;
-        row-gap: 30px;
-
-        .header{
-            display: grid;
-            justify-items: left;
-
-            span{
-                text-align: left;
-                color: #2DBEFC;
-                font-size: 20px;
-            }
-        }
+        @extend %actionBack;
     }
 </style>
