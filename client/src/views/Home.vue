@@ -15,13 +15,13 @@
                     </div>
 
                     <div class="search-header">
-                        <form class="header-border" action="" @submit.prevent="searchProjectsEvt">
+                        <form class="" action="" @submit.prevent="searchProjectsEvt">
                             <div><img :src=" require(`../assets/search-icon.svg`)"></div>
                             <input v-model="searchValueProject" type="search" placeholder="Project's name">
                         </form>
                     </div>
 
-                    <div class="select-header header-border">
+                    <div class="select-header">
                         <div><img :src=" require(`../assets/select-icon.svg`)"></div>
                         <select class="select-header" @change="onFilterChange($event)">
                             <option :value="true">All projects</option>
@@ -29,9 +29,9 @@
                         </select>
                     </div>
 
-                    <div class="header-border table-btn section-header-btn"><img :src=" require(`../assets/table-icon.svg`)"></div>
+                    <div class="table-btn section-header-btn"><img :src=" require(`../assets/table-icon.svg`)"></div>
 
-                    <div class="header-border grid-btn section-header-btn"><img :src=" require(`../assets/grid-icon.svg`)"></div>
+                    <div class="grid-btn section-header-btn"><img :src=" require(`../assets/grid-icon.svg`)"></div>
 
                 </div>
 
@@ -99,6 +99,7 @@
                         <div>
                             <div class="avatar" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${friend.avatar}`) + ')'}"></div>
                         </div>
+
                         <div class="">
                             <div class="login">
                                 <span>{{friend.login}}</span>
@@ -218,7 +219,9 @@
             
             <div class="action-add-wrap">
                 <div class="row-1">
-                    <form action="" @submit.prevent="searchUsersEvt">
+
+                    <form class="search-collaborators" action="" @submit.prevent="searchUsersEvt">
+                        <div><img :src=" require(`../assets/search-icon.svg`)"></div>
                         <input v-model="searchValueUser" type="search" placeholder="Input e-mail or login here..">
                     </form>
 
@@ -273,11 +276,7 @@
     import ActionBack               from '../components/ActionBack.vue';
     import Form, {FormItem, Option} from '../components/Form.vue';
     import {VueDraggableNext}       from 'vue-draggable-next'
-
     
-    // TODO
-    // add img in flash message + create styles for flash
-    //fix all in css to camelCase
 
     export default defineComponent({
 

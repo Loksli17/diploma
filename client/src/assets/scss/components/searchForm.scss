@@ -1,0 +1,33 @@
+
+%searchForm{
+    @include row(15px);
+    height: 100%;
+    padding: 0 15px;
+    background: $white;
+
+    &:focus-within{
+        transition: 0.4s;
+        outline-color: $blue;
+    }
+
+    div{
+        @include flex(center, center);
+        height: 100%;
+    }
+
+    img{
+        width: 30px;
+    }
+
+    input{
+        display: block;
+        height: 100%;
+        border: 0px;
+        font-size: 18px;
+        width: 180px;
+
+        &:focus{
+            outline: none;
+        }
+    }
+}

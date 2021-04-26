@@ -1,3 +1,5 @@
+@import 'searchForm.scss';
+
 %projectsSectionHeader{
 
     @include row(15px);
@@ -5,12 +7,13 @@
     padding-bottom: 30px;
     border-bottom: 2px solid $grayBorder;
 
-    .header-border{
+    @mixin header-border(){
         outline: 1.5px solid $grayBorder;
     }
 
     .section-header-btn{
         @include flex(center, center);
+        @include header-border();
         background: $white;
         box-sizing: border-box;
         padding: 8px;
@@ -31,36 +34,8 @@
     .search-header{
 
         form{
-            @include row(15px);
-            height: 100%;
-            padding: 0 10px;
-            background: $white;
-
-            &:focus-within{
-                transition: 0.4s;
-                outline-color: $blue;
-            }
-
-            div{
-                @include flex(center, center);
-                height: 100%;
-            }
-
-            img{
-                width: 30px;
-            }
-
-            input{
-                display: block;
-                height: 100%;
-                border: 0px;
-                font-size: 18px;
-                width: 180px;
-
-                &:focus{
-                    outline: none;
-                }
-            }
+            @include header-border();
+            @extend %searchForm !optional;
         }
     }
 
@@ -71,6 +46,7 @@
         height: 100%;
         padding: 0 15px;
         background: $white;
+        @include header-border();
 
         div{
             @include flex(center, center);
@@ -89,6 +65,7 @@
         select{
             padding: 0px 15px;
             height: 100%;
+            outline: 0;
             border: 0;
             font-size: 20px;
             appearance: none;

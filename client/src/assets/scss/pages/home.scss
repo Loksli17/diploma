@@ -321,9 +321,15 @@ $plusButtonSize  : 40px;
     }
 
     .row-1{
+        @include row(15px);
+
         .small-btn{
             width: 150px;
             border-radius: 2px;
+        }
+
+        .search-collaborators{
+            @extend %searchForm !optional;
         }
     }
 
