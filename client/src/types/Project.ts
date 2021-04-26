@@ -11,4 +11,5 @@ export default interface Project{
     viewStatus: ViewStatus;
     author?: User;
     image: string;
+    isOwn?: boolean;
 }

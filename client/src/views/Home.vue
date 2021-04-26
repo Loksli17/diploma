@@ -579,6 +579,19 @@
 
                 this.projectView = this.projects!.find((project) => project.id === id);
 
+                if(this.projectView == undefined){
+                    return;
+                }
+
+                if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: `You cannot edit this projects`,
+                    });
+                    return;
+                }
+
                 const 
                     backView = this.$refs.actionBackView! as any,
                     backEdit = this.$refs.actionBackEdit! as any;
@@ -627,6 +640,21 @@
 
                 const backView: any = this.$refs.actionBackView! as any;
 
+                this.projectView = this.projects!.find((project) => project.id === id);
+
+                if(this.projectView == undefined){
+                    return;
+                }
+
+                if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: `You cannot delete this project`,
+                    });
+                    return;
+                }
+
                 try {
                     const res: any = await this.$axios.post('project/delete', {id: id});
 
@@ -662,6 +690,19 @@
             },
 
             addCollaboratorsShowBack: function(){
+
+                if(this.projectView == undefined){
+                    return;
+                }
+                
+                if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: `You cannot add collaborators is this project`,
+                    });
+                    return;
+                }
 
                 const
                     backView: any    = this.$refs.actionBackView! as any,  
@@ -732,7 +773,7 @@
             },
 
             addCollaboratorsEvt: async function(id: number){
-
+                                
                 if(!this.newCollabs!.length){
                     this.$flashMessage.show({
                         type: 'warning',
@@ -804,12 +845,23 @@
             },
 
             removeCollaborator: async function(ind: number){
+                
+                if(this.projectViewCollabs == undefined || !this.projectViewCollabs.length || this.projectView == undefined){
+                    return;
+                }
+
+                console.log(this.projectView);
+
+                if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: `You cannot add collaborators is this project`,
+                    });
+                    return;
+                }
 
                 try {
-
-                    if(this.projectViewCollabs == undefined || !this.projectViewCollabs.length || this.projectView == undefined){
-                        return;
-                    }
 
                     const res: any = await this.$axios.post('project/remove-collaborator', {userId: this.projectViewCollabs[ind].id, projectId: this.projectView.id});
 

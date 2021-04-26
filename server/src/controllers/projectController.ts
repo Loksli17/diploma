@@ -175,8 +175,6 @@ export default class ProjectController{
             return;
         }
 
-        console.log(POST);
-
         try{
             collaborators = await getRepository(User).createQueryBuilder('user')
                 .innerJoin('user_has_project', 'uhp', 'uhp.projectId = :id and uhp.userId = user.id', {id: POST.id})
