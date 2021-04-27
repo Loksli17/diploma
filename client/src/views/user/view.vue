@@ -162,13 +162,14 @@
                 amountProjects    : 0 as number | undefined,
                 searchValueProject: "" as string,
 
-                pageUser: {} as User | undefined,
+                pageUser        : {} as User | undefined,
+                friendshipStatus: 0 as number,
             }
         },
 
         methods: {
 
-            resetSearch: async function(){
+            resetSearch: async function(): Promise<void>{
 
                 const pagination = this.$refs.pagination as any;
 
@@ -237,7 +238,7 @@
                 }
             },
 
-            searchProjectsEvt: async function(){
+            searchProjectsEvt: async function(): Promise<void>{
 
                 const pagination = this.$refs.pagination as any;
                 
@@ -281,6 +282,12 @@
                     const res = await this.$axios.post('user/get-id', {id: this.$route.query.id});
                     if(res.status == 200){
                         return res.data.user;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../../assets/flash/fail.svg"),
+                            text: `Error with query`,
+                        });
                     }
                 }catch(err){
                     this.$flashMessage.show({
@@ -292,7 +299,7 @@
                 }
             },
 
-            moreFriendsEvt: async function(){
+            moreFriendsEvt: async function(): Promise<void>{
 
                 const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
 
@@ -316,7 +323,7 @@
                 this.friends = this.friends?.concat(newFriends);
             },
 
-            pageChangeEvt: async function(data: {take: number; skip: number}){
+            pageChangeEvt: async function(data: {take: number; skip: number}): Promise<void>{
                 const newProjects: Array<Project> | undefined = await this.getProjects(data.take, data.skip, this.projectsFilter);
 
                 if(newProjects == undefined){
@@ -383,7 +390,7 @@
                 this.amountProjects = amountProjects;
             },
 
-            tableViewEvt: async function(){
+            tableViewEvt: function(): void{
                 this.projectsTableView  = true;
                 this.projectsGridView   = false;
             },
@@ -391,6 +398,44 @@
             gridViewEvt: async function(){
                 this.projectsTableView  = false;
                 this.projectsGridView   = true;
+            },
+
+
+            /*
+                @return 
+                    2 - identity user = view user
+                    1 - friendship
+                    0 - no friendship
+            */
+
+            checkFriends: async function(): Promise<number>{
+
+                if(this.$store.state.userIdentity!.id === Number(this.$route.query.id)){
+                    return 2;
+                }
+                
+
+                try {
+                    const res = await this.$axios.post('/user/checkFriends', {userId1: this.$store.state.userIdentity!.id, userId2: this.$route.query.id});
+
+                    if(res.status == 200){
+                        return res.data.friendshipStatus;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../../assets/flash/fail.svg"),
+                            text: `Error with query`,
+                        });
+                        throw new Error();
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flash/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    throw new Error(err);
+                }
             },
         },
 
@@ -406,8 +451,9 @@
             //     this.$router.push('/404');
             //     return;
             // }
-            
-            this.friends = await this.getFriends(this.friendsRange, this.friendsCount, Number (this.$route.query.id));
+        
+            this.friendshipStatus = await this.checkFriends();
+            this.friends          = await this.getFriends(this.friendsRange, this.friendsCount, Number (this.$route.query.id));
         },
         
     });

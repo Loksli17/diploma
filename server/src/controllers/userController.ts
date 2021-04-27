@@ -165,6 +165,7 @@ export default class UserController{
     }
 
 
+    //!FIX POST ERRORS
     private static async editUser(req: Request, res: Response){
 
         interface POST{
@@ -220,6 +221,7 @@ export default class UserController{
     }
 
 
+    //!FIX POST ERRORS
     private static async editAvatar(req: Request, res: Response){
 
         interface POST{
@@ -304,7 +306,7 @@ export default class UserController{
         interface POST{
             old: string;
             new: string;
-            id: number;
+            id : number;
         }
 
         let
@@ -373,6 +375,43 @@ export default class UserController{
     }
 
 
+    public static async checkFriends(req: Request, res: Response){
+        interface POST{
+            userId1: number,
+            userId2: number,
+        }
+
+        let
+            postErrors      : Array<keyof POST>        = [],
+            POST            : POST                     = req.body,
+            friendshipStatus: number                   = 0,
+            userHasUser     : UserHasUser | undefined  = undefined;
+
+        postErrors = PostModule.checkData(POST, ['userId1', 'userId2']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try{
+            userHasUser = await getRepository(UserHasUser).createQueryBuilder()
+                            .where(
+                                "(userId1 = :id1 && userId2 = :id2) || (userId1 = :id2 && userId2 = :id1)", 
+                                {id1: POST.userId1, id2: POST.userId2}
+                            )
+                            .getOne();
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        console.log(userHasUser);
+
+        res.status(200).send({msg: friendshipStatus});
+    }
+
+
     public static routes(){
         this.router.post('/get-friends',          this.getFriends);
         this.router.post('/search-user',          this.searchUser);
@@ -381,6 +420,7 @@ export default class UserController{
         this.router.post('/get-id',               this.getById);
         this.router.post('/edit-password',        this.editPassword);
         this.router.post('/search-collaborators', this.searchCollaborators);
+        this.router.post('/check-friends',        this.checkFriends);
         return this.router;
     }
 }
