@@ -1,0 +1,49 @@
+%userItem{
+    @include row(15px);
+    grid-template-columns: 100px auto;
+    height: 84px;
+    background: $white;
+    position: relative;
+
+    & > div:nth-child(2){
+        @include column(10px);
+        padding: 10px 0px;
+        box-sizing: border-box;
+
+        & > div{
+            @include flex(flex-start, center);
+        }
+
+        .login span{
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .online{
+            color: $green;
+        }
+
+        .offline{
+            color: $red;
+        }
+
+        span{
+            font-size: 23px;
+        }
+    }
+
+    .avatar{
+        @include backImage();
+        height: calc(100% - 1px);
+    }
+
+    .btn-wrap{
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        
+        button{
+            @extend %btn-plus !optional;
+        }
+    }
+}
