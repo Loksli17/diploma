@@ -21,6 +21,7 @@ export default class UserController{
         interface POST{
             take: number;
             skip: number;
+            id  : number,
         }
 
         let
@@ -28,7 +29,7 @@ export default class UserController{
             POST      : POST              = req.body,
             friends   : Array<User>       = [];
 
-        postErrors = PostModule.checkData(POST, ['take', 'skip']);
+        postErrors = PostModule.checkData(POST, ['take', 'skip', 'id']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -37,7 +38,7 @@ export default class UserController{
 
         try{
             friends = await getRepository(User).createQueryBuilder()
-                .leftJoin('user_has_user', 'uhu', 'uhu.userId1 = :id or uhu.userId2 = :id', {id: 1})
+                .leftJoin('user_has_user', 'uhu', 'uhu.userId1 = :id or uhu.userId2 = :id', {id: POST.id})
                 .where('user.id != :id', {id: 1})
                 .skip(POST.skip)
                 .take(POST.take)

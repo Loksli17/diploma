@@ -58,43 +58,8 @@ $plusButtonSize  : 40px;
                 overflow-y: auto;
 
                 .friend{
-                    @include row(15px);
-                    grid-template-columns: 100px auto;
+                    @extend %userItem !optional;
                     border-bottom: 2px solid;
-                    height: 84px;
-                    background: $grayMain;
-
-                    & > div:nth-child(2){
-                        @include column(10px);
-                        padding: 10px 0px;
-                        box-sizing: border-box;
-
-                        & > div{
-                            @include flex(flex-start, center);
-                        }
-
-                        .login span{
-                            font-size: 22px;
-                            font-weight: 600;
-                        }
-
-                        .online{
-                            color: $green;
-                        }
-
-                        .offline{
-                            color: $red;
-                        }
-
-                        span{
-                            font-size: 23px;
-                        }
-                    }
-
-                    .avatar{
-                        @include backImage();
-                        height: calc(100% - 1px);
-                    }
                 }
 
                 .friend:last-child{

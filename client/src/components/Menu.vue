@@ -26,10 +26,13 @@
                 <div v-if="showUserMenu" class="user-menu">
                     <ul>
                         <li>
+                            <router-link class="user-show-link" :to="'/'">Home</router-link>
+                        </li>
+                        <li>
                             <router-link class="user-show-link" :to="'/user/edit'">Settings</router-link>
                         </li>
                         <li>
-                            <router-link class="user-show-link" :to="'/user/view'">View myself page</router-link>
+                            <router-link class="user-show-link" :to="`/user/view?id=${user.id}`">View myself page</router-link>
                         </li>
                         <li>
                             <router-link class="user-show-link" :to="'/logout'">Log out</router-link>
