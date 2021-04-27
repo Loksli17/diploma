@@ -1,5 +1,5 @@
 <template>
-    <div class="pages">
+    <div v-if="displayStatus" class="pages">
         <div :class="classNameData">
 
             <div v-if="firstPage">
@@ -104,6 +104,7 @@
                 nextPage           : undefined as Page | undefined,
                 lastPage           : undefined as Page | undefined,
                 firstPage          : undefined as Page | undefined,
+                displayStatus      : true as boolean,
             }
         },
 

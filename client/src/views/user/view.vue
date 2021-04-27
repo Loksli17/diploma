@@ -13,13 +13,13 @@
                 <div class="col-1-options">
                     
                     <div class="search-header">
-                        <form class="" action="" @submit.prevent="searchProjectsEvt">
+                        <form class="" @submit.prevent="searchProjectsEvt" action="">
                             <div><img :src=" require(`../../assets/search-icon.svg`)"></div>
                             <input v-model="searchValueProject" type="search" placeholder="Project's name">
                         </form>
 
                         <div>
-                            <button class="btn">Clear</button>
+                            <button class="btn" @click="resetSearch">Clear</button>
                         </div>
                     </div>
 
@@ -160,12 +160,23 @@
                 projectsFilter    : true as number | boolean,
                 projects          : [] as Array<Project> | undefined,
                 amountProjects    : 0 as number | undefined,
+                searchValueProject: "" as string,
 
                 pageUser: {} as User | undefined,
             }
         },
 
         methods: {
+
+            resetSearch: async function(){
+
+                const pagination = this.$refs.pagination as any;
+
+                this.searchValueProject  = "";
+                pagination.displayStatus = true;
+                this.projects            = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+            },
+
             getFriends: async function(take: number = 10, skip: number = 0, id: number = 1): Promise<Array<User> | undefined> {
                 try{
                     const res = await this.$axios.post('user/get-friends', {take: take, skip: skip, id: id});
@@ -224,6 +235,45 @@
                     });
                     throw new Error(err);
                 }
+            },
+
+            searchProjectsEvt: async function(){
+
+                const pagination = this.$refs.pagination as any;
+                
+                if(this.searchValueProject == ""){
+                    pagination.displayStatus = true;
+                    this.projects            = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../../assets/flash/warning.svg"),
+                        text: `Input some data`,
+                    });
+
+                    return;
+                }
+
+                try{
+                    const 
+                        res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$store.state.userIdentity!.id}),
+                        projects: Array<Project> = res.data.projects;
+
+                    if(!projects.length){
+                        this.$flashMessage.show({
+                            type: 'warning',
+                            image: require("../../assets/flash/warning.svg"),
+                            text: `No projects to display`,
+                        });
+                        return;
+                    }
+
+                    this.projects            = projects;
+                    pagination.displayStatus = false;
+                    // this.amountProjects = 0;
+                }catch(err){
+                    throw new Error(err);
+                }   
             },
 
             getPageUser: async function(): Promise<User | undefined>{
