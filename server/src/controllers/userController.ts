@@ -17,7 +17,7 @@ export default class UserController{
     private static router: Router = Router();
 
 
-    //! THIS API IS SOOOO BAD (MAY BE REFACTOR?)
+    //! THIS API IS SOOOO BAD (MAY BE REFACTOR?) (it just works, but it is f***)
     private static async getFriends(req: Request, res: Response){
         
         interface POST{
@@ -29,7 +29,7 @@ export default class UserController{
         let
             postErrors: Array<keyof POST>  = [],
             POST      : POST               = req.body,
-            friends   : Array<User> = [];
+            friends   : Array<any | User> = [];
 
         postErrors = PostModule.checkData(POST, ['take', 'skip', 'id']);
 
@@ -39,6 +39,7 @@ export default class UserController{
         }
 
         try{
+            //! bad mTm query try to refactor it later with two join operartors
             friends = await getRepository(UserHasUser).createQueryBuilder()
                 .select([
                     "`u`.`id` as id",
@@ -57,13 +58,18 @@ export default class UserController{
 
             friends.map((item) => {
                 let user: User = new User();
+
+                //! this is bad practice
+                item = User.cleanItem<typeof item>(item);
                 user.changeFields(item);
                 return user;
             });
 
         }catch(err){
             throw new Error(err);
-        }
+        }  
+        
+        console.log(friends);
 
         res.status(200).send({friends: friends});
     }

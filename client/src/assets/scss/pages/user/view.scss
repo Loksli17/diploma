@@ -13,7 +13,7 @@
         .col-2{
             width: 100%;
             @include column(25px);
-            grid-template-rows: max-content minmax(auto, 600px) max-content;
+            grid-template-rows: max-content max-content max-content;
 
             h1{
                 text-align: left;
