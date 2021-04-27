@@ -20,7 +20,7 @@
                     </UserItem>
                 </div>     
 
-                <div class="button-wrap"><button class="btn">More friends</button></div>       
+                <div class="button-wrap"><button @click="moreFriendsEvt" class="btn">More friends</button></div>       
             </div>
         </div>
 
@@ -67,21 +67,44 @@
                     throw new Error(err);
                 }
             },
+
+            moreFriendsEvt: async function(){
+                console.log('keeeek');
+                const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
+
+                if(newFriends == undefined){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flash/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    return;
+                }
+
+                if(!newFriends.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../../assets/flash/warning.svg"),
+                        text: `You don't have more friends`,
+                    });
+                }
+
+                this.friends = this.friends?.concat(newFriends);
+            }
         },
 
-        mounted: async function(){
 
-            if(this.$route.query.id == undefined){
-                // this.$route.push('404');
-                return;
-            }
+        created: async function(){
+            
+            // if(this.$route.query.id == undefined){
+            //     this.$router.push('/404');
+            //     return;
+            // }
+
+            console.log(this.$route.query.id);
             
             this.friends = await this.getFriends(this.friendsRange, this.friendsCount, Number (this.$route.query.id));
         },
-
-        // created: function(){
-            
-        // },
         
     });
 </script>

@@ -1,14 +1,16 @@
-import {IsEmail, MinLength, IsNotEmpty}                     from 'class-validator';
+import {IsEmail, MinLength, IsNotEmpty} from 'class-validator';
+import {IsUniq}                         from '@join-com/typeorm-class-validator-is-uniq';
+import Project                          from './Project';
+import UserHasUser                      from './UserHasUser';
+
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany} from 'typeorm';
-import {IsUniq}                                             from '@join-com/typeorm-class-validator-is-uniq';
-import Project                                              from './Project';
 
 
 @Entity()
 export default class User{
 
-    constructor(user: Partial<User>){
-        Object.assign(this, user);
+    constructor(){
+        
     }
 
     public changeFields(user: Partial<User>){

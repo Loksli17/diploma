@@ -3,6 +3,7 @@ import config                 from '../config';
 import Project                from '../models/Project';
 import User                   from '../models/User';
 import UserHasProject         from '../models/UserHasProject';
+import UserHasUser            from '../models/UserHasUser';
 import ViewStatus             from '../models/ViewStatus';
 
 
@@ -17,7 +18,7 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User, Project, ViewStatus, UserHasProject],
+        entities: [User, Project, ViewStatus, UserHasProject, UserHasUser],
     }),
 
     init = async (): Promise<void> => {

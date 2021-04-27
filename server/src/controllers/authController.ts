@@ -133,7 +133,9 @@ export default class AuthController{
             res.status(400).send({error: ErrorMessage.dataNotSended('user')});
         }
 
-        user           = new User(POST.user);
+        user = new User();
+        user.changeFields(POST.user);
+
         validateResult = await validate(user);
 
         if(validateResult.length){

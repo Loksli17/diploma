@@ -9,6 +9,7 @@ import User                        from '../models/User';
 import fs                          from 'fs';
 import crypto                      from 'crypto-js';
 import PostModule                  from '../libs/post';
+import UserHasUser from '../models/UserHasUser';
 
 
 export default class UserController{
@@ -16,6 +17,7 @@ export default class UserController{
     private static router: Router = Router();
 
 
+    //! THIS API IS SOOOO BAD (MAY BE REFACTOR?)
     private static async getFriends(req: Request, res: Response){
         
         interface POST{
@@ -25,9 +27,9 @@ export default class UserController{
         }
 
         let
-            postErrors: Array<keyof POST> = [],
-            POST      : POST              = req.body,
-            friends   : Array<User>       = [];
+            postErrors: Array<keyof POST>  = [],
+            POST      : POST               = req.body,
+            friends   : Array<User> = [];
 
         postErrors = PostModule.checkData(POST, ['take', 'skip', 'id']);
 
@@ -37,12 +39,28 @@ export default class UserController{
         }
 
         try{
-            friends = await getRepository(User).createQueryBuilder()
-                .leftJoin('user_has_user', 'uhu', 'uhu.userId1 = :id or uhu.userId2 = :id', {id: POST.id})
-                .where('user.id != :id', {id: 1})
-                .skip(POST.skip)
-                .take(POST.take)
-                .getMany();
+            friends = await getRepository(UserHasUser).createQueryBuilder()
+                .select([
+                    "`u`.`id` as id",
+                    "`u`.`lastName` as lastName",
+                    "`u`.`firstName` as firstName",
+                    "`u`.`login` as login",
+                    "`u`.`email` as email",
+                    "`u`.`password` as password",
+                    "`u`.`avatar` as avatar",
+                ])
+                .innerJoinAndSelect('user', 'u', '((userId1 = u.id and u.id != :id) or (userId2 = u.id and u.id != :id))', {id: POST.id})
+                .where('userId1 = :id or userId2 = :id', {id: POST.id})
+                .offset(POST.skip)
+                .limit(POST.take)
+                .getRawMany();
+
+            friends.map((item) => {
+                let user: User = new User();
+                user.changeFields(item);
+                return user;
+            });
+
         }catch(err){
             throw new Error(err);
         }
@@ -178,7 +196,8 @@ export default class UserController{
             return;
         }
 
-        user = new User(POST.user);
+        user = new User();
+        user.changeFields(POST.user);
 
         validateResult = await validate(user);
 
