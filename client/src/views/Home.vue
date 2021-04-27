@@ -426,9 +426,9 @@
                 }
             },
 
-            getFriends: async function(take: number = 10, skip: number = 0): Promise<Array<User> | undefined> {
+            getFriends: async function(take: number = 10, skip: number = 0, id: number = 1): Promise<Array<User> | undefined> {
                 try{
-                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip});
+                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip, id: id});
                     if(res.status == 200){
                         this.friendsCount += res.data.friends.length;
                         return res.data.friends;
@@ -920,8 +920,6 @@
                     return;
                 }
 
-                console.log(this.projectView);
-
                 if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
                     this.$flashMessage.show({
                         type: 'warning',
@@ -975,7 +973,7 @@
 
 
         mounted: async function(){
-            this.friends        = await this.getFriends(this.friendsRange, this.friendsCount);
+            this.friends        = await this.getFriends(this.friendsRange, this.friendsCount, this.$store.state.userIdentity!.id);
             this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
             this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
         },

@@ -1,0 +1,42 @@
+@import '../../index';
+
+.page-user-view{
+    
+    .page-wrap{
+        @extend %page-wrap !optional;
+        @include pageWrapperTheme($grayMain);
+        @include row(0px);
+        padding: 50px;
+        box-sizing: border-box;
+        grid-template-columns: 1fr minmax(400px, 600px);
+
+        .col-2{
+            width: 100%;
+            @include column(25px);
+            grid-template-rows: max-content minmax(auto, 600px) max-content;
+
+            h1{
+                text-align: left;
+            }
+
+            .friends-wrap{
+                width: 100%;
+                @include column(10px);
+                overflow-y: auto;
+
+                .friend{
+                    @extend %userItem;
+                }
+            }
+
+            .button-wrap{
+                @include flex(flex-start, center);
+            }
+        }
+    }
+
+    .btn{
+        @extend %btn !optional;
+        @include buttonTheme();
+    }
+}
