@@ -5,10 +5,55 @@
     .page-wrap{
         @extend %page-wrap !optional;
         @include pageWrapperTheme($grayMain);
-        @include row(0px);
-        padding: 50px;
+        @include row(60px);
+        padding: 50px 50px;
         box-sizing: border-box;
         grid-template-columns: 1fr minmax(400px, 600px);
+
+        .col-1{
+            @include column(25px);
+            grid-template-rows: max-content max-content auto;
+
+            .col-1-header{
+                text-align: left;
+            }
+
+            .col-1-options{
+                @extend %projectsSectionHeader;
+                
+
+                .search-header{
+
+                    @include row(20px);
+                    justify-content: left;
+
+                    form{
+                        width: 300px;
+                    }
+
+                    button{
+                        width: 100px;
+                        height: 100%;
+                    }
+                }
+            }
+
+            .projects-wrap{
+                padding: 2px;
+                box-sizing: border-box;
+                max-height: 550px;
+                overflow-y: auto;
+
+                table{
+                @extend %tableProjects !optional;
+                }
+
+                .projects-grid-wrap{
+                    @extend %gridProjects !optional;
+                }
+            }
+
+        }
 
         .col-2{
             width: 100%;
@@ -20,13 +65,15 @@
             }
 
             .friends-wrap{
-                width: 100%;
                 @include column(10px);
+                max-height: 600px;
+                width: 100%;
                 overflow-y: auto;
 
                 .friend{
                     @extend %userItem;
                 }
+
             }
 
             .button-wrap{

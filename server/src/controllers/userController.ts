@@ -68,8 +68,6 @@ export default class UserController{
         }catch(err){
             throw new Error(err);
         }  
-        
-        console.log(friends);
 
         res.status(200).send({friends: friends});
     }
@@ -133,7 +131,6 @@ export default class UserController{
     }
 
 
-    //! method for future
     private static async getById(req: Request, res: Response){
 
         interface POST{
