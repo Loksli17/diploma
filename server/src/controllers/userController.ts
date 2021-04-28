@@ -49,16 +49,17 @@ export default class UserController{
                     "`u`.`email` as email",
                     "`u`.`password` as password",
                     "`u`.`avatar` as avatar",
+                    "`u`.`status` as status"
                 ])
                 .innerJoinAndSelect('user', 'u', '((userId1 = u.id and u.id != :id) or (userId2 = u.id and u.id != :id))', {id: POST.id})
                 .where('userId1 = :id or userId2 = :id', {id: POST.id})
                 .offset(POST.skip)
                 .limit(POST.take)
+                .orderBy('`u`.status')
                 .getRawMany();
 
             friends.map((item) => {
                 let user: User = new User();
-
                 //! this is bad practice
                 item = User.cleanItem<typeof item>(item);
                 user.changeFields(item);

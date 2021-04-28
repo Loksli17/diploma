@@ -117,7 +117,7 @@
                         v-bind:className="'friend'"
                         v-bind:onlineStatus="true"
                         >
-                        </UserItem>
+                    </UserItem>
                 </div>     
 
                 <div class="button-wrap"><button @click="moreFriendsEvt" class="btn">More friends</button></div>       
