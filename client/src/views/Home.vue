@@ -66,8 +66,13 @@
                                         </div>
                                         
                                         <a href="" @click.prevent="projectViewEvt(project.id)">
+                                            <img :src="require('../assets/settings-icon.svg')" draggable="false">
+                                        </a>
+                                        
+                                        <a href="" @click.prevent="projectOpenEvt(project.id)">
                                             <img :src="require('../assets/view-icon.svg')" draggable="false">
                                         </a>
+
                                         <a href="" @click.prevent="projectEditEvt(project.id)">
                                             <img :src="require('../assets/edit-icon.svg')" draggable="false">
                                         </a>
@@ -98,9 +103,16 @@
                                         <div>
                                             <div>
                                                 <a href="" @click.prevent="projectViewEvt(project.id)">
+                                                    <img :src="require('../assets/settings-icon.svg')" draggable="false">
+                                                </a>
+                                            </div>
+                                            
+                                            <div>
+                                                <a href="" @click.prevent="projectOpenEvt(project.id)">
                                                     <img :src="require('../assets/view-icon.svg')" draggable="false">
                                                 </a>
                                             </div>
+
                                             <div>
                                                 <a href="" @click.prevent="projectEditEvt(project.id)">
                                                     <img :src="require('../assets/edit-icon.svg')" draggable="false">

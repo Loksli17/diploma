@@ -6,7 +6,16 @@
         </div>
 
         <div class="col">
-
+            <div class="tab-wrap">
+                <ul>
+                    <li v-for="tab in tabs" :key="tab.name">
+                        <router-link class="user-show-link" :to="'/project?id=' + tab.link">
+                            <span>{{tab.name}}</span>
+                        </router-link>
+                        <div class="close" @click="removeTab(tab)">&#10006;</div>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="col">
@@ -49,6 +58,12 @@
 <script lang="ts">
     import {defineComponent} from "vue";
     import User              from "../types/User";
+    import Project           from "../types/Project";
+
+    interface Tab{
+        name: string;
+        link: number;
+    }
 
     export default defineComponent({
 
@@ -56,6 +71,7 @@
             return{
                 showUserMenu: false,
                 user        : {} as User,
+                tabs        : [] as Array<Tab>,
             }           
         },
 
@@ -65,9 +81,30 @@
                 this.$emit("reload-page");
             },
 
-            hideUserMenu: function(){
+            hideUserMenu: function(): void{
                 this.showUserMenu = false;
             },
+
+            
+            addTab: function(project: Project): void{
+                
+                for(let i: number = 0; i < this.tabs.length; i++){
+                    if(this.tabs[i].link == project.id){
+                        //todo open project with this link
+                        return;
+                    }
+                }
+
+                const tab: Tab = {name: project.name, link: project.id};
+                this.tabs.push(tab);
+
+                //todo put new tab into vuex
+            },
+
+            removeTab: function(tab: Tab): void{
+                const ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
+                this.tabs.splice(ind, 1);
+            }
         },
 
         created: function(){

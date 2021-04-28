@@ -1,6 +1,6 @@
 <template>
     <div class="page-user-view" :key="statusPage">
-        <Menu v-on:reload-page="reloadPage"></Menu>
+        <Menu ref="globalMenu" v-on:reload-page="reloadPage"></Menu>
 
         <div class="page-wrap">
 
@@ -44,7 +44,7 @@
 
                         <div class="projects-grid-wrap" v-if="projectsGridView">
                             
-                            <div class="project" v-for="project in projects" :key="project.id">
+                            <div class="project" v-for="project in projects" :key="project.id" @click.prevent="projectOpenEvt(project)">
                                 <div class="project-wrap">
 
                                     <div class="project-img" :style="{backgroundImage: 'url(' + require(`../../assets/projects/img/${project.image}`)+ ')'}">
@@ -67,6 +67,10 @@
                                         <div class="login">
                                             <span :class="{own: project.isOwn}">{{project.author.login}}</span>
                                         </div>
+
+                                        <a href="" @click.prevent="projectOpenEvt(project)">
+                                            <img :src="require('../../assets/view-icon.svg')" draggable="false">
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -79,6 +83,7 @@
                                 <th>Project Name</th>
                                 <th>Last modified</th>
                                 <th>Author</th>
+                                <th>Options</th>
                             </tr>
                             <tbody>
                                 <tr v-for="project in projects" :key="project.id">
@@ -89,6 +94,15 @@
                                     <td>{{project.name}}</td>
                                     <td>{{project.dateOfEdit}}</td>
                                     <td :class="{own: project.isOwn}">{{project.author.login}}</td>
+                                    <td class="options">
+                                        <div>
+                                            <div>
+                                                <a href="" @click.prevent="projectOpenEvt(project)">
+                                                    <img :src="require('../../assets/view-icon.svg')" draggable="false">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -492,6 +506,12 @@
                     });
                     throw new Error(err);
                 }
+            },
+
+            projectOpenEvt: function(project: Project): void{
+                console.log(project)
+                const menu = this.$refs.globalMenu! as any;
+                menu.addTab(project);
             }
         },
 

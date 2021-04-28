@@ -2,6 +2,8 @@
 @import '../utils/backImage.scss';
 @import '../base/colors.scss';
 @import '../base/config.scss';
+@import '../utils/pseudoElement.scss';
+@import '../utils/layout/row.scss';
 
 
 .menu{
@@ -19,6 +21,59 @@
 
 .col:nth-child(1){
     @include flex(center, center);
+}
+
+.col:nth-child(2){
+    
+    .tab-wrap{
+        height: 100%;
+
+        ul{
+            width: max-content;
+            @include row(0px);
+            box-sizing: border-box;
+            height: inherit;
+
+            li{
+                list-style: none;
+                width: max-content;
+                height: inherit;
+                border-left: 1.5px solid;
+                position: relative;
+                
+                a{
+                    height: inherit;
+                    @include flex(center, center); 
+                    box-sizing: border-box;
+                    padding: 0px 15px;
+                    text-decoration: none;
+                    font-size: 18px;
+                    color: $black;
+                    font-weight: 600;
+                    background: $grayMain;
+                    overflow-y: auto;
+                }
+
+                div.close{
+                    @extend %pseudoElement;
+                    position: absolute;
+                    top: -2px;
+                    right: 5px;
+                    font-size: 17px;
+                    cursor: pointer;
+
+                    &:hover{
+                        transition: 0.4s;
+                        color: $blue;
+                    }
+                }
+
+                &:last-child{
+                    border-right: 1.5px solid;
+                }
+            }
+        }
+    }
 }
 
 .col:nth-child(3){
