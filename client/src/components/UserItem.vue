@@ -19,14 +19,14 @@
             </div>
         </div>
 
-        <!-- <transition name="userMenuShow"> -->
+        <transition name="userMenuShow">
             <div class="contex-menu" v-if="menuStatus" v-bind:style="{top: menuTop + 'px', left: menuLeft + 'px'}">
                 <router-link v-for="item in items" :key="item.key" class="item-link" :to="item.link + userData.id">
-                    <img src="" alt="">
+                    <img :src="require(`@/assets/${item.img}`)" alt="">
                     <span>{{item.value}}</span>
                 </router-link>
             </div>
-        <!-- </transition> -->
+        </transition>
 
     </div>
     

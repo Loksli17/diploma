@@ -141,6 +141,7 @@
                         v-bind:user="friend"
                         v-bind:className="'friend'"
                         v-bind:onlineStatus="true"
+                        v-bind:items="userContexMenuItems"
                         >
                     </UserItem>
                 </div>
@@ -323,7 +324,7 @@
     import ActionBack               from '../components/ActionBack.vue';
     import Form, {FormItem, Option} from '../components/Form.vue';
     import {VueDraggableNext}       from 'vue-draggable-next';
-    import UserItem                 from '../components/UserItem.vue';
+    import UserItem, {MenuUserItem} from '../components/UserItem.vue';
     
 
     export default defineComponent({
@@ -370,10 +371,17 @@
 
                 enabled : true,
                 dragging: false,
+
+                userContexMenuItems: [
+                    {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
+                    {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}, 
+                    {value: "Remove form friends", link: "", img: "remove-icon.svg"},
+                ] as Array<MenuUserItem>,
             }  
         },
 
-        methods: {
+
+        methods: { 
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {

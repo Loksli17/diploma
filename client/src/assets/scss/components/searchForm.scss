@@ -1,3 +1,7 @@
+@import '../utils/layout/row.scss';
+@import '../utils/flex.scss';
+@import '../base/colors.scss';
+
 
 %searchForm{
     @include row(15px);

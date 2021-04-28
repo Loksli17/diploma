@@ -1,3 +1,10 @@
+@import '../utils/layout/row.scss';
+@import '../utils/layout/column.scss';
+@import '../utils/flex.scss';
+@import '../utils/backImage.scss';
+@import '../base/colors.scss';
+
+
 %userItem{
     @include row(15px);
     grid-template-columns: 100px auto;
@@ -53,6 +60,31 @@
         right: 30px;
         background: $white;
         border: 2px solid $grayBorder;
-        
+
+        @include column(0px);
+        width: 250px;
+        z-index: 1;
+
+        .item-link{
+            padding: 25px 20px;
+            box-sizing: border-box;
+            text-align: left;
+            text-decoration: none;
+            color: black;
+
+            @include column(15px);
+           
+            span{
+                font-size: 17px;
+            }
+        }
+    }
+
+    .userMenuShow-enter-active, .userShow-leave-active {
+        transition: opacity 0.2s ease;
+    }
+
+    .userMenuShow-enter-from, .userShow-leave-to {
+        opacity: 0;
     }
 }

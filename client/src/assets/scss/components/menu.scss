@@ -1,7 +1,9 @@
 @import '../utils/flex.scss';
 @import '../utils/backImage.scss';
 @import '../base/colors.scss';
-    
+@import '../base/config.scss';
+
+
 .menu{
     display: grid;
     background: $white;

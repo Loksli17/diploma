@@ -166,7 +166,10 @@
                 pageUser        : {} as User | undefined,
                 friendshipStatus: 0 as number,
 
-                userContexMenuItems: [{value: "View profile", link: "/user/view?id=", img: ""}, {value: "Go to chat", link: "/chat?roomId=", img: ""}, {value: "delete", link: "", img: ""},] as Array<MenuUserItem>,
+                userContexMenuItems: [
+                    {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"}, 
+                    {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}
+                ] as Array<MenuUserItem>,
             }
         },
 
