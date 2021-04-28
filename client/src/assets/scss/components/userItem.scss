@@ -68,14 +68,30 @@
         .item-link{
             padding: 25px 20px;
             box-sizing: border-box;
-            text-align: left;
             text-decoration: none;
             color: black;
+            border-bottom: 2px solid $grayBorder;
 
-            @include column(15px);
+            @include row(15px);
+            grid-template-columns: max-content auto;
+            align-items: center;
            
             span{
                 font-size: 17px;
+                text-align: left;
+            }
+
+            img{
+                width: 30px;
+            }
+
+            &:hover{
+                transition: 0.4s;
+                background: $blueHover;
+            }
+
+            &:last-child{
+                border-bottom: 0px solid;
             }
         }
     }

@@ -20,7 +20,7 @@
         </div>
 
         <transition name="userMenuShow">
-            <div class="contex-menu" v-if="menuStatus" v-bind:style="{top: menuTop + 'px', left: menuLeft + 'px'}">
+            <div class="contex-menu" v-if="menuStatus" v-bind:style="{top: menuTop + 'px', left: menuLeft + 'px'}" @click="reloadParent">
                 <router-link v-for="item in items" :key="item.key" class="item-link" :to="item.link + userData.id">
                     <img :src="require(`@/assets/${item.img}`)" alt="">
                     <span>{{item.value}}</span>
@@ -83,15 +83,20 @@
         },
 
         methods: {
-            hideUserMenu: function(){
+
+            reloadParent: function(): void{
+                this.hideUserMenu();
+                this.$emit('reload-page');
+            },
+
+            hideUserMenu: function(): void{
                 this.menuStatus = false;
             },
-            showUserMenu: function(e: any){
+
+            showUserMenu: function(e: any): void{
                 this.menuStatus = true;
                 this.menuTop    = e.clientY;
                 this.menuLeft   = e.clientX;
-
-                console.log(this.menuTop, this.menuLeft)
             }
         },
         

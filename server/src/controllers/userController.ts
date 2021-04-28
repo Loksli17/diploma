@@ -27,7 +27,7 @@ export default class UserController{
         let
             postErrors: Array<keyof POST>  = [],
             POST      : POST               = req.body,
-            friends   : Array<any | User> = [];
+            friends   : Array<User> = [];
 
         postErrors = PostModule.checkData(POST, ['take', 'skip', 'id']);
 
@@ -39,8 +39,7 @@ export default class UserController{
         try{
             friends = await getRepository(User).createQueryBuilder('user')
                 .innerJoin('user_has_user', 'uhu', 'uhu.userId1 = user.id or uhu.userId2 = user.id')
-                .where('uhu.userId1 = :id || uhu.userId2 = :id', {id: POST.id})
-                .andWhere('user.id != :id', {id: POST.id})
+                .where('(uhu.userId1 = :id || uhu.userId2 = :id) and user.id != :id', {id: POST.id})
                 .skip(POST.skip)
                 .take(POST.take)
                 .orderBy('user.status')
@@ -48,7 +47,7 @@ export default class UserController{
 
         }catch(err){
             throw new Error(err);
-        }  
+        }
 
         res.status(200).send({friends: friends});
     }

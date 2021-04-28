@@ -1,6 +1,6 @@
 <template>
-    <div class="page-user-view">
-        <Menu></Menu>
+    <div class="page-user-view" :key="statusPage">
+        <Menu v-on:reload-page="reloadPage"></Menu>
 
         <div class="page-wrap">
 
@@ -117,6 +117,7 @@
                         v-bind:className="'friend'"
                         v-bind:onlineStatus="true"
                         v-bind:items="userContexMenuItems"
+                        v-on:reload-page="reloadPage"
                         >
                     </UserItem>
                 </div>     
@@ -170,10 +171,29 @@
                     {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"}, 
                     {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}
                 ] as Array<MenuUserItem>,
+
+                statusPage: 0 as number,
             }
         },
 
         methods: {
+
+            initPage: async function(): Promise<void>{
+                this.pageUser         = await this.getPageUser();
+                this.projects         = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                this.amountProjects   = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
+                this.friendshipStatus = await this.checkFriends();
+
+                this.friendsCount  = 0;
+                this.projectsCount = 0;
+
+                console.log(this.friends);
+            },
+
+            reloadPage: async function(): Promise<void>{
+                this.initPage();
+            },
 
             resetSearch: async function(): Promise<void>{
 
@@ -184,9 +204,9 @@
                 this.projects            = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
             },
 
-            getFriends: async function(take: number = 10, skip: number = 0, id: number = 1): Promise<Array<User> | undefined> {
+            getFriends: async function(take: number = 10, skip: number = 0): Promise<Array<User> | undefined> {
                 try{
-                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip, id: id});
+                    const res = await this.$axios.post('user/get-friends', {take: take, skip: skip, id: this.$route.query.id});
                     if(res.status == 200){
                         this.friendsCount += res.data.friends.length;
                         return res.data.friends;
@@ -420,9 +440,8 @@
                     return 2;
                 }
                 
-
                 try {
-                    const res = await this.$axios.post('/user/checkFriends', {userId1: this.$store.state.userIdentity!.id, userId2: this.$route.query.id});
+                    const res = await this.$axios.post('/user/check-friends', {userId1: this.$store.state.userIdentity!.id, userId2: this.$route.query.id});
 
                     if(res.status == 200){
                         return res.data.friendshipStatus;
@@ -446,20 +465,7 @@
         },
 
         mounted: async function(){
-            this.pageUser       = await this.getPageUser();
-            this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-            this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-        },
-
-        created: async function(){
-            
-            // if(this.$route.query.id == undefined){
-            //     this.$router.push('/404');
-            //     return;
-            // }
-        
-            this.friendshipStatus = await this.checkFriends();
-            this.friends          = await this.getFriends(this.friendsRange, this.friendsCount, Number (this.$route.query.id));
+            this.initPage();
         },
         
     });
