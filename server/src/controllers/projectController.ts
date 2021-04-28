@@ -1,15 +1,14 @@
 import {Router, Request, Response} from 'express';
 
-import {Any, FindOperator, getRepository, InsertResult}             from 'typeorm';
-import Project                     from '../models/Project';
-import User                        from '../models/User';
-import ErrorMessage                from '../libs/error';
-import PostModule                  from '../libs/post';
-import ViewStatus                  from '../models/ViewStatus';
-import {validate, ValidationError} from 'class-validator';
-import Parser                      from '../libs/parser';
-import { brotliDecompressSync } from 'zlib';
-import UserHasProject from '../models/UserHasProject';
+import {getRepository, InsertResult} from 'typeorm';
+import Project                       from '../models/Project';
+import User                          from '../models/User';
+import ErrorMessage                  from '../libs/error';
+import PostModule                    from '../libs/post';
+import ViewStatus                    from '../models/ViewStatus';
+import {validate, ValidationError}   from 'class-validator';
+import Parser                        from '../libs/parser';
+import UserHasProject                from '../models/UserHasProject';
 
 
 export default class ProjectController{
@@ -42,10 +41,13 @@ export default class ProjectController{
             where = "authorId = :id";
         }
 
+        console.log(POST.userId);
+
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
-                .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
+                .andWhere("uhp.userId = :id", {id: POST.userId})
+                .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
                 .leftJoinAndSelect("project.viewStatus", "viewStatus")
                 .skip(POST.skip)
@@ -93,7 +95,8 @@ export default class ProjectController{
         try{
             count = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
-                .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
+                .andWhere("uhp.userId = :id", {id: POST.userId})
+                .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
                 .skip(POST.skip)
                 .take(POST.take)
