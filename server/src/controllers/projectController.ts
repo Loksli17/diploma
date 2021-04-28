@@ -303,7 +303,6 @@ export default class ProjectController{
             .leftJoinAndSelect("project.viewStatus", "viewStatus")
             .getOne();
 
-        console.log(project)
 
         res.status(201).json({project: project, msg: 'Project has changed successfully'});
     }

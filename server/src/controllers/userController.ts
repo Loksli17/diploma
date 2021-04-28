@@ -387,6 +387,7 @@ export default class UserController{
             throw new Error(err);
         }
 
+        //!delete from
         console.log(userHasUser);
 
         res.status(200).send({msg: friendshipStatus});
