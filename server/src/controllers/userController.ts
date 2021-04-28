@@ -355,7 +355,7 @@ export default class UserController{
     }
 
 
-    public static async checkFriends(req: Request, res: Response){
+    public static async checkFriendship(req: Request, res: Response){
         interface POST{
             userId1: number,
             userId2: number,
@@ -387,10 +387,57 @@ export default class UserController{
             throw new Error(err);
         }
 
-        //!delete from
-        console.log(userHasUser);
+        friendshipStatus = userHasUser != undefined ? 1 : 0;
 
-        res.status(200).send({msg: friendshipStatus});
+        res.status(200).send({friendshipStatus: friendshipStatus});
+    }
+
+
+    public static async removeFriendship(req: Request, res: Response){
+        
+        interface POST{
+            currentUserId: number,
+            friendId     : number,
+        }
+
+        let
+            postErrors : Array<keyof POST>        = [],
+            POST       : POST                     = req.body,
+            userHasUser: UserHasUser | undefined  = undefined;
+
+        postErrors = PostModule.checkData(POST, ['currentUserId', 'friendId']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try{
+            userHasUser = await getRepository(UserHasUser).createQueryBuilder()
+                .where(
+                    "(userId1 = :id1 && userId2 = :id2) || (userId1 = :id2 && userId2 = :id1)", 
+                    {id1: POST.currentUserId, id2: POST.friendId}
+                )
+                .getOne();
+
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
+
+        if(userHasUser == undefined){
+            res.status(400).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUserId} and ${POST.friendId}`)});
+            return;
+        }
+
+        try {
+            let result = await getRepository(UserHasUser).remove(userHasUser);
+            res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUserId} and ${POST.friendId}`)});
+            console.log(result);
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            throw new Error(err);
+        }
     }
 
 
@@ -402,7 +449,8 @@ export default class UserController{
         this.router.post('/get-id',               this.getById);
         this.router.post('/edit-password',        this.editPassword);
         this.router.post('/search-collaborators', this.searchCollaborators);
-        this.router.post('/check-friends',        this.checkFriends);
+        this.router.post('/check-friends',        this.checkFriendship);
+        this.router.post('/remove-friends',       this.removeFriendship);
         return this.router;
     }
 }

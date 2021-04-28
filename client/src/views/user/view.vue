@@ -8,6 +8,8 @@
 
                 <div class="col-1-header">
                     <h1>{{pageUser.lastName}} &nbsp;{{pageUser.firstName}} &nbsp;({{pageUser.login}})</h1>
+                    <button class="btn del-friend-btn" @click="removeFriendEvt" v-if="friendshipStatus == 1"></button>
+                    <button class="btn add-friend-btn" v-if="!friendshipStatus"></button>
                 </div>
 
                 <div class="col-1-options">
@@ -188,7 +190,7 @@
                 this.friendsCount  = 0;
                 this.projectsCount = 0;
 
-                console.log(this.amountProjects);
+                console.log(this.friendshipStatus);
             },
 
             reloadPage: async function(): Promise<void>{
@@ -462,6 +464,35 @@
                     throw new Error(err);
                 }
             },
+
+
+            removeFriendEvt: async function(): Promise<void>{
+                try {
+                    const res = await this.$axios.post('/user/remove-friends', {currentUserId: this.$store.state.userIdentity!.id, friendId: this.$route.query.id});
+
+                    if(res.status == 200){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            image: require("../../assets/flash/success.svg"),
+                            text: `User ${this.pageUser!.login} was removed from your friend list` ,
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../../assets/flash/fail.svg"),
+                            text: `Error with query`,
+                        });
+                        throw new Error();
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flash/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    throw new Error(err);
+                }
+            }
         },
 
         mounted: async function(){

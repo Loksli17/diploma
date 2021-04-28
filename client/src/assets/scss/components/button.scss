@@ -48,3 +48,26 @@
         }
     }
 }
+
+%btn-minus{
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 20px;
+    background: $red;
+
+    &:before{
+        @extend %pseudoElement;
+        @include pseudoElementTheme(23px, 2px, $white);
+        top: 19px;
+        left: 9px;
+    }
+
+    &:hover{
+        &:before{
+            // transition: 0.4s;
+            height: 4px;
+            top: 18px;
+        }
+    }
+}

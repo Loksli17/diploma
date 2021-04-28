@@ -15,7 +15,19 @@
             grid-template-rows: max-content max-content auto;
 
             .col-1-header{
+                @include row(20px);
+                grid-template-columns: max-content max-content;
+                align-items: center;
                 text-align: left;
+                margin-bottom: 15px;
+
+                .add-friend-btn{
+                    @extend %btn-plus !optional;
+                }
+
+                .del-friend-btn{
+                    @extend %btn-minus !optional;
+                }
             }
 
             .col-1-options{
