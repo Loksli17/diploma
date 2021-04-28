@@ -188,7 +188,7 @@
                 this.friendsCount  = 0;
                 this.projectsCount = 0;
 
-                console.log(this.friends);
+                console.log(this.amountProjects);
             },
 
             reloadPage: async function(): Promise<void>{
@@ -223,7 +223,7 @@
 
             getAmountProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<number | undefined> {
                 try {
-                    const res = await this.$axios.post('project/get-amount-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    const res = await this.$axios.post('project/get-amount-projects', {take: take, skip: skip, userId: this.$route.query.id, filter: filter});
                     if(res.status == 200){
                         return res.data.amount;
                     }
