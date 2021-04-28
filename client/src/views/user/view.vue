@@ -509,7 +509,6 @@
             },
 
             projectOpenEvt: function(project: Project): void{
-                console.log(project)
                 const menu = this.$refs.globalMenu! as any;
                 menu.addTab(project);
             }

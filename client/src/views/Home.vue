@@ -1,6 +1,6 @@
 <template>
     <div class="page-home">
-        <Menu></Menu>
+        <Menu ref="globalMenu"></Menu>
         
         <div class="page-wrap">
 
@@ -41,7 +41,7 @@
 
                         <div class="projects-grid-wrap" v-if="projectsGridView">
                             
-                            <div class="project" v-for="project in projects" :key="project.id">
+                            <div class="project" v-for="project in projects" :key="project.id" @click.prevent="projectOpenEvt(project)">
                                 <div class="project-wrap">
 
                                     <div class="project-img" :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}">
@@ -69,7 +69,7 @@
                                             <img :src="require('../assets/settings-icon.svg')" draggable="false">
                                         </a>
                                         
-                                        <a href="" @click.prevent="projectOpenEvt(project.id)">
+                                        <a href="" @click.prevent="projectOpenEvt(project)">
                                             <img :src="require('../assets/view-icon.svg')" draggable="false">
                                         </a>
 
@@ -108,7 +108,7 @@
                                             </div>
                                             
                                             <div>
-                                                <a href="" @click.prevent="projectOpenEvt(project.id)">
+                                                <a href="" @click.prevent="projectOpenEvt(project)">
                                                     <img :src="require('../assets/view-icon.svg')" draggable="false">
                                                 </a>
                                             </div>
@@ -981,6 +981,11 @@
                 this.projectsTableView  = false;
                 this.projectsGridView   = true;
             },
+
+            projectOpenEvt: function(project: Project): void{
+                const menu = this.$refs.globalMenu! as any;
+                menu.addTab(project);
+            }
         },
 
 

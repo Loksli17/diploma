@@ -6,6 +6,7 @@ const store = createStore({
     state: {
         userIdentity: localStorage.getItem('userIdentity') == "undefined" ? null : JSON.parse(localStorage.getItem('userIdentity')!) as User | null,
         jwt         : localStorage.getItem('jwt') == "undefined" ? null : localStorage.getItem('jwt') as string | null,
+        tabs        : localStorage.getItem('tabs') == "undefined" ? null : JSON.parse(localStorage.getItem('tabs')!) as Array<any> | null,
     },
 
     mutations: {
@@ -26,6 +27,15 @@ const store = createStore({
                 localStorage.setItem('jwt', jwt);   
             }
             state.jwt = jwt;
+        },
+
+        setTabs: function(state, tabs: Array<any> | null){
+            if(tabs == null){
+                localStorage.setItem('tabs', "undefined");
+            }else{
+                localStorage.setItem('tabs', JSON.stringify(tabs));   
+            }
+            state.tabs = JSON.parse(JSON.stringify(tabs));
         }
     }
 });

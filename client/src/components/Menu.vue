@@ -2,14 +2,14 @@
     <div class="menu">
 
         <div class="col">
-            <router-link class="user-show-link" :to="'/'"><img :src="require(`../assets/home-icon.svg`)" alt=""></router-link>
+            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/'"><img :src="require(`../assets/home-icon.svg`)" alt=""></router-link>
         </div>
 
         <div class="col">
             <div class="tab-wrap">
                 <ul>
-                    <li v-for="tab in tabs" :key="tab.name">
-                        <router-link class="user-show-link" :to="'/project?id=' + tab.link">
+                    <li v-for="(tab, ind) in tabs" :key="tab.name" >
+                        <router-link @click="setActiveTab(ind)" :class="{'active-tab': tab.isActive}" class="user-show-link" :to="'/project?id=' + tab.link">
                             <span>{{tab.name}}</span>
                         </router-link>
                         <div class="close" @click="removeTab(tab)">&#10006;</div>
@@ -35,16 +35,16 @@
                 <div v-if="showUserMenu" class="user-menu">
                     <ul>
                         <li>
-                            <router-link class="user-show-link" :to="'/'">Home</router-link>
+                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/'">Home</router-link>
                         </li>
                         <li>
-                            <router-link class="user-show-link" :to="'/user/edit'">Settings</router-link>
+                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/user/edit'">Settings</router-link>
                         </li>
                         <li>
                             <router-link class="user-show-link" @click="reloadParent" :to="`/user/view?id=${user.id}`">View myself page</router-link>
                         </li>
                         <li>
-                            <router-link class="user-show-link" :to="'/logout'">Log out</router-link>
+                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/logout'">Log out</router-link>
                         </li>
                     </ul>
                 </div>
@@ -56,13 +56,15 @@
 
 
 <script lang="ts">
+    declare const require: any
     import {defineComponent} from "vue";
     import User              from "../types/User";
     import Project           from "../types/Project";
 
-    interface Tab{
+    export interface Tab{
         name: string;
         link: number;
+        isActive: boolean;
     }
 
     export default defineComponent({
@@ -78,6 +80,7 @@
         methods: {
 
             reloadParent: function(): void{
+                this.cleanActiveTab();
                 this.$emit("reload-page");
             },
 
@@ -95,16 +98,47 @@
                     }
                 }
 
-                const tab: Tab = {name: project.name, link: project.id};
-                this.tabs.push(tab);
+                if(this.tabs.length == 10){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: `You cannot delete this project`,
+                    });
+                    return;
+                }
 
-                //todo put new tab into vuex
+                const tab: Tab = {name: project.name, link: project.id, isActive: false};
+                this.tabs.push(tab);
+                this.$store.commit('setTabs', this.tabs);
+
             },
 
             removeTab: function(tab: Tab): void{
                 const ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
                 this.tabs.splice(ind, 1);
-            }
+                this.$store.commit('setTabs', this.tabs);
+            },
+
+            cleanActiveTab: function(): void{
+                this.tabs.map((item) => {
+                    item.isActive = false;
+                    return item;
+                });
+            },
+
+            setActiveTab(ind: number): void{
+                const newTab: Tab = this.tabs[ind];
+
+                this.tabs.map((item) => {
+                    item.isActive = false;
+                    return item;
+                });
+                
+                newTab.isActive = true;
+                this.tabs.splice(ind, 1, newTab);
+                
+                console.log(this.tabs);
+            },
         },
 
         created: function(){
@@ -112,6 +146,10 @@
                 return;
             }
             this.user = this.$store.state.userIdentity;
+
+            if(this.$store.state.tabs != null){
+                this.tabs = this.$store.state.tabs;
+            }
         },
         
     });
