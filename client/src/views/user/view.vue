@@ -116,6 +116,7 @@
                         v-bind:user="friend"
                         v-bind:className="'friend'"
                         v-bind:onlineStatus="true"
+                        v-bind:items="userContexMenuItems"
                         >
                     </UserItem>
                 </div>     
@@ -129,12 +130,12 @@
 
 <script lang="ts">
     declare const require: any
-    import {defineComponent} from 'vue';
-    import Menu              from '../../components/Menu.vue';
-    import User              from '../../types/User';
-    import UserItem          from '../../components/UserItem.vue';
-    import Project           from '../../types/Project';
-    import Pagination        from '../../components/Pagination.vue';
+    import {defineComponent}        from 'vue';
+    import Menu                     from '../../components/Menu.vue';
+    import User                     from '../../types/User';
+    import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
+    import Project                  from '../../types/Project';
+    import Pagination               from '../../components/Pagination.vue';
 
  
     export default defineComponent({
@@ -164,6 +165,8 @@
 
                 pageUser        : {} as User | undefined,
                 friendshipStatus: 0 as number,
+
+                userContexMenuItems: [{value: "View profile", link: "/user/view?id=", img: ""}, {value: "Go to chat", link: "/chat?roomId=", img: ""}, {value: "delete", link: "", img: ""},] as Array<MenuUserItem>,
             }
         },
 

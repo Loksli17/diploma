@@ -137,21 +137,12 @@
                 </div>
 
                 <div class="row friends-wrap">
-                    <div class="friend" v-for="friend in friends" :key='friend.id'>
-                        <div>
-                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${friend.avatar}`) + ')'}"></div>
-                        </div>
-
-                        <div class="">
-                            <div class="login">
-                                <span>{{friend.login}}</span>
-                            </div>
-                            <div>
-                                <span v-if="friend.status" class="online">online</span>
-                                <span v-else class="offline">offline</span>
-                            </div>
-                        </div>
-                    </div>
+                    <UserItem v-for="friend in friends" :key="friend.id" 
+                        v-bind:user="friend"
+                        v-bind:className="'friend'"
+                        v-bind:onlineStatus="true"
+                        >
+                    </UserItem>
                 </div>
 
                 <div class="row">
@@ -331,7 +322,8 @@
     import Pagination               from '../components/Pagination.vue';
     import ActionBack               from '../components/ActionBack.vue';
     import Form, {FormItem, Option} from '../components/Form.vue';
-    import {VueDraggableNext}       from 'vue-draggable-next'
+    import {VueDraggableNext}       from 'vue-draggable-next';
+    import UserItem                 from '../components/UserItem.vue';
     
 
     export default defineComponent({
@@ -1011,6 +1003,7 @@
             ActionBack,
             Form,
             draggable: VueDraggableNext,
+            UserItem,
         },
     });
 </script>

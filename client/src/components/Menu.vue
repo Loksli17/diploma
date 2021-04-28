@@ -60,7 +60,7 @@
         },
 
         methods: {
-            hideUserMenu: function(e: any){
+            hideUserMenu: function(){
                 this.showUserMenu = false;
             }
         },

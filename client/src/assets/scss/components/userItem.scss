@@ -46,4 +46,13 @@
             @extend %btn-plus !optional;
         }
     }
+
+    .contex-menu{
+        position: fixed;
+        top: 600px;
+        right: 30px;
+        background: $white;
+        border: 2px solid $grayBorder;
+        
+    }
 }

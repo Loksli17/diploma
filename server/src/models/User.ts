@@ -53,20 +53,5 @@ export default class User{
 
     @ManyToMany(() => Project, project => project.users)
     public projects?: Array<Project> | undefined;
-
-
-    public static cleanItem<T extends Object>(item: T): T{
-        let userProps: Array<string> = ['id', 'firstName', 'email', 'lastName', 'password', 'status', 'login', 'avatar'];
-
-        for(let prop in item){
-            if(Object.prototype.hasOwnProperty.call(item, prop)){
-                if(!userProps.includes(prop)){
-                    delete item[prop];
-                }
-            }
-        }
-        
-        return item;
-    }
 }
 

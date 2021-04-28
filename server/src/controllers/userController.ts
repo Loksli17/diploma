@@ -16,8 +16,6 @@ export default class UserController{
 
     private static router: Router = Router();
 
-
-    //! THIS API IS SOOOO BAD (MAY BE REFACTOR?) (it just works, but it is f***)
     private static async getFriends(req: Request, res: Response){
         
         interface POST{
@@ -39,32 +37,14 @@ export default class UserController{
         }
 
         try{
-            //! bad mTm query try to refactor it later with two join operartors
-            friends = await getRepository(UserHasUser).createQueryBuilder()
-                .select([
-                    "`u`.`id` as id",
-                    "`u`.`lastName` as lastName",
-                    "`u`.`firstName` as firstName",
-                    "`u`.`login` as login",
-                    "`u`.`email` as email",
-                    "`u`.`password` as password",
-                    "`u`.`avatar` as avatar",
-                    "`u`.`status` as status"
-                ])
-                .innerJoinAndSelect('user', 'u', '((userId1 = u.id and u.id != :id) or (userId2 = u.id and u.id != :id))', {id: POST.id})
-                .where('userId1 = :id or userId2 = :id', {id: POST.id})
-                .offset(POST.skip)
-                .limit(POST.take)
-                .orderBy('`u`.status')
-                .getRawMany();
-
-            friends.map((item) => {
-                let user: User = new User();
-                //! this is bad practice
-                item = User.cleanItem<typeof item>(item);
-                user.changeFields(item);
-                return user;
-            });
+            friends = await getRepository(User).createQueryBuilder('user')
+                .innerJoin('user_has_user', 'uhu', 'uhu.userId1 = user.id or uhu.userId2 = user.id')
+                .where('uhu.userId1 = :id || uhu.userId2 = :id', {id: POST.id})
+                .andWhere('user.id != :id', {id: POST.id})
+                .skip(POST.skip)
+                .take(POST.take)
+                .orderBy('user.status')
+                .getMany();
 
         }catch(err){
             throw new Error(err);
@@ -117,12 +97,12 @@ export default class UserController{
 
         try{
             users = await getRepository(User).createQueryBuilder()
-                    .where('id not in (:...ids)', {ids: POST.collabsIds})
-                    .andWhere(new Brackets(qb => {
-                        qb.where('email like :data', {data: `%${POST.searchData}%`})
-                        .orWhere('login like :data', {data: `%${POST.searchData}%`})
-                    }))
-                    .getMany();
+                .where('id not in (:...ids)', {ids: POST.collabsIds})
+                .andWhere(new Brackets(qb => {
+                    qb.where('email like :data', {data: `%${POST.searchData}%`})
+                    .orWhere('login like :data', {data: `%${POST.searchData}%`})
+                }))
+                .getMany();
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
@@ -397,11 +377,12 @@ export default class UserController{
 
         try{
             userHasUser = await getRepository(UserHasUser).createQueryBuilder()
-                            .where(
-                                "(userId1 = :id1 && userId2 = :id2) || (userId1 = :id2 && userId2 = :id1)", 
-                                {id1: POST.userId1, id2: POST.userId2}
-                            )
-                            .getOne();
+                .where(
+                    "(userId1 = :id1 && userId2 = :id2) || (userId1 = :id2 && userId2 = :id1)", 
+                    {id1: POST.userId1, id2: POST.userId2}
+                )
+                .getOne();
+
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
