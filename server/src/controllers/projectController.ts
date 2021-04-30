@@ -70,8 +70,6 @@ export default class ProjectController{
     private static async getAmountProjects(req: Request, res: Response){
 
         interface POST{
-            take  : number;
-            skip  : number;
             userId: number;
             filter: number | boolean;
         }
@@ -82,7 +80,7 @@ export default class ProjectController{
             POST      : POST              = req.body,
             count     : number            = 0;
 
-        postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId']);
+        postErrors = PostModule.checkData(POST, ['filter', 'userId']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -102,8 +100,6 @@ export default class ProjectController{
                 }))
                 .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
-                .skip(POST.skip)
-                .take(POST.take)
                 .orderBy('project.dateOfEdit', 'DESC')
                 .getCount();
         }catch(err){

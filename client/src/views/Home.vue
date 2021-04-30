@@ -144,7 +144,9 @@
 
             <div class="aside">
                 <div class="row">
-                    <button class="btn new-friend-btn"></button>
+                    <router-link to="/user/addFriends">
+                        <button class="btn new-friend-btn"></button>
+                    </router-link>
                     <div><h1>Friends</h1></div>
                 </div>
 
@@ -422,9 +424,9 @@
                 }
             },
 
-            getAmountProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<number | undefined> {
+            getAmountProjects: async function(filter: number | boolean = true): Promise<number | undefined> {
                 try {
-                    const res = await this.$axios.post('project/get-amount-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    const res = await this.$axios.post('project/get-amount-projects', {userId: this.$store.state.userIdentity!.id, filter: filter});
                     if(res.status == 200){
                         return res.data.amount;
                     }
@@ -544,7 +546,7 @@
 
                 const 
                     newProjects: Array<Project> | undefined = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter),
-                    amountProjects: number | undefined      = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    amountProjects: number | undefined      = await this.getAmountProjects(this.projectsFilter);
                 
                 if(newProjects == undefined){
                     this.$flashMessage.show({
@@ -991,8 +993,8 @@
 
         mounted: async function(){
             this.friends        = await this.getFriends(this.friendsRange, this.friendsCount, this.$store.state.userIdentity!.id);
-            this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter)
-            this.amountProjects = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+            this.projects       = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+            this.amountProjects = await this.getAmountProjects(this.projectsFilter);
         },
 
 

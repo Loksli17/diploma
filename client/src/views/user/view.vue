@@ -197,7 +197,7 @@
             initPage: async function(): Promise<void>{
                 this.pageUser         = await this.getPageUser();
                 this.projects         = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-                this.amountProjects   = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                this.amountProjects   = await this.getAmountProjects(this.projectsFilter);
                 this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
                 this.friendshipStatus = await this.checkFriends();
 
@@ -237,9 +237,9 @@
                 }
             },
 
-            getAmountProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<number | undefined> {
+            getAmountProjects: async function(filter: number | boolean = true): Promise<number | undefined> {
                 try {
-                    const res = await this.$axios.post('project/get-amount-projects', {take: take, skip: skip, userId: this.$route.query.id, filter: filter});
+                    const res = await this.$axios.post('project/get-amount-projects', {userId: this.$route.query.id, filter: filter});
                     if(res.status == 200){
                         return res.data.amount;
                     }
@@ -399,7 +399,7 @@
 
                 const 
                     newProjects: Array<Project> | undefined = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter),
-                    amountProjects: number | undefined      = await this.getAmountProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                    amountProjects: number | undefined      = await this.getAmountProjects(this.projectsFilter);
                 
                 if(newProjects == undefined){
                     this.$flashMessage.show({
