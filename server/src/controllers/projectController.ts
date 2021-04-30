@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 
-import {getRepository, InsertResult} from 'typeorm';
+import {Brackets, getRepository, InsertResult} from 'typeorm';
 import Project                       from '../models/Project';
 import User                          from '../models/User';
 import ErrorMessage                  from '../libs/error';
@@ -44,8 +44,10 @@ export default class ProjectController{
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
-                .andWhere("uhp.userId = :id", {id: POST.userId})
-                .orWhere("project.authorId = :id", {id: POST.userId})
+                .andWhere(new Brackets(qb => {
+                    qb.where("uhp.userId = :id", {id: POST.userId})
+                    .orWhere("project.authorId = :id", {id: POST.userId})
+                }))
                 .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
                 .leftJoinAndSelect("project.viewStatus", "viewStatus")
@@ -94,8 +96,10 @@ export default class ProjectController{
         try{
             count = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
-                .andWhere("uhp.userId = :id", {id: POST.userId})
-                .orWhere("project.authorId = :id", {id: POST.userId})
+                .andWhere(new Brackets(qb => {
+                    qb.where("uhp.userId = :id", {id: POST.userId})
+                    .orWhere("project.authorId = :id", {id: POST.userId})
+                }))
                 .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
                 .skip(POST.skip)
@@ -133,7 +137,11 @@ export default class ProjectController{
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
                 .where('project.name like :name', {name: `%${POST.searchData}%`})
-                .leftJoin('user_has_project', 'uhp', 'uhp.userId = :id', {id: POST.userId})
+                .andWhere(new Brackets(qb => {
+                    qb.where("uhp.userId = :id", {id: POST.userId})
+                    .orWhere("project.authorId = :id", {id: POST.userId})
+                }))
+                .leftJoin('user_has_project', 'uhp', 'uhp.projectId = project.id')
                 .leftJoinAndSelect("project.author", "user")
                 .leftJoinAndSelect("project.viewStatus", "viewStatus")
                 .getMany();

@@ -299,7 +299,7 @@
 
                 try{
                     const 
-                        res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$store.state.userIdentity!.id}),
+                        res = await this.$axios.post('project/search-project', {searchData: this.searchValueProject, userId: this.$route.query.id}),
                         projects: Array<Project> = res.data.projects;
 
                     if(!projects.length){
