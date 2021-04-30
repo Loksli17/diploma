@@ -124,20 +124,18 @@
                     item.isActive = false;
                     return item;
                 });
+
+                this.$store.commit('setTabs', this.tabs);
             },
 
             setActiveTab(ind: number): void{
-                const newTab: Tab = this.tabs[ind];
 
-                this.tabs.map((item) => {
-                    item.isActive = false;
+                this.tabs.map((item: Tab) => {
+                    item.isActive = item.link == this.tabs[ind].link;
                     return item;
                 });
-                
-                newTab.isActive = true;
-                this.tabs.splice(ind, 1, newTab);
-                
-                console.log(this.tabs);
+
+                this.$store.commit('setTabs', this.tabs);
             },
         },
 
