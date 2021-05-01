@@ -108,6 +108,13 @@
             overloadParseResult: {
                 type: Boolean,
             },
+            overloadSendData: {
+                type: Boolean,
+            },
+            startData: {
+                type   : Object,
+                default: undefined,
+            },
             rows: {
                 default : [], 
                 type    : Array as () => Array<Array<FormItem>>,
@@ -179,10 +186,20 @@
                         this.formData[propsToSend[i].name] = propsToSend[i].value;
                     }
                 }
+
+                if(this.startData != undefined){
+                   for(let key in this.startData){
+                       this.formData[key] = this.startData[key];
+                   }
+                }
+
+                console.log(this.formData);
             },
 
-
             sendAxios: async function(){
+
+                this.$emit('before-send');
+
                 try {
                     this.result = await this.$axios.post(this.action, JSON.stringify(this.formData), {
                         headers: config.headers,

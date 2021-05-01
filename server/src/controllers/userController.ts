@@ -10,6 +10,8 @@ import fs                          from 'fs';
 import crypto                      from 'crypto-js';
 import PostModule                  from '../libs/post';
 import UserHasUser from '../models/UserHasUser';
+import { ESRCH } from 'constants';
+import { constants } from 'buffer';
 
 
 export default class UserController{
@@ -52,26 +54,122 @@ export default class UserController{
         res.status(200).send({friends: friends});
     }
 
+
+    private static async getUsers(req: Request, res: Response){
+        interface POST{
+            take: number,
+            skip: number,
+        }
+
+        let
+            postErrors: Array<keyof POST>  = [],
+            POST      : POST               = req.body,
+            users     : Array<User> = [];
+
+        postErrors = PostModule.checkData(POST, ['take', 'skip']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            users = await getRepository(User).createQueryBuilder()
+                .skip(POST.skip)
+                .take(POST.take)
+                .getMany();
+
+        }catch(err){
+            throw new Error(err);
+        }
+
+        res.status(200).send({users: users});
+    }
+
+    
+    private static async getAmountUsers(req: Request, res: Response){
+
+        let amount: number = 0;
+
+        try {
+            amount = await getRepository(User).count();
+        }catch(err){
+            throw new Error(err);
+        }
+
+        console.log(amount);
+
+        res.status(200).send({amount: amount});
+    }
+
     
     private static async searchUser(req: Request, res: Response){
 
         interface POST{
-            login?: string;
-            id   ?: number;
-            email?: string;
+            user: {
+                login    : string;
+                email    : string;
+                firstName: string;
+                lastName : string;
+            },
+            take: number,
+            skip: number,
         }
 
-        // TODO DON'T FORGET ABOUT LIKE
         let 
             POST      : POST              = req.body,
             postErrors: Array<keyof POST> = [],
+            amount    : number            = 0,
+            whereCond : string            = '',
             users     : Array<User>       = [];
-            
-        users = await getRepository(User).createQueryBuilder()
-                .where('user.login = :login', {login: POST.login})
-                .getMany();
 
-        res.status(200).send({users: users});
+        postErrors = PostModule.checkData<POST>(POST, ['user', 'take', 'skip']);
+
+        console.log(POST);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        for(const [key, value] of Object.entries(POST.user)){
+            if(value != "") whereCond += ` ${key} like :${key} and`;
+        }
+
+        whereCond = whereCond.substr(0, whereCond.length - 4);
+        console.log(whereCond);
+
+        try {
+            users = await getRepository(User).createQueryBuilder()
+                .where(whereCond, {
+                    login    : `%${POST.user.login}%`, 
+                    email    : `%${POST.user.email}%`,
+                    firstName: `%${POST.user.firstName}%`,
+                    lastName : `%${POST.user.lastName}%`
+                })
+                .skip(POST.skip)
+                .take(POST.take)
+                .getMany();
+                
+
+            console.log(users);
+            
+            amount = await getRepository(User).createQueryBuilder()
+                .where(whereCond, {
+                    login    : `%${POST.user.login}%`, 
+                    email    : `%${POST.user.email}%`,
+                    firstName: `%${POST.user.firstName}%`,
+                    lastName : `%${POST.user.lastName}%`
+                })
+                .getCount();
+
+        }catch(err){
+            res.status(400).send({msg: ErrorMessage.db()});
+            console.error(err);
+            return;
+        }
+
+        res.status(200).send({users: users, amount: amount});
     }
 
 
@@ -92,7 +190,6 @@ export default class UserController{
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
-
 
         try{
             users = await getRepository(User).createQueryBuilder()
@@ -443,6 +540,8 @@ export default class UserController{
 
     public static routes(){
         this.router.post('/get-friends',          this.getFriends);
+        this.router.post('/get-amount-users',      this.getAmountUsers);
+        this.router.post('/get-users',            this.getUsers);
         this.router.post('/search-user',          this.searchUser);
         this.router.post('/edit',                 this.editUser);
         this.router.post('/edit-avatar',          this.editAvatar);

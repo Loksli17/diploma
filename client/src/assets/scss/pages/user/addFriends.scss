@@ -1,0 +1,56 @@
+@import '../../index';
+
+.page-add-friends{
+    @extend %page-wrap !optional;
+    @include pageWrapperTheme($grayMain);
+    @include column(20px);
+    grid-template-rows: max-content auto;
+
+    .form{
+        @extend %form;
+    }
+
+    .page-header{
+        text-align: left;
+    }
+
+    .page-wrap{
+        @include row(40px);
+        grid-template-columns: auto max-content;
+    }
+
+    .section{
+        @include column(20px);
+        grid-template-rows: auto max-content;
+
+        .user-wrap{
+            @include column(10px);
+            height: max-content;
+            max-height: 700px;
+            overflow-y: auto;
+
+            .user{
+                @extend %userItem;
+
+                .btn-wrap{
+                    top: 12px;
+                    right: 12px;
+                }
+            }
+        }
+
+    }
+
+    .aside{
+        background: $white;
+        box-sizing: border-box;
+        padding: 40px;
+        height: max-content;
+    }
+
+    .btn{
+        @extend %btn !optional;
+        @include buttonTheme();
+    }
+
+}

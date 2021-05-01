@@ -61,10 +61,6 @@
             className: {
                 type: String,
             },
-            avatarPath: {
-                type    : String,
-                required: true,
-            },
             items: {
                 default : [],
                 type    : Array as () => Array<MenuUserItem>,
