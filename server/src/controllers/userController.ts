@@ -114,6 +114,7 @@ export default class UserController{
             },
             take: number,
             skip: number,
+            userId: number,
         }
 
         let 
@@ -123,7 +124,7 @@ export default class UserController{
             whereCond : string            = '',
             users     : Array<User>       = [];
 
-        postErrors = PostModule.checkData<POST>(POST, ['user', 'take', 'skip']);
+        postErrors = PostModule.checkData<POST>(POST, ['user', 'take', 'skip', 'userId']);
 
         console.log(POST);
 
@@ -137,6 +138,9 @@ export default class UserController{
         }
 
         whereCond = whereCond.substr(0, whereCond.length - 4);
+
+        whereCond += whereCond == "" ? 'id != :id' : 'and id != :id';
+
         console.log(whereCond);
 
         try {
@@ -145,7 +149,8 @@ export default class UserController{
                     login    : `%${POST.user.login}%`, 
                     email    : `%${POST.user.email}%`,
                     firstName: `%${POST.user.firstName}%`,
-                    lastName : `%${POST.user.lastName}%`
+                    lastName : `%${POST.user.lastName}%`,
+                    id       : POST.userId,
                 })
                 .skip(POST.skip)
                 .take(POST.take)
@@ -153,13 +158,14 @@ export default class UserController{
                 
 
             console.log(users);
-            
+
             amount = await getRepository(User).createQueryBuilder()
                 .where(whereCond, {
                     login    : `%${POST.user.login}%`, 
                     email    : `%${POST.user.email}%`,
                     firstName: `%${POST.user.firstName}%`,
-                    lastName : `%${POST.user.lastName}%`
+                    lastName : `%${POST.user.lastName}%`,
+                    id       : POST.userId,
                 })
                 .getCount();
 

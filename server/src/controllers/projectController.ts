@@ -238,7 +238,8 @@ export default class ProjectController{
         POST.project!.dateOfEdit   = new Date();
         POST.project!.dateOfCreate = new Date();
 
-        project = new Project(POST.project);
+        project = new Project();
+        project.changeFields(POST.project);
 
         validateResult = await validate(project);
 

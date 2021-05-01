@@ -8,10 +8,6 @@ import ViewStatus   from './ViewStatus';
 @Entity()
 export default class Project{
 
-    constructor(project: Partial<Project>){
-        Object.assign(this, project);
-    }
-
     public changeFields(project: Partial<Project>){
         Object.assign(this, project);
     }

@@ -74,7 +74,6 @@
 
     import {defineComponent}        from 'vue';
     import Menu                     from '../../components/Menu.vue';
-    import Form, {FormItem}         from '../../components/Form.vue';
     import User                     from '../../types/User';
     import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
     import Pagination               from '../../components/Pagination.vue';
@@ -84,7 +83,6 @@
 
         components: {
             Menu,
-            Form,
             UserItem, 
             Pagination
         },
@@ -111,7 +109,7 @@
         },
 
         mounted: async function(){
-            const res = await this.getUsersAmount({take: this.usersRange, skip: 0, user: {login: '', email: '', firstName: '', lastName: ''}});
+            const res = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: this.usersRange, skip: 0, user: {login: '', email: '', firstName: '', lastName: ''}});
 
             this.users       = res.users;
             this.amountUsers = res.amount;
@@ -166,7 +164,7 @@
             },
 
             sendSearchData: async function(){
-                const res = await this.getUsersAmount({take: this.usersRange, skip: 0, user: this.user});
+                const res = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: this.usersRange, skip: 0, user: this.user});
 
                 this.users       = res.users;
                 this.amountUsers = res.amount;
@@ -176,7 +174,7 @@
 
             pageChangeEvt: async function(data: {take: number; skip: number}){
 
-                const responseData: {users: Array<User>, amount: number} | undefined = await this.getUsersAmount({take: data.take, skip: data.skip, user: this.user});
+                const responseData: {users: Array<User>, amount: number} | undefined = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: data.take, skip: data.skip, user: this.user});
 
                 console.log(responseData);
 
