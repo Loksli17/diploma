@@ -16,6 +16,7 @@
                         v-bind:onlineStatus="false"
                         v-bind:items="userContexMenuItems"
                         v-bind:addButtonStatus="true"
+                        v-bind:fullNameStatus="true"
                         >
                     </UserItem>
                 </div>

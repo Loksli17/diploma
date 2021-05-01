@@ -7,7 +7,7 @@
 
         <div class="">
             <div class="login">
-                <span>{{userData.login}}</span>
+                <span>{{userData.login}} <template v-if="fullNameStatus">({{userData.firstName}} {{userData.lastName}})</template></span>
             </div>
             <div v-if="onlineStatus">
                 <span v-if="userData.status" class="online">online</span>
@@ -56,6 +56,9 @@
                 required: true,
             },
             addButtonStatus: {
+                type: Boolean,
+            },
+            fullNameStatus: {
                 type: Boolean,
             },
             className: {
