@@ -70,6 +70,13 @@
 
             <div class="notific-wrap">
                 <h2>Notifications</h2>
+
+                <div class="notifications-wrap">
+                    <div v-for="notific in notifications" :key="notific.id">
+                        
+                        <div>{{notific.text}}</div>
+                    </div>
+                </div>
             </div>
 
             <div class="add-btn-wrap">
@@ -86,6 +93,7 @@
     import Form, {FormItem}  from '../../components/Form.vue';
     import Menu              from '../../components/Menu.vue';
     import User              from "../../types/User";
+    import Notification      from "../../types/Notification";
     import ActionBack        from '../../components/ActionBack.vue';
     
     export default defineComponent({
@@ -108,6 +116,8 @@
                     [{type: 'password', name: 'old'}, {type: 'password', name: 'new'}, {type: 'hidden', name: 'id'}],
                     [{type: 'submit', name: 'submit', value: 'Edit password'}],
                 ] as Array<Array<FormItem>>,
+
+                notifications: [] as Array<Notification>, 
             }
         },
 
@@ -120,6 +130,10 @@
             this.rowsEditForm[2][0].value = this.user.firstName;
 
             this.rowsPasswordForm[0][2].value = this.user.id;
+
+            this.notifications = this.$store.state.notifications;
+
+            console.log(this.notifications);
         },
 
         updated: function(){
@@ -140,7 +154,7 @@
             if(!this.capableDragAndDrop){
                 this.$flashMessage.show({
                     type: 'error',
-                    text: 'Your broswer can not works with drag and drop. Baaaad.',
+                    text: 'Your browser can not works with drag and drop. Baaaad.',
                 });
                 return;
             }

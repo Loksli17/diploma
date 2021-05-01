@@ -1,12 +1,14 @@
+import Notification from '@/types/Notification';
 import {createStore} from 'vuex';
 import User          from '../types/User';
 
 const store = createStore({
     
     state: {
-        userIdentity: localStorage.getItem('userIdentity') == "undefined" ? null : JSON.parse(localStorage.getItem('userIdentity')!) as User | null,
-        jwt         : localStorage.getItem('jwt') == "undefined" ? null : localStorage.getItem('jwt') as string | null,
-        tabs        : localStorage.getItem('tabs') == "undefined" ? null : JSON.parse(localStorage.getItem('tabs')!) as Array<any> | null,
+        userIdentity : localStorage.getItem('userIdentity') == "undefined" ? null : JSON.parse(localStorage.getItem('userIdentity')!) as User | null,
+        jwt          : localStorage.getItem('jwt')          == "undefined" ? null : localStorage.getItem('jwt') as string | null,
+        tabs         : localStorage.getItem('tabs')         == "undefined" ? null : JSON.parse(localStorage.getItem('tabs')!) as Array<any> | null,
+        notifications: localStorage.getItem('notification') == "undefined" ? null : JSON.parse(localStorage.getItem('notification')!) as Array<Notification> | null,
     },
 
     mutations: {
@@ -36,6 +38,15 @@ const store = createStore({
                 localStorage.setItem('tabs', JSON.stringify(tabs));   
             }
             state.tabs = JSON.parse(JSON.stringify(tabs));
+        },
+
+        setNotifications(state, notifications: Array<Notification> | null){
+            if(notifications == null){
+                localStorage.setItem('notifications', "undefined");
+            }else{
+                localStorage.setItem('notifications', JSON.stringify(notifications));   
+            }
+            state.notifications = JSON.parse(JSON.stringify(notifications));
         }
     }
 });

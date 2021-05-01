@@ -38,12 +38,15 @@
     declare const require: any
     import {defineComponent} from 'vue'
     import User              from '../types/User';
+    import Notification      from '../types/Notification';
+ 
 
     export interface MenuUserItem{
         img: string;
         value: string;
         link: string;
     }
+
 
     export default defineComponent({
         
@@ -74,11 +77,12 @@
 
         data: function(){
             return{
-                userData     : {} as User,
-                itemClassName: "user-item" as string,
-                menuStatus   : false as boolean,
-                menuTop      : 0 as number,
-                menuLeft     : 0 as number,
+                userData           : {} as User,
+                itemClassName      : "user-item" as string,
+                menuStatus         : false as boolean,
+                menuTop            : 0 as number,
+                menuLeft           : 0 as number,
+                menuNonActiveStatus: false as boolean,
             }
         },
 
@@ -104,8 +108,21 @@
                 
                 try {
                     const res = await this.$axios.post('/notification/add', {typeId: 1, userSend: this.$store.state.userIdentity!, userReceiveId: this.userData.id});
+                    console.log(res);
 
                     if(res.status == 200){
+                        
+                        // ! i don't need this here
+                        // const notification: Notification = res.data.notification;
+                        // console.log(notification);
+                        
+                        // if(this.$store.state.notifications == null){
+                        //     this.$store.state.notifications = [];
+                        // }
+
+                        // this.$store.state.notifications.push(notification);
+                        // this.$store.commit('setNotifications', this.$store.state.notifications);
+
                         this.$flashMessage.show({
                             type: 'success',
                             image: require("../assets/flash/success.svg"),
@@ -133,6 +150,8 @@
         created: function(){
             if(this.className != undefined){this.itemClassName = this.className}
             this.userData = this.user;
+
+
         }
     });
 </script>
