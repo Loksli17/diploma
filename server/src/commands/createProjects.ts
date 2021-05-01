@@ -1,19 +1,19 @@
-import {ProjectModel, Project} from '../models/Project';
+import Project from '../models/Project';
 import '../config/database';
 
 const init = async(): Promise<void> => {
 
     let Projects: Array<Project> = [
-        {
-            name        : 'projectOfYourDream',
-            filename    : 'kek1.json',
-            dateOfCreate: new Date(),
-        },
-        {
-            name        : 'project',
-            filename    : '123.json',
-            dateOfCreate: new Date(),
-        },
+        // {
+        //     name        : 'projectOfYourDream',
+        //     filename    : 'kek1.json',
+        //     dateOfCreate: new Date(),
+        // },
+        // {
+        //     name        : 'project',
+        //     filename    : '123.json',
+        //     dateOfCreate: new Date(),
+        // },
         // {
         //     name    : 'projectOfYourRukav',
         //     filename: 'lol.json',
@@ -33,13 +33,13 @@ const init = async(): Promise<void> => {
     result: Array<Project> = [];
 
     try{
-        await ProjectModel.remove({});
+        // await ProjectModel.remove({});
     }catch(err){
         console.log(err);
     }
 
     try{
-        result = await ProjectModel.insertMany(Projects);
+        // result = await Project.insertMany(Projects);
     }catch(err){
         console.log(err);
     }

@@ -7,8 +7,9 @@
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc -p",
-    "db-users": "nodemon server/src/commands/createUsers.ts",
-    "db-projects": "nodemon server/src/commands/createProjects.ts"
+    "db-users": "nodemon src/commands/createUsers.ts",
+    "db-projects": "nodemon src/commands/createProjects.ts",
+    "db-typeNotifics": "nodemon src/commands/createTypeNotifications.ts"
   },
   "repository": {
     "type": "git",

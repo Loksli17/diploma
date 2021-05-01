@@ -97,8 +97,6 @@ export default class UserController{
             throw new Error(err);
         }
 
-        console.log(amount);
-
         res.status(200).send({amount: amount});
     }
 
@@ -126,8 +124,6 @@ export default class UserController{
 
         postErrors = PostModule.checkData<POST>(POST, ['user', 'take', 'skip', 'userId']);
 
-        console.log(POST);
-
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
@@ -138,10 +134,7 @@ export default class UserController{
         }
 
         whereCond = whereCond.substr(0, whereCond.length - 4);
-
-        whereCond += whereCond == "" ? 'id != :id' : 'and id != :id';
-
-        console.log(whereCond);
+        whereCond += whereCond == "" ? 'id != :id' : ' and id != :id';
 
         try {
             users = await getRepository(User).createQueryBuilder()
@@ -155,9 +148,6 @@ export default class UserController{
                 .skip(POST.skip)
                 .take(POST.take)
                 .getMany();
-                
-
-            console.log(users);
 
             amount = await getRepository(User).createQueryBuilder()
                 .where(whereCond, {
@@ -546,7 +536,7 @@ export default class UserController{
 
     public static routes(){
         this.router.post('/get-friends',          this.getFriends);
-        this.router.post('/get-amount-users',      this.getAmountUsers);
+        this.router.post('/get-amount-users',     this.getAmountUsers);
         this.router.post('/get-users',            this.getUsers);
         this.router.post('/search-user',          this.searchUser);
         this.router.post('/edit',                 this.editUser);

@@ -201,7 +201,7 @@
                 this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
                 this.friendshipStatus = await this.checkFriends();
 
-                this.friendsCount  = 0;
+                this.friendsCount  = this.friends.length;
                 this.projectsCount = 0;
 
                 console.log(this.friendshipStatus);
@@ -226,6 +226,12 @@
                     if(res.status == 200){
                         this.friendsCount += res.data.friends.length;
                         return res.data.friends;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../../assets/flash/fail.svg"),
+                            text: 'Error with query',
+                        });
                     }
                 }catch(err){
                     this.$flashMessage.show({

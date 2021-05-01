@@ -5,12 +5,14 @@ import User                   from '../models/User';
 import UserHasProject         from '../models/UserHasProject';
 import UserHasUser            from '../models/UserHasUser';
 import ViewStatus             from '../models/ViewStatus';
+import Notification           from '../models/Notification';
+import TypeNotification       from '../models/TypeNotification';
 
 
 const
     connectionManager = getConnectionManager(),
     
-    connection        = connectionManager.create({
+    connection = connectionManager.create({
         name    : 'default',
         type    : 'mysql',
         host    : 'localhost',
@@ -18,7 +20,7 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User, Project, ViewStatus, UserHasProject, UserHasUser],
+        entities: [User, Project, ViewStatus, UserHasProject, UserHasUser, Notification, TypeNotification],
     }),
 
     init = async (): Promise<void> => {

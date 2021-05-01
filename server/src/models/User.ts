@@ -1,7 +1,7 @@
 import {IsEmail, MinLength, IsNotEmpty} from 'class-validator';
 import {IsUniq}                         from '@join-com/typeorm-class-validator-is-uniq';
 import Project                          from './Project';
-import UserHasUser                      from './UserHasUser';
+import Notification                     from './Notification';
 
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany} from 'typeorm';
 
@@ -53,5 +53,12 @@ export default class User{
 
     @ManyToMany(() => Project, project => project.users)
     public projects?: Array<Project> | undefined;
+
+
+    @OneToMany(() => Notification, notification => notification.userReceive)
+    public receiveNotifications?: Array<Notification> | undefined;
+
+    @OneToMany(() => Notification, notification => notification.userSend)
+    public sendNotifications?: Array<Notification> | undefined;
 }
 

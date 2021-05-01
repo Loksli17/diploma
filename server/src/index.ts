@@ -26,7 +26,7 @@ export class App{
         this.io     = new socketServer(this.server, {
             cors: {
                 origin: "http://localhost:8080",
-                methods: ["GET", "POST"]
+                methods: ["GET", "POST", "PUT"]
             }
         });
 

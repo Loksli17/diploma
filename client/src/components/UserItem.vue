@@ -13,10 +13,10 @@
                 <span v-if="userData.status" class="online">online</span>
                 <span v-else class="offline">offline</span>
             </div>
+        </div>
 
-            <div v-if="addButtonStatus" class="btn-wrap">
-                <button class="btn"></button>
-            </div>
+        <div v-if="addButtonStatus" @click.stop="addToFriendList" class="btn-wrap">
+            <button class="btn"></button>
         </div>
 
         <transition name="userMenuShow">
@@ -35,6 +35,7 @@
 
 
 <script lang="ts">
+    declare const require: any
     import {defineComponent} from 'vue'
     import User              from '../types/User';
 
@@ -96,6 +97,36 @@
                 this.menuStatus = true;
                 this.menuTop    = e.clientY;
                 this.menuLeft   = e.clientX;
+            },
+
+            addToFriendList: async function(): Promise<void>{
+                this.menuStatus = false;
+                
+                try {
+                    const res = await this.$axios.post('/notification/add', {typeId: 1, userSend: this.$store.state.userIdentity!, userReceiveId: this.userData.id});
+
+                    if(res.status == 200){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            image: require("../assets/flash/success.svg"),
+                            text: `Invate to friendlist was sended to user: ${this.userData.login}`,
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../assets/flash/fail.svg"),
+                            text: 'Error with query',
+                        });
+                    }
+                }catch(err) {
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../assets/flash/fail.svg"),
+                        text: 'Error with query',
+                    });
+                    console.error(err);
+                }
+                
             }
         },
         
