@@ -77,7 +77,7 @@ const filters = {
         return moment(date).format('YYYY-MM-DD hh:mm:ss');
     },
     datetimeToView: function(date: Date | string){
-        return moment(date).format('YYYY.MM.DD h:mm a');
+        return moment(date).format('D.MM.YY h:mm a');
     },
     dateToDb: function(date: Date | string){
         return moment(date).format('YYYY-MM-DD');
@@ -131,6 +131,5 @@ app.use(flashMessage, {
     time    : 6000,
     strategy: 'single',
 });
-
 
 app.use(store).use(router).mount('#app');

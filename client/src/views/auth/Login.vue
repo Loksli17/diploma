@@ -17,11 +17,13 @@
 
 
 <script lang="ts">
+    declare const require: any
     import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
     import User              from '../../types/User';
     import moment            from 'moment';
+    import Notification      from '../../types/Notification';
 
 
     export default defineComponent({
@@ -36,15 +38,42 @@
         },
 
         methods: {
-            formResultParser: function(result: any){
+
+            getNotifications: async function(id: number): Promise<Notification | undefined>{
+
+                try {
+                    const res = await this.$axios.post('/notification/get-notifications', {userId: id, type:"receive"});
+
+                    if(res.status == 200){
+                        return res.data.notifications;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
+
+
+            formResultParser: async function(result: any){
 
                 if(result.status === 400){
                     return;
                 }
 
                 this.$flashMessage.show({
-                    type: 'success',
-                    text: result.data.msg,
+                    type : 'success',
+                    image: require("../../assets/flash/success.svg"),
+                    text : result.data.msg,
                 });
 
                 result.data.user.authDate = moment().add(1, 'd');
@@ -56,6 +85,8 @@
 
                 this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;
                 this.$router.push('/');
+
+                this.$store.commit('setNotifications', await this.getNotifications(result.data.user.id));
             },
         },
 

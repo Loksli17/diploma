@@ -16,7 +16,7 @@
 
     .page-wrap{
         @include row(40px);
-        grid-template-columns: auto max-content;
+        grid-template-columns: auto 600px;
     }
 
     .section{
@@ -42,10 +42,28 @@
     }
 
     .aside{
-        background: $white;
-        box-sizing: border-box;
-        padding: 40px;
         height: max-content;
+
+        form{
+            box-sizing: border-box;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: $white;
+        }
+
+        .notifications-wrap{
+            @include row(10px);
+            grid-template-columns: 1fr 1fr;
+
+            > div{
+                @include column(15px);
+                grid-template-rows: 30px auto;
+            }
+
+            .notification{
+                width: 100%;
+            }
+        }
     }
 
     .btn{

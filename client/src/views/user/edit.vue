@@ -117,7 +117,7 @@
                     [{type: 'submit', name: 'submit', value: 'Edit password'}],
                 ] as Array<Array<FormItem>>,
 
-                notifications: [] as Array<Notification>, 
+                notifications: [] as Array<Notification> | null, 
             }
         },
 

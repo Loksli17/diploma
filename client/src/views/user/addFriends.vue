@@ -63,6 +63,28 @@
                          </label>
                     </div>
                 </form>
+
+                <div class="notifications-wrap">
+                    <div class="notifications-send">
+                        <h2>My queries to friendlist</h2>
+
+                        <div>
+                            <div class="notification" v-for="notific in sendNotifications" :key="notific.id">
+                                <span>{{notific.text}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification-receive">
+                        <h2>Queries to friendlist to me</h2>
+
+                        <div>
+                            <div class="notification" v-for="notific in receiveNotifications" :key="notific.id">
+                                <span>{{notific.text}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,6 +99,7 @@
     import User                     from '../../types/User';
     import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
     import Pagination               from '../../components/Pagination.vue';
+    import Notification             from '../../types/Notification';
 
 
     export default defineComponent({
@@ -96,15 +119,18 @@
                 currentPage: 1 as number,
                 users      : [] as Array<User> | undefined,
 
-                user: {email: '', login: '', firstName: '', lastName: ''} as Object,
+                user : {email: '', login: '', firstName: '', lastName: ''} as object,
 
                 userContexMenuItems: [
                     {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
                     {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}, 
                 ] as Array<MenuUserItem>,
 
-                formData       : {take: 0} as Object,
+                formData       : {take: 0} as object,
                 sendFormCounter: 0 as number,
+
+                receiveNotifications: [] as Array<Notification> | undefined,
+                sendNotifications   : [] as Array<Notification> | undefined,
             }
         },
 
@@ -113,13 +139,16 @@
 
             this.users       = res.users;
             this.amountUsers = res.amount;
+            
+            this.receiveNotifications = this.$store.state.notifications!;
+            this.sendNotifications    = await this.getSendNotifications();
         },
 
         methods: {
 
-            getUsersAmount: async function(body: Object): Promise<Array<User>>{
+            getUsersAmount: async function(body: object){
                 try {
-                    let res = await this.$axios.post('/user/search-user', body);
+                    const res = await this.$axios.post('/user/search-user', body);
 
                     if(res.status == 200){
                         return res.data;
@@ -129,7 +158,7 @@
                             text: 'Error with query',
                             image: require("../../assets/flash/fail.svg"),
                         });
-                        console.error(res.error);
+                        console.error(res.data.error);
                     }
                 }catch(err){
                     this.$flashMessage.show({
@@ -138,6 +167,30 @@
                         image: require("../../assets/flash/fail.svg"),
                     });
                     console.error(err);  
+                }
+            },
+
+            getSendNotifications: async function(): Promise<Array<Notification> | undefined>{
+
+                try {
+                    const res = await this.$axios.post('/notification/get-notifications', {userId: this.$store.state.userIdentity!.id, type:"send"});
+
+                    if(res.status == 200){
+                        return res.data.notifications;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
                 }
             },
 
@@ -168,17 +221,13 @@
 
                 this.users       = res.users;
                 this.amountUsers = res.amount;
-
-                console.log(this.amount);
             },
 
             pageChangeEvt: async function(data: {take: number; skip: number}){
 
-                const responseData: {users: Array<User>, amount: number} | undefined = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: data.take, skip: data.skip, user: this.user});
+                const responseData: {users: Array<User>; amount: number} | undefined = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: data.take, skip: data.skip, user: this.user});
 
-                console.log(responseData);
-
-                if(!responseData.users.length){
+                if(!responseData!.users.length){
                     this.$flashMessage.show({
                         type: 'warning',
                         image: require("../../assets/flash/warning.svg"),
@@ -187,7 +236,7 @@
                     return;
                 }
 
-                this.users = responseData.users;
+                this.users = responseData!.users;
             }
         },
         

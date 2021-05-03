@@ -201,7 +201,7 @@
                 this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
                 this.friendshipStatus = await this.checkFriends();
 
-                this.friendsCount  = this.friends.length;
+                this.friendsCount  = this.friends!.length;
                 this.projectsCount = 0;
 
                 console.log(this.friendshipStatus);

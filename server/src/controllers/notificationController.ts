@@ -55,8 +55,46 @@ export default class NotificationController{
         res.status(200).send({notification: notification});
     }
 
+
+    public static async getNotifications(req: Request, res: Response){
+
+        interface POST{
+            userId: number,
+            type  : string,
+        }
+
+        let 
+            postErrors   : Array<keyof POST>   = [],
+            whereCond    : string              = '',
+            notifications: Array<Notification> = [],
+            POST         : POST                = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['userId', 'type']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        whereCond = POST.type == "send" ? "userSendId = :id" : "userReceiveId = :id";
+        
+        try {
+            notifications = await getRepository(Notification).createQueryBuilder()
+                .where(whereCond, {id: POST.userId})
+                .getMany();   
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);
+        }
+
+        res.status(200).send({notifications: notifications});
+    }
+
+
     public static routes(){
-        this.router.post('/add', this.createNotification);
+        this.router.post('/add',               this.createNotification);
+        this.router.post('/get-notifications', this.getNotifications);
+
         return this.router;
     }
 }
