@@ -22,6 +22,7 @@
             
             <div class="notific">
                 <img :src="require(`../assets/bell-icon.svg`)" alt="">
+                <div class="amount" v-if="amountNotifications"> {{amountNotifications}} </div>
             </div>
 
             <div class="user-identity" v-on:click="showUserMenu = !showUserMenu">
@@ -74,6 +75,8 @@
                 showUserMenu: false,
                 user        : {} as User,
                 tabs        : [] as Array<Tab>,
+
+                amountNotifications: 0 as number, 
             }           
         },
 
@@ -137,17 +140,25 @@
 
                 this.$store.commit('setTabs', this.tabs);
             },
+
+            setNotificationAmount(val: number): void{
+                this.amountNotifications = val;
+            }
         },
 
         created: function(){
+
             if(this.$store.state.userIdentity == null){
                 return;
             }
+
             this.user = this.$store.state.userIdentity;
 
             if(this.$store.state.tabs != null){
                 this.tabs = this.$store.state.tabs;
             }
+
+            this.amountNotifications = this.$store.state.notifications!.length
         },
         
     });

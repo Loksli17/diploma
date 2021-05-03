@@ -124,12 +124,11 @@ export default class NotificationController{
 
         try {
             const res = await getRepository(Notification).remove(notification);
-            console.log(res);
         }catch(err){
             console.error(err);
         }
 
-        res.status(200).send({msg: `Notification with id: ${notification.id}`})
+        res.status(200).send({msg: `Notification with id: ${id}`})
     }
 
 

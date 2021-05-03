@@ -1,6 +1,6 @@
 <template>
     <div class="page-user-edit">
-        <Menu></Menu>
+        <Menu ref="menu"></Menu>
 
         <ActionBack ref="actionBackData" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Edit`">
             <Form
@@ -315,7 +315,9 @@
 
             removeNotification: function(id: number){
                 this.notifications = this.$store.state.notifications!;
-                console.log(this.$store.state.notifications!);
+
+                const menu = this.$refs.menu as any;
+                menu.setNotificationAmount(this.notifications.length);
             }
         },
 
