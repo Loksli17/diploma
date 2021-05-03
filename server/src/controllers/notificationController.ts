@@ -128,7 +128,7 @@ export default class NotificationController{
             console.error(err);
         }
 
-        res.status(200).send({msg: `Notification with id: ${id}`})
+        res.status(200).send({msg: `Notification with id: ${POST.id}`})
     }
 
 
