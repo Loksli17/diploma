@@ -1,0 +1,55 @@
+@import '../utils/flex.scss';
+@import '../base/colors.scss';
+@import '../utils/layout/row.scss';
+@import '../utils/pseudoElement.scss';
+
+
+$border: 2px solid $grayBorder;
+$padding: 15px;
+
+%notification{
+    border: $border;
+    @include row(0px);
+    grid-template-columns: max-content auto;
+    height: max-content;
+    background: $white;
+    position: relative;
+
+    > div:first-child{
+        @include flex(center, center);
+        box-sizing: border-box;
+        padding: $padding;
+
+        img{
+            width: 45px;
+        }
+
+        border-right: $border;
+    }
+
+    > div:nth-child(2){
+        box-sizing: border-box;
+        padding: $padding;
+        @include flex(center, center);
+
+        span{
+            font-weight: 600;
+            font-size: 19px;
+            text-align: left;
+        };
+    }
+
+    div.close{
+        @extend %pseudoElement;
+        position: absolute;
+        top: 0px;
+        right: 5px;
+        font-size: 17px;
+        cursor: pointer;
+
+        &:hover{
+            transition: 0.4s;
+            color: $blue;
+        }
+    }
+}

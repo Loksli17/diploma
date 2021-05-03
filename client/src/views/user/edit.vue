@@ -72,10 +72,9 @@
                 <h2>Notifications</h2>
 
                 <div class="notifications-wrap">
-                    <div v-for="notific in notifications" :key="notific.id">
-                        
-                        <div>{{notific.text}}</div>
-                    </div>
+
+                    <NotificationComp v-on:remove-notification="removeNotification" v-for="notific in notifications" :key="notific.id" v-bind:notification="notific"></NotificationComp>
+
                 </div>
             </div>
 
@@ -95,6 +94,7 @@
     import User              from "../../types/User";
     import Notification      from "../../types/Notification";
     import ActionBack        from '../../components/ActionBack.vue';
+    import NotificationComp  from '../../components/Notification.vue';
     
     export default defineComponent({
 
@@ -131,9 +131,8 @@
 
             this.rowsPasswordForm[0][2].value = this.user.id;
 
-            this.notifications = this.$store.state.notifications;
+            this.notifications = this.$store.state.notifications!;
 
-            console.log(this.notifications);
         },
 
         updated: function(){
@@ -312,6 +311,11 @@
                 });
 
                 console.log(res.data.user.password);
+            },
+
+            removeNotification: function(id: number){
+                this.notifications = this.$store.state.notifications!;
+                console.log(this.$store.state.notifications!);
             }
         },
 
@@ -319,6 +323,7 @@
             Form,
             Menu,
             ActionBack,
+            NotificationComp,
         }
     })
 </script>

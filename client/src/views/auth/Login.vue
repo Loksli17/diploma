@@ -86,6 +86,8 @@
                 this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;
                 this.$router.push('/');
 
+                this.$store.commit('setNotifications', []);
+                console.log(this.$store.commit('setNotifications', []));
                 this.$store.commit('setNotifications', await this.getNotifications(result.data.user.id));
             },
         },

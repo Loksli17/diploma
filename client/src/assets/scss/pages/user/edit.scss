@@ -80,6 +80,24 @@
         }
     }
 
+    .notific-wrap{
+        @include column(20px);
+        grid-template-rows: max-content auto;
+        
+        max-height: 100%;
+        overflow-y: auto;
+
+        .notifications-wrap{
+            @include column(20px);
+            grid-auto-rows: max-content;
+            height: 100%;
+
+            .notification{
+                @extend %notification;
+            }
+        }
+    }
+
 
     #fileForm{
 

@@ -76,12 +76,14 @@ export default class NotificationController{
             return;
         }
 
-        whereCond = POST.type == "send" ? "userSendId = :id" : "userReceiveId = :id";
+        whereCond = POST.type == "send" ? "notification.userSendId = :id" : "notification.userReceiveId = :id";
         
         try {
-            notifications = await getRepository(Notification).createQueryBuilder()
+            notifications = await getRepository(Notification).createQueryBuilder('notification')
                 .where(whereCond, {id: POST.userId})
-                .getMany();   
+                .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
+                .getMany();
+
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);
@@ -90,10 +92,51 @@ export default class NotificationController{
         res.status(200).send({notifications: notifications});
     }
 
+    
+    public static async removeNotification(req: Request, res: Response){
+
+        interface POST{
+            id: number,
+        }
+
+        let 
+            postErrors  : Array<keyof POST> = [],
+            notification: Notification | undefined,
+            POST        : POST              = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['id']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            notification = await getRepository(Notification).findOne(POST.id);
+        }catch(err){
+            console.error(err);
+        }
+
+        if(notification == undefined){
+            res.status(400).send({msg: ErrorMessage.notFound('Notification')});
+            return;
+        }
+
+        try {
+            const res = await getRepository(Notification).remove(notification);
+            console.log(res);
+        }catch(err){
+            console.error(err);
+        }
+
+        res.status(200).send({msg: `Notification with id: ${notification.id}`})
+    }
+
 
     public static routes(){
         this.router.post('/add',               this.createNotification);
         this.router.post('/get-notifications', this.getNotifications);
+        this.router.post('/delete',            this.removeNotification);
 
         return this.router;
     }
