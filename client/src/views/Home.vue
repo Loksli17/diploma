@@ -740,7 +740,7 @@
                 }
 
                 try {
-                    const res: any = await this.$axios.post('project/delete', {id: id});
+                    const res: any = await this.$axios.post('project/delete', {id: id, userSend: this.$store.state.userIdentity!});
 
                     if(res.status === 400){
                         this.$flashMessage.show({

@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 import NotificationController      from './notificationController';
-import {Brackets, getRepository}   from 'typeorm';
+import {Brackets, DeleteResult, getRepository}   from 'typeorm';
 
 
 import Project                       from '../models/Project';
@@ -323,13 +323,16 @@ export default class ProjectController{
     private static async removeProject(req: Request, res: Response){
 
         interface POST{
-            id: number;
+            id      : number;
+            userSend: User,
         }
 
         let 
-            POST      : POST              = req.body,
-            postErrors: Array<keyof POST> = [], 
-            project   : Project | undefined;
+            POST          : POST                  = req.body,
+            notifications : Array<Notification>   = [],
+            userHasProject: Array<UserHasProject> = [],
+            postErrors    : Array<keyof POST>     = [],
+            project       : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['id']);
         
@@ -350,12 +353,16 @@ export default class ProjectController{
         }
 
         try{
-            await getRepository(UserHasProject).createQueryBuilder()
+            userHasProject = await getRepository(UserHasProject).createQueryBuilder()
                 .where("projectId = :id", {id: POST.id})
-                .delete()
-                .execute();
+                .getMany();
 
+            await getRepository(UserHasProject).remove(userHasProject);
             await getRepository(Project).delete(POST.id);
+
+            notifications = await NotificationController.addManyNotifications(POST.userSend, userHasProject.map((item) => {return item.userId}), 5);
+
+            // TODO send notifications with socket. do it here
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
@@ -443,7 +450,7 @@ export default class ProjectController{
                 res.status(400).send({msg: ErrorMessage.notFound('user')});
                 return;
             }
-            
+
         }catch(err){
             throw new Error(err);   
         }
