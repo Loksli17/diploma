@@ -1,17 +1,17 @@
 import {Router, Request, Response} from 'express';
+import {Brackets, getRepository}   from 'typeorm';
+
+
+import Project                     from '../models/Project';
+import User                        from '../models/User';
+import ErrorMessage                from '../libs/error';
+import PostModule                  from '../libs/post';
+import ViewStatus                  from '../models/ViewStatus';
+import {validate, ValidationError} from 'class-validator';
+import Parser                      from '../libs/parser';
+import UserHasProject              from '../models/UserHasProject';
+import Notification                from '../models/Notification';
 import NotificationController      from './notificationController';
-import {Brackets, DeleteResult, getRepository}   from 'typeorm';
-
-
-import Project                       from '../models/Project';
-import User                          from '../models/User';
-import ErrorMessage                  from '../libs/error';
-import PostModule                    from '../libs/post';
-import ViewStatus                    from '../models/ViewStatus';
-import {validate, ValidationError}   from 'class-validator';
-import Parser                        from '../libs/parser';
-import UserHasProject                from '../models/UserHasProject';
-import Notification                  from '../models/Notification';
 
 
 

@@ -48,6 +48,10 @@ export default class User{
     @IsNotEmpty()
     public status: boolean = false;
 
+    @Column()
+    public socketId?: string;
+
+
     @OneToMany(() => Project, project => project.author)
     public ownProjects?: Array<Project> | undefined;
 

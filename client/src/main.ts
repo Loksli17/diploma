@@ -10,9 +10,16 @@ import store                              from './store';
 import User                               from './types/User';
 import {Socket, io}                       from 'socket.io-client';
 
+
+const user = store.state.userIdentity!;
+delete user.authDate;
 const socket = io('http://localhost:3000', {
     autoConnect: store.state.userIdentity == null ? false : true,
+    query: {
+        user: JSON.stringify(user),
+    }
 });
+
 
 axios.defaults.baseURL = config.axiosPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;

@@ -81,6 +81,10 @@
                 this.$store.commit('setUserIdentity', result.data.user);
                 this.$store.commit('setJWT', result.data.token);
 
+                const user: User = this.$store.state.userIdentity!;
+                delete user.authDate;
+
+                this.$socket.io!.opts!.query!.user = JSON.stringify(user);
                 this.$socket.open();
 
                 this.$axios.defaults.headers.common['Authorization'] = this.$store.state.jwt;

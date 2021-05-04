@@ -7,6 +7,7 @@ import cors                             from 'cors';
 import fileUpload                       from 'express-fileupload';
 import {createServer, Server}           from 'http';
 import {Server as socketServer, Socket} from 'socket.io';
+import SocketContoller                  from './controllers/socketController';
 import morgan                           from 'morgan';
 
 
@@ -48,14 +49,7 @@ export class App{
     }
 
     private ioInit(){
-        this.io.on('connection', (socket: Socket) => {
-
-            console.log(`socket id=${socket.id}`);
-
-            socket.on('disconnect', (reason: string) => {
-                console.log(reason);
-            });
-        });
+        this.io.on('connection', SocketContoller.connection);
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: NextFunction){
