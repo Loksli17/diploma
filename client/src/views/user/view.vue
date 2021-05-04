@@ -494,8 +494,10 @@
                         this.$flashMessage.show({
                             type: 'success',
                             image: require("../../assets/flash/success.svg"),
-                            text: `User ${this.pageUser!.login} was removed from your friend list` ,
+                            text: `User ${this.pageUser!.login} was removed from your friend list`,
                         });
+
+                        this.$socket.emit('notification', {userReceiveId: this.$route.query.id, notification: res.data.notification});
                     }else{
                         this.$flashMessage.show({
                             type: 'error',

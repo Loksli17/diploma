@@ -525,12 +525,9 @@ export default class UserController{
         }
 
         try {
-            let result = await getRepository(UserHasUser).remove(userHasUser);
-            res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUser.id} and ${POST.friendId}`)});
-
+            await getRepository(UserHasUser).remove(userHasUser);
             notification = await NotificationController.addNotification(POST.currentUser, POST.friendId, 2);
-            //todo notification with socket. do it here
-            
+            res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUser.id} and ${POST.friendId}`), notification: notification});
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);

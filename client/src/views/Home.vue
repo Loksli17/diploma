@@ -945,7 +945,6 @@
                 }
 
                 try {
-
                     const res: any = await this.$axios.post('project/remove-collaborator', {
                         userId   : this.projectViewCollabs[ind].id,
                         projectId: this.projectView.id,
@@ -961,6 +960,8 @@
                         return;  
                     }
 
+                    this.$socket.emit('notification', {userReceiveId: this.projectViewCollabs[ind].id, notification: res.data.notification});
+
                     this.projectViewCollabs.splice(ind, 1);
 
                     this.$flashMessage.show({
@@ -969,12 +970,12 @@
                         text: res.data.msg,
                     });
                 }catch(err){
+                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../assets/flash/fail.svg"),
                         text: `Error with query`,
-                    });
-                    return;   
+                    }); 
                 }
             },
 
@@ -1026,7 +1027,19 @@
             }
             
             this.rowsEditProjectForm[1][0].options  = viewStatusElements;
-            this.rowsEditProjectForm[1][0].selected = viewStatusElements[0].id
+            this.rowsEditProjectForm[1][0].selected = viewStatusElements[0].id;
+
+            this.$socket.on('notification', (data: any) => {
+
+                if(data.notification.typeNotification.id != 2){
+                    return;
+                }
+
+                this.friends = this.friends!.filter((item) => {
+                    if(item.id != data.notification.userSendId) return item;
+                });
+
+            });
         },
 
         components: {

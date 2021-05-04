@@ -103,6 +103,10 @@
                 this.menuLeft   = e.clientX;
             },
 
+            removeFromFriendList: async function(): Promise<void>{
+                console.log('kek');
+            },
+
             addToFriendList: async function(): Promise<void>{
                 this.menuStatus = false;
                 
@@ -113,17 +117,6 @@
                     if(res.status == 200){
 
                         this.$socket.emit('notification', {userReceiveId: this.userData.id, notification: res.data.notification});
-                        
-                        // ! i don't need this here
-                        // const notification: Notification = res.data.notification;
-                        // console.log(notification);
-                        
-                        // if(this.$store.state.notifications == null){
-                        //     this.$store.state.notifications = [];
-                        // }
-
-                        // this.$store.state.notifications.push(notification);
-                        // this.$store.commit('setNotifications', this.$store.state.notifications);
 
                         this.$flashMessage.show({
                             type: 'success',
@@ -152,8 +145,6 @@
         created: function(){
             if(this.className != undefined){this.itemClassName = this.className}
             this.userData = this.user;
-
-
         }
     });
 </script>

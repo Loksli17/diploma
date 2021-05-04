@@ -361,14 +361,12 @@ export default class ProjectController{
             await getRepository(Project).delete(POST.id);
 
             notifications = await NotificationController.addManyNotifications(POST.userSend, userHasProject.map((item) => {return item.userId}), 5);
-
-            // TODO send notifications with socket. do it here
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        res.status(200).send({msg: `Project with name: ${project.name} has deleted successfully`});
+        res.status(200).send({msg: `Project with name: ${project.name} has deleted successfully`, notifications: notifications});
     }
 
 
@@ -400,19 +398,15 @@ export default class ProjectController{
         try {
             await getRepository(UserHasProject).insert(userHasProject);
             notifications = await NotificationController.addManyNotifications(POST.userSend, POST.usersIds, 3);
-
-            //TODO send socket to all new collaborators. Do it here
-
         }catch(err) {
             res.status(400).send({msg: ErrorMessage.db()});
             console.error(err);
         }
 
-        res.status(200).send({msg: 'Collaborators were added'});
+        res.status(200).send({msg: 'Collaborators were added', notifications: notifications});
     }
 
 
-    //TODO notificatons to another user about removed
     public static async removeCollaborator(req: Request, res: Response){
         
         interface POST{
@@ -460,15 +454,12 @@ export default class ProjectController{
         try{
             await getRepository(UserHasProject).remove(userHasProject[0]);
             notification = await NotificationController.addNotification(POST.userSend, POST.userId, 4);
-
-            //TODO send socket to all new collaborators. Do it here
-            
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from project: ${project.name}`});
+        res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from project: ${project.name}`, notification: notification});
     }
 
 
