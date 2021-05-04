@@ -1,6 +1,8 @@
 import {Router, Request, Response} from 'express';
+import NotificationController      from './notificationController';
+import {Brackets, getRepository}   from 'typeorm';
 
-import {Brackets, getRepository, InsertResult} from 'typeorm';
+
 import Project                       from '../models/Project';
 import User                          from '../models/User';
 import ErrorMessage                  from '../libs/error';
@@ -9,6 +11,8 @@ import ViewStatus                    from '../models/ViewStatus';
 import {validate, ValidationError}   from 'class-validator';
 import Parser                        from '../libs/parser';
 import UserHasProject                from '../models/UserHasProject';
+import Notification                  from '../models/Notification';
+
 
 
 export default class ProjectController{
@@ -365,15 +369,17 @@ export default class ProjectController{
 
         interface POST{
             usersIds: Array<number>,
-            id      : number
+            id      : number,
+            userSend: User,
         }
 
         let 
-            POST          : POST                  = req.body,
-            postErrors    : Array<keyof POST>     = [], 
-            userHasProject: Array<UserHasProject> = [];
+            POST          : POST                     = req.body,
+            postErrors    : Array<keyof POST>        = [],
+            notifications : Array<Notification>      = [],
+            userHasProject: Array<UserHasProject>    = [];
 
-        postErrors = PostModule.checkData<POST>(POST, ['id', 'usersIds']);
+        postErrors = PostModule.checkData<POST>(POST, ['id', 'usersIds', 'userSend']);
         
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -385,11 +391,14 @@ export default class ProjectController{
         };
 
         try {
-            let result: InsertResult = await getRepository(UserHasProject).insert(userHasProject);
-            console.log(result);
+            await getRepository(UserHasProject).insert(userHasProject);
+            notifications = await NotificationController.addManyNotifications(POST.userSend, POST.usersIds, 3);
+
+            //TODO send socket to all new collaborators. Do it here
+
         }catch(err) {
             res.status(400).send({msg: ErrorMessage.db()});
-            throw new Error(err);
+            console.error(err);
         }
 
         res.status(200).send({msg: 'Collaborators were added'});
@@ -402,6 +411,7 @@ export default class ProjectController{
         interface POST{
             userId   : number;
             projectId: number;
+            userSend : User;
         }
 
         let
@@ -409,6 +419,7 @@ export default class ProjectController{
             postErrors    : Array<keyof POST> = [], 
             user          : User | undefined,
             userHasProject: Array<UserHasProject>,
+            notification  : Notification | undefined,
             project       : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['userId', 'projectId']);
@@ -432,6 +443,7 @@ export default class ProjectController{
                 res.status(400).send({msg: ErrorMessage.notFound('user')});
                 return;
             }
+            
         }catch(err){
             throw new Error(err);   
         }
@@ -440,6 +452,10 @@ export default class ProjectController{
 
         try{
             await getRepository(UserHasProject).remove(userHasProject[0]);
+            notification = await NotificationController.addNotification(POST.userSend, POST.userId, 4);
+
+            //TODO send socket to all new collaborators. Do it here
+
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
@@ -447,6 +463,7 @@ export default class ProjectController{
 
         res.status(200).send({msg: `Collabortor with login: ${user.login} was removed from project: ${project.name}`});
     }
+
 
     public static routes(){
         this.router.all('/get-projects' ,       this.getProjects);

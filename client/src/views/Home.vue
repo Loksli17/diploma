@@ -876,7 +876,8 @@
                 try {
                     const res: any = await this.$axios.post('project/add-collaborators', {
                         usersIds: collabsIds, 
-                        id      : this.projectView!.id
+                        id      : this.projectView!.id,
+                        userSend: this.$store.state.userIdentity!,
                     });
 
                     if(res.status == 400){
@@ -945,7 +946,11 @@
 
                 try {
 
-                    const res: any = await this.$axios.post('project/remove-collaborator', {userId: this.projectViewCollabs[ind].id, projectId: this.projectView.id});
+                    const res: any = await this.$axios.post('project/remove-collaborator', {
+                        userId   : this.projectViewCollabs[ind].id,
+                        projectId: this.projectView.id,
+                        userSend : this.$store.state.userIdentity!, 
+                    });
 
                     if(res.status == 400){
                         this.$flashMessage.show({

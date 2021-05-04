@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import { getRepository, InsertResult } from 'typeorm';
 
 
 import PostModule        from '../libs/post';
@@ -6,12 +7,80 @@ import ErrorMessage      from '../libs/error';
 import TypeNotification  from '../models/TypeNotification';
 import Notification      from '../models/Notification';
 import User              from '../models/User';
-import { getRepository } from 'typeorm';
+
 
 
 export default class NotificationController{
 
     private static router: Router = Router();
+
+    public static async addNotification(userSend: User, userReceiveId: number, typeId: number): Promise<Notification | undefined>{
+
+        let
+            typesNotification: Array<TypeNotification> = [],
+            notification     : Notification            = new Notification();
+
+        notification.userReceiveId      = userReceiveId;
+        notification.userSendId         = userSend.id;
+        notification.typeNotificationId = typeId;
+        notification.date               = new Date();
+        notification.time               = new Date();
+
+        try{
+            typesNotification = await getRepository(TypeNotification).find();
+            notification.text = Notification.createText(typesNotification[typeId - 1].template, /:login/, userSend.login);
+            const result = await getRepository(Notification).insert(notification);
+            notification.id = result.identifiers[0].id;
+
+            return notification;
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+
+    public static async addManyNotifications(userSend: User, userReceiveId: Array<number>, typeId: number): Promise<Array<Notification>>{
+        
+        let
+            typesNotification: Array<TypeNotification> = [],
+            notifications    : Array<Notification>     = [];
+
+        try {
+            typesNotification = await getRepository(TypeNotification).find();
+        }catch(err){
+            console.error(err);
+        }
+
+        if(userReceiveId == undefined){
+            return [];
+        }
+
+        userReceiveId.forEach((id) => {
+            let notific: Notification = new Notification;
+
+            notific.userReceiveId      = id;
+            notific.userSendId         = userSend.id;
+            notific.typeNotificationId = typeId;
+            notific.date               = new Date();
+            notific.time               = new Date();
+            notific.text = Notification.createText(typesNotification[typeId - 1].template, /:login/, userSend.login);
+
+            notifications.push(notific);
+        });
+
+        try {
+            const insertResult: InsertResult = await getRepository(Notification).insert(notifications);
+
+            notifications.map((notific, index) => {
+                notific.id = insertResult.identifiers[index].id; 
+                return notific;
+            })
+        }catch(err){
+            console.error(err);
+        }
+
+        return notifications;
+    }
 
 
     private static async createNotification(req: Request, res: Response){
@@ -23,10 +92,9 @@ export default class NotificationController{
         }
 
         let 
-            postErrors       : Array<keyof POST>       = [],
-            typesNotification: Array<TypeNotification> = [],
-            notification     : Notification,
-            POST             : POST                    = req.body;
+            postErrors       : Array<keyof POST> = [],
+            notification     : Notification | undefined,
+            POST             : POST              = req.body;
         
         postErrors = PostModule.checkData(POST, ['typeId', 'userSend', 'userReceiveId']);
         
@@ -35,22 +103,7 @@ export default class NotificationController{
             return;
         }
 
-        notification = new Notification();
-
-        notification.userReceiveId      = POST.userReceiveId;
-        notification.userSendId         = POST.userSend.id;
-        notification.typeNotificationId = POST.typeId;
-        notification.date               = new Date();
-        notification.time               = new Date();
-
-        try{
-            typesNotification = await getRepository(TypeNotification).find();
-            notification.text = Notification.createText(typesNotification[POST.typeId - 1].template, /:login/, POST.userSend.login);
-            const result = await getRepository(Notification).insert(notification);
-            notification.id = result.identifiers[0].id;
-        }catch(err){
-            console.error(err);
-        }
+        notification = await NotificationController.addNotification(POST.userSend, POST.userReceiveId, POST.typeId);
 
         res.status(200).send({notification: notification});
     }
@@ -82,6 +135,7 @@ export default class NotificationController{
             notifications = await getRepository(Notification).createQueryBuilder('notification')
                 .where(whereCond, {id: POST.userId})
                 .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
+                .orderBy('notification.id', 'DESC')
                 .getMany();
 
         }catch(err){
@@ -123,7 +177,7 @@ export default class NotificationController{
         }
 
         try {
-            const res = await getRepository(Notification).remove(notification);
+            await getRepository(Notification).remove(notification);
         }catch(err){
             console.error(err);
         }
