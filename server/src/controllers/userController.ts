@@ -9,9 +9,9 @@ import User                        from '../models/User';
 import fs                          from 'fs';
 import crypto                      from 'crypto-js';
 import PostModule                  from '../libs/post';
-import UserHasUser from '../models/UserHasUser';
-import { ESRCH } from 'constants';
-import { constants } from 'buffer';
+import UserHasUser                 from '../models/UserHasUser';
+import NotificationController      from './notificationController';
+import Notification                from '../models/Notification';
 
 
 export default class UserController{
@@ -489,16 +489,17 @@ export default class UserController{
     public static async removeFriendship(req: Request, res: Response){
         
         interface POST{
-            currentUserId: number,
-            friendId     : number,
+            currentUser: User,
+            friendId   : number,
         }
 
         let
-            postErrors : Array<keyof POST>        = [],
-            POST       : POST                     = req.body,
-            userHasUser: UserHasUser | undefined  = undefined;
+            postErrors  : Array<keyof POST>        = [],
+            POST        : POST                     = req.body,
+            notification: Notification | undefined,
+            userHasUser : UserHasUser | undefined  = undefined;
 
-        postErrors = PostModule.checkData(POST, ['currentUserId', 'friendId']);
+        postErrors = PostModule.checkData(POST, ['currentUser', 'friendId']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -509,7 +510,7 @@ export default class UserController{
             userHasUser = await getRepository(UserHasUser).createQueryBuilder()
                 .where(
                     "(userId1 = :id1 && userId2 = :id2) || (userId1 = :id2 && userId2 = :id1)", 
-                    {id1: POST.currentUserId, id2: POST.friendId}
+                    {id1: POST.currentUser.id, id2: POST.friendId}
                 )
                 .getOne();
 
@@ -519,14 +520,17 @@ export default class UserController{
         }
 
         if(userHasUser == undefined){
-            res.status(400).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUserId} and ${POST.friendId}`)});
+            res.status(400).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUser.id} and ${POST.friendId}`)});
             return;
         }
 
         try {
             let result = await getRepository(UserHasUser).remove(userHasUser);
-            res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUserId} and ${POST.friendId}`)});
-            console.log(result);
+            res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUser.id} and ${POST.friendId}`)});
+
+            notification = await NotificationController.addNotification(POST.currentUser, POST.friendId, 2);
+            //todo notification with socket. do it here
+            
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);

@@ -488,7 +488,7 @@
 
             removeFriendEvt: async function(): Promise<void>{
                 try {
-                    const res = await this.$axios.post('/user/remove-friends', {currentUserId: this.$store.state.userIdentity!.id, friendId: this.$route.query.id});
+                    const res = await this.$axios.post('/user/remove-friends', {currentUser: this.$store.state.userIdentity!, friendId: this.$route.query.id});
 
                     if(res.status == 200){
                         this.$flashMessage.show({
