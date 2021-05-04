@@ -111,6 +111,8 @@
                     console.log(res);
 
                     if(res.status == 200){
+
+                        this.$socket.emit('notification', {userReceiveId: this.userData.id, notification: res.data.notification});
                         
                         // ! i don't need this here
                         // const notification: Notification = res.data.notification;

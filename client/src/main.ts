@@ -11,12 +11,17 @@ import User                               from './types/User';
 import {Socket, io}                       from 'socket.io-client';
 
 
-const user = store.state.userIdentity!;
-delete user.authDate;
+let user: User | null = null;
+
+if(store.state.userIdentity != null){
+    user = store.state.userIdentity!;
+    delete user.authDate;
+}
+
 const socket = io('http://localhost:3000', {
     autoConnect: store.state.userIdentity == null ? false : true,
     query: {
-        user: JSON.stringify(user),
+        user: store.state.userIdentity == null ? 'null' : JSON.stringify(user),
     }
 });
 

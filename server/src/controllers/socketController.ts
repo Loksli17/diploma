@@ -6,6 +6,7 @@ import User     from '../models/User';
 
 export default class SocketContoller{
 
+    private static socket: Socket;
 
     public static connection(socket: Socket): void{
 
@@ -26,6 +27,22 @@ export default class SocketContoller{
             getRepository(User).update(user.id!, user);
             console.log(`user with id=${user.id} has been disconnect reason: ${reason}`);
         });
+        
+        SocketContoller.notification(socket);
+        
     }
 
+
+    public static notification(socket: Socket){
+
+        socket.on('notification', (data: any) => {
+            console.log(data);
+            getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
+                if(value == undefined || value.socketId == undefined){
+                    return;
+                }
+                socket.to(value.socketId).emit('notification', {notification: data.notification});
+            })
+        });
+    }
 }

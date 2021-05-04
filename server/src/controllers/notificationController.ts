@@ -31,6 +31,7 @@ export default class NotificationController{
             notification.text = Notification.createText(typesNotification[typeId - 1].template, /:login/, userSend.login);
             const result = await getRepository(Notification).insert(notification);
             notification.id = result.identifiers[0].id;
+            notification.typeNotification = typesNotification[typeId - 1];
 
             return notification;
         }catch(err){
@@ -63,8 +64,9 @@ export default class NotificationController{
             notific.typeNotificationId = typeId;
             notific.date               = new Date();
             notific.time               = new Date();
+            notific.typeNotification   = typesNotification[typeId - 1];
             notific.text = Notification.createText(typesNotification[typeId - 1].template, /:login/, userSend.login);
-
+            
             notifications.push(notific);
         });
 

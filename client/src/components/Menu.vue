@@ -158,7 +158,21 @@
                 this.tabs = this.$store.state.tabs;
             }
 
-            this.amountNotifications = this.$store.state.notifications!.length
+            this.amountNotifications = this.$store.state.notifications!.length;
+
+            this.$socket.on('notification', (data: any) => {
+
+                console.log(data);
+
+                this.amountNotifications++;
+                this.$store.commit('addNotification', data.notification);
+
+                this.$flashMessage.show({
+                    type : 'info',
+                    image: require("../assets/flash/warning.svg"),
+                    text : data.notification.text,
+                });
+            })
         },
         
     });

@@ -47,6 +47,14 @@ const store = createStore({
                 localStorage.setItem('notifications', JSON.stringify(notifications));   
             }
             state.notifications = JSON.parse(JSON.stringify(notifications));
+        },
+
+        addNotification(state, notification: Notification){
+            if(state.notifications == null){
+                state.notifications = [];
+            }
+            state.notifications.push(notification);
+            localStorage.setItem('notifications', JSON.stringify(state.notifications));
         }
     }
 });

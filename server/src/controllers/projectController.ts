@@ -462,7 +462,7 @@ export default class ProjectController{
             notification = await NotificationController.addNotification(POST.userSend, POST.userId, 4);
 
             //TODO send socket to all new collaborators. Do it here
-
+            
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
