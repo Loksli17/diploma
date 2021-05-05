@@ -12,4 +12,5 @@ export default interface Chat{
     user2?: User;
 
     messages: Array<Message>;
+    lastMessage: Message,
 }

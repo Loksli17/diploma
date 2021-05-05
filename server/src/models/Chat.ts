@@ -32,4 +32,6 @@ export default class Chat{
 
     @OneToMany(() => Message, message => message.chat)
     public messages?: Array<Message> | undefined;
+
+    public lastMessage?: Message;
 }

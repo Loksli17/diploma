@@ -6,7 +6,7 @@ import Chat         from '../models/Chat';
 import User         from '../models/User';
 import ErrorMessage from '../libs/error';
 import PostModule   from '../libs/post';
-import { connected } from 'process';
+import Message      from '../models/Message';
 
 
 export default class ChatController{
@@ -21,9 +21,10 @@ export default class ChatController{
         }
 
         let 
-            postErrors: Array<keyof POST> = [],
+            postErrors: Array<keyof POST>          = [],
             chat      : Chat | undefined,
-            POST      : POST              = req.body;
+            messages  : Array<Message> | undefined = [],
+            POST      : POST                       = req.body;
         
         postErrors = PostModule.checkData(POST, ['user1Id', 'user2Id']);
 
@@ -41,6 +42,14 @@ export default class ChatController{
                 .leftJoinAndSelect('chat.user1', 'user as u1')
                 .leftJoinAndSelect('chat.user2', 'user as u2')
                 .getOne();
+
+            messages = await getRepository(Message).createQueryBuilder()
+                    .where('chatId = :id', {id: chat!.id})
+                    .limit(50)
+                    .orderBy('id', 'DESC')
+                    .getMany();
+
+            chat!.messages = messages == undefined ? [] : messages;
             
             if(chat == undefined){
                 res.status(200).send({msg: "Chat has not been created", chat: undefined});
@@ -55,6 +64,53 @@ export default class ChatController{
         res.status(200).send({chat: chat}); 
     }
 
+
+    private static async getChats(req: Request, res: Response): Promise<void>{
+        interface POST{
+            userId: number,
+        }
+
+        let 
+            postErrors: Array<keyof POST> = [],
+            chats     : Array<Chat>       = [],
+            POST      : POST              = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['userId']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            const chatsDb: Array<any> = await getRepository(Chat).createQueryBuilder('chat')
+                .where('user1Id = :id || user2Id = :id', {id: POST.userId})
+                .innerJoinAndSelect('message', 'm', 'm.chatId = chat.id')
+                .innerJoinAndSelect('user', 'u', 'u.id = m.userId')
+                .groupBy('chat_id')
+                .getRawMany();
+                
+            chats = chatsDb.map((item) => {
+                let chat: Chat = new Chat();
+
+                chat.lastMessage = new Message();
+                chat.lastMessage.text = item['m_text'];
+                chat.lastMessage.user = new User();
+                chat.lastMessage.user.login = item['u_login'];
+
+                chat.user1Id = item.user1Id;
+                chat.user2Id = item.user2Id;
+
+                return chat;
+            });
+
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);
+        }
+
+        res.status(200).send({chats: chats}); 
+    }
 
     private static async createChat(req: Request, res: Response): Promise<void>{
 
@@ -89,8 +145,9 @@ export default class ChatController{
 
 
     public static routes(){
-        this.router.post('/get', this.getChat);
-        this.router.post('/add', this.createChat);
+        this.router.post('/get',      this.getChat);
+        this.router.post('/add',      this.createChat);
+        this.router.post('/getChats', this.getChats);
 
         return this.router;
     }
