@@ -49,8 +49,8 @@
                         background: $white;
                         color: $black;
                         width: max-content;
-                        height: 80%;
-                        padding: 15px;
+                        height: max-content;
+                        padding: 8px;
                         box-sizing: border-box;
                     }
                 }
@@ -58,10 +58,52 @@
             
             .chats-wrap{
                 border-right: 2px solid $grayBorder;
+                height: 100%;
+                overflow-y: auto;
+
+                .chat-item{
+                    background: $grayMain;
+                    border-top: 2px solid $grayBorder;
+                    @include row(10px);
+                    grid-template-columns: 90px auto;
+
+                    >.avatar{
+                        @include backImage();
+                    }
+
+                    >.section{
+                        padding: 10px;
+                        box-sizing: border-box;
+                        @include column(7px);
+                        grid-template-rows: auto 40px;
+
+                        .login{
+                            font-size: 21px;
+                            text-align: left;
+                            font-weight: 600;
+                        }
+
+                        .last-message{
+                            @include row(10px);
+                            align-items: center;
+                            grid-template-columns: 40px;
+
+                            .avatar{
+                                @include backImage();
+                                height: 40px;
+                            }
+
+                            span{
+                                text-align: left;
+                                font-size: 18px;
+                            }
+                        }
+                    }                    
+                }
             }
         }
 
-        .current-chat{
+        .current-chat{ 
             @include column(0px);
             grid-template-rows: 60px auto 60px;
             $size: 60px;

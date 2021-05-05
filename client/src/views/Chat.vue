@@ -14,11 +14,18 @@
                 </div>
 
                 <div class="chats-wrap">
-                    <div v-for="chat in chats" :key="chat.id">
-                        <div class="avatar"></div>
-                        <div>
-                            <div class="login"></div>
-                            <div class="last-message">{{chat.id}}</div>
+                    <div class="chat-item" v-for="chat in chats" :key="chat.id">
+                        <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.user2.avatar}`) + ')'}"></div>
+                        <div class="section">
+                            <div class="login">{{chat.user2.login}}</div>
+                            <div class="last-message">
+                                <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.lastMessage.user.avatar}`) + ')'}">
+
+                                </div>
+                                <span>
+                                    {{chat.lastMessage.text}}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,12 +79,6 @@
                 message: "" as string,
             }
         },
-
-        // watch: {
-        //     interlocutor: function(oldVal, newVal){
-        //         this.interlocutor = Object.assign({}, newVal);
-        //     }
-        // },
 
         components: {
             Menu,
@@ -179,7 +180,7 @@
 
             this.chats = await this.getChats();
 
-            console.log(this.chats);
+            console.log(this.chats, this.currentChat);
         },
     });
 </script>

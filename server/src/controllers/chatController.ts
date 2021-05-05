@@ -87,6 +87,8 @@ export default class ChatController{
                 .where('user1Id = :id || user2Id = :id', {id: POST.userId})
                 .innerJoinAndSelect('message', 'm', 'm.chatId = chat.id')
                 .innerJoinAndSelect('user', 'u', 'u.id = m.userId')
+                .innerJoinAndSelect('user', 'u1', 'u1.id = chat.user1Id')
+                .innerJoinAndSelect('user', 'u2', 'u2.id = chat.user2Id')
                 .groupBy('chat_id')
                 .getRawMany();
                 
@@ -96,10 +98,21 @@ export default class ChatController{
                 chat.lastMessage = new Message();
                 chat.lastMessage.text = item['m_text'];
                 chat.lastMessage.user = new User();
-                chat.lastMessage.user.login = item['u_login'];
+                chat.lastMessage.user.login  = item['u_login'];
+                chat.lastMessage.user.avatar = item['u_avatar'];
 
                 chat.user1Id = item.user1Id;
                 chat.user2Id = item.user2Id;
+
+                if(item['u2_id'] != POST.userId){
+                    chat.user2 = new User();
+                    chat.user2.login = item['u2_login'];
+                    chat.user2.email = item['u2_email'];
+                }else{
+                    chat.user2 = new User();
+                    chat.user2.login = item['u1_login'];
+                    chat.user2.email = item['u2_email'];
+                }
 
                 return chat;
             });
@@ -141,6 +154,12 @@ export default class ChatController{
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);
         }
+    }
+
+    public static async saveMessage(){
+         interface POST{
+             
+         }
     }
 
 
