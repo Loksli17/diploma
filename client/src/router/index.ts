@@ -41,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'AddFriends',
         component: () => import('../views/user/addFriends.vue'),
     },
+    {
+        path: "/chat",
+        name: 'chat',
+        component: () => import('../views/Chat.vue'),
+    },
 ]
 
 const router = createRouter({

@@ -1,9 +1,10 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, Unique} from 'typeorm';
 
 
 import {IsNotEmpty} from 'class-validator';
 import User         from './User';
 import ViewStatus   from './ViewStatus';
+import {IsUniq}     from '@join-com/typeorm-class-validator-is-uniq';
 
 @Entity()
 export default class Project{
@@ -25,6 +26,8 @@ export default class Project{
     @Column()
     public viewStatusId: number = 1;
 
+    @IsUniq()
+    @IsNotEmpty()
     @Column()
     public fileName: string = 'project.json';
     

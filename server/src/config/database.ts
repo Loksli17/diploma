@@ -7,6 +7,8 @@ import UserHasUser            from '../models/UserHasUser';
 import ViewStatus             from '../models/ViewStatus';
 import Notification           from '../models/Notification';
 import TypeNotification       from '../models/TypeNotification';
+import Chat                   from '../models/Chat';
+import Message                from '../models/Message';
 
 
 const
@@ -20,7 +22,17 @@ const
         username: config.db.user,
         password: config.db.password,
         database: config.db.name,
-        entities: [User, Project, ViewStatus, UserHasProject, UserHasUser, Notification, TypeNotification],
+        entities: [
+            User, 
+            Project, 
+            ViewStatus, 
+            UserHasProject, 
+            UserHasUser, 
+            Notification, 
+            TypeNotification,
+            Chat,
+            Message
+        ],
     }),
 
     init = async (): Promise<void> => {

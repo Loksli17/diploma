@@ -1,9 +1,11 @@
-import {IsEmail, MinLength, IsNotEmpty} from 'class-validator';
-import {IsUniq}                         from '@join-com/typeorm-class-validator-is-uniq';
-import Project                          from './Project';
-import Notification                     from './Notification';
-
 import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany} from 'typeorm';
+
+import {IsEmail, MinLength, IsNotEmpty, MaxLength} from 'class-validator';
+import {IsUniq}                                    from '@join-com/typeorm-class-validator-is-uniq';
+import Project                                     from './Project';
+import Notification                                from './Notification';
+import Chat                                        from './Chat';
+import Message                                     from './Message';
 
 
 @Entity()
@@ -29,13 +31,13 @@ export default class User{
     @IsNotEmpty()
     public login: string = 'bestMathMan228';
 
-    @Column({unique: true})
+    @Column()
     @IsEmail()
     @IsNotEmpty()
     @IsUniq()
     public email: string = '123@mail.ru';
 
-    @Column({})
+    @Column()
     @MinLength(7)
     @IsNotEmpty()
     public password: string = '12345678';
@@ -64,5 +66,15 @@ export default class User{
 
     @OneToMany(() => Notification, notification => notification.userSend)
     public sendNotifications?: Array<Notification> | undefined;
+
+
+    @OneToMany(() => Chat, chat => chat.user1)
+    public chats1?: Array<Chat> | undefined;
+
+    @OneToMany(() => Chat, chat => chat.user1)
+    public chats2?: Array<Chat> | undefined;
+
+    @OneToMany(() => Message, message => message.user)
+    public messages?: Array<Chat> | undefined;
 }
 

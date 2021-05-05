@@ -388,7 +388,7 @@
 
                 userContexMenuItems: [
                     {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
-                    {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}, 
+                    {value: "Go to chat", link: "/chat?idUserReceive=", img: "chat-icon.svg"}, 
                     {value: "Remove form friends", link: "", img: "remove-icon.svg"},
                 ] as Array<MenuUserItem>,
             }  
