@@ -329,7 +329,7 @@
 
 
 <script lang="ts">
-    declare const require: any
+    declare const require: any;
     import {defineComponent}        from 'vue';
     import Menu                     from '../components/Menu.vue';
     import Project                  from '../types/Project';

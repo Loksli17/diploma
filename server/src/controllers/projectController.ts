@@ -12,6 +12,7 @@ import Parser                      from '../libs/parser';
 import UserHasProject              from '../models/UserHasProject';
 import Notification                from '../models/Notification';
 import NotificationController      from './notificationController';
+import { chownSync } from 'fs';
 
 
 
@@ -238,9 +239,10 @@ export default class ProjectController{
             res.status(400).send({msg: ErrorMessage.dataNotSended(postErrors[0])});
             return;
         }
-        
+
         POST.project!.dateOfEdit   = new Date();
         POST.project!.dateOfCreate = new Date();
+        //TODO name of project with userId, project name + smth random? (think about it)
 
         project = new Project();
         project.changeFields(POST.project);

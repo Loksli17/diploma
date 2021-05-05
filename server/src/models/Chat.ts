@@ -17,11 +17,11 @@ export default class Chat{
 
     @IsNotEmpty()
     @Column()
-    public userId1?: number;
+    public user1Id?: number;
 
     @IsNotEmpty()
     @Column()
-    public userId2?: number;
+    public user2Id?: number;
 
     @ManyToOne(() => User, user => user.chats1)
     public user1?: User | number;

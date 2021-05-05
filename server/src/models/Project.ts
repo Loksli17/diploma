@@ -26,7 +26,7 @@ export default class Project{
     @Column()
     public viewStatusId: number = 1;
 
-    @IsUniq()
+    // @IsUniq()
     @IsNotEmpty()
     @Column()
     public fileName: string = 'project.json';
