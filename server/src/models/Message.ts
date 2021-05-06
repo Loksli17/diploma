@@ -28,6 +28,8 @@ export default class Message{
     @Column()
     public text?: string;
 
+    @Column()
+    public date?: Date;
 
     @ManyToOne(() => User, user => user.messages)
     public user?: User | number;

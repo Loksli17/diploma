@@ -14,13 +14,13 @@
                 </div>
 
                 <div class="chats-wrap">
-                    <div class="chat-item" v-for="chat in chats" :key="chat.id">
+                    <div class="chat-item" v-for="(chat, index) in chats" :key="chat.id" @click="changeChatEvt(index, chat)">
                         <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.user2.avatar}`) + ')'}"></div>
                         <div class="section">
                             <div class="login">{{chat.user2.login}}</div>
                             <div class="last-message">
                                 <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.lastMessage.user.avatar}`) + ')'}">
-
+                                    
                                 </div>
                                 <span>
                                     {{chat.lastMessage.text}}
@@ -41,9 +41,21 @@
 
                 <div class="messages-wrap">
                     <div class="message" v-for="message in currentChat.messages" :key="message">
-                        <div>
-                            <div class="avatar"></div>
-                            <div class="text">{{message.text}}</div>
+                        <div class="identity-message" v-if="$store.state.userIdentity.id == message.userId">
+                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${$store.state.userIdentity.avatar}`) + ')'}"></div>
+                            <div class="text">
+                                <span>{{message.text}}</span>
+                                <span>{{$filters.datetimeToViewMessage(message.date)}}</span>
+                            </div>
+                        </div>
+
+                        <div v-else class="interlocutor-message">
+                            <div></div>
+                            <div class="text">
+                                <span>{{message.text}}</span>
+                                <span>{{$filters.datetimeToViewMessage(message.date)}}</span>
+                            </div>
+                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${interlocutor.avatar}`) + ')'}"></div>
                         </div>
                     </div>
                 </div>
@@ -75,6 +87,7 @@
                 chats       : [] as Array<Chat>,
                 currentChat : {} as Chat,
                 interlocutor: {avatar: 'default-user.png'} as User,
+                // identityUser: {} as User,
                 
                 message: "" as string,
             }
@@ -110,12 +123,12 @@
                 }
             },
 
-            getChat: async function(){
+            getChat: async function(user1Id: number, user2Id: number){
                 
                 try {
                     const res = await this.$axios.post('/chat/get', {
-                        user1Id: this.$store.state.userIdentity!.id,
-                        user2Id: Number(this.$route.query.idUserReceive),
+                        user1Id: user1Id,
+                        user2Id: user2Id,
                     });
 
                     if(res.status == 200){
@@ -163,10 +176,22 @@
                     console.error(err);
                 }
             },
+
+            changeChatEvt: async function(index: number, chat: any){
+                
+                this.currentChat = await this.getChat(chat.user1Id, chat.user2Id);
+
+                if(this.currentChat.user1!.id == this.$store.state.userIdentity!.id){
+                    this.interlocutor = this.currentChat.user2!;
+                }else{
+                    this.interlocutor = this.currentChat.user1!;
+                }
+
+            }
         },
 
         created: async function(){
-            this.currentChat = await this.getChat();
+            this.currentChat = await this.getChat(this.$store.state.userIdentity!.id, Number(this.$route.query.idUserReceive));
 
             if(this.currentChat == undefined){
                 this.currentChat = await this.createChat();
@@ -179,6 +204,10 @@
             }
 
             this.chats = await this.getChats();
+            // this.currentChat.messages.forEach((item) => {
+            //     item.dateString = this.$filters.datetimeToViewMessage(item.date);
+            //     return item;
+            // });
 
             console.log(this.chats, this.currentChat);
         },

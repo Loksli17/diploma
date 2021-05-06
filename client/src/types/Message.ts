@@ -11,4 +11,6 @@ export default interface Message{
 
     user: User;
     chat: Chat;
+
+    date: Date;
 }

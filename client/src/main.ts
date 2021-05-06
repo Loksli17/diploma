@@ -91,6 +91,9 @@ const filters = {
     datetimeToView: function(date: Date | string){
         return moment(date).format('D.MM.YY h:mm a');
     },
+    datetimeToViewMessage: function(date: Date | string){
+        return moment(date).format('h:mm a D MMMM');
+    },
     dateToDb: function(date: Date | string){
         return moment(date).format('YYYY-MM-DD');
     },

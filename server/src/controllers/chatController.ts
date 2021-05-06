@@ -1,12 +1,13 @@
 import {Router, Request, Response} from 'express';
 import {getRepository, InsertResult} from 'typeorm';
 
-
-import Chat         from '../models/Chat';
-import User         from '../models/User';
-import ErrorMessage from '../libs/error';
-import PostModule   from '../libs/post';
-import Message      from '../models/Message';
+import {validate, ValidationError} from 'class-validator';
+import Parser                      from '../libs/parser';
+import Chat                        from '../models/Chat';
+import User                        from '../models/User';
+import ErrorMessage                from '../libs/error';
+import PostModule                  from '../libs/post';
+import Message                     from '../models/Message';
 
 
 export default class ChatController{
@@ -95,14 +96,14 @@ export default class ChatController{
             chats = chatsDb.map((item) => {
                 let chat: Chat = new Chat();
 
-                chat.lastMessage = new Message();
-                chat.lastMessage.text = item['m_text'];
-                chat.lastMessage.user = new User();
+                chat.lastMessage             = new Message();
+                chat.lastMessage.text        = item['m_text'];
+                chat.lastMessage.user        = new User();
                 chat.lastMessage.user.login  = item['u_login'];
                 chat.lastMessage.user.avatar = item['u_avatar'];
 
-                chat.user1Id = item.user1Id;
-                chat.user2Id = item.user2Id;
+                chat.user1Id = item['chat_user1Id'];
+                chat.user2Id = item['chat_user2Id'];
 
                 if(item['u2_id'] != POST.userId){
                     chat.user2 = new User();
@@ -156,10 +157,44 @@ export default class ChatController{
         }
     }
 
-    public static async saveMessage(){
-         interface POST{
-             
-         }
+    public static async saveMessage(req: Request, res: Response): Promise<void>{
+        interface POST{
+            text  : string,
+            userId: number,
+            chatId: number,
+        }
+
+        let 
+            postErrors   : Array<keyof POST>       = [],
+            validateResult: Array<ValidationError> = [],
+            message      : Message | undefined     = new Message(),
+            POST         : POST                    = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['text', 'userId', 'chatId']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        message.changeFields(POST);
+        message.date = new Date();
+
+        validateResult = await validate(message);
+
+        if(validateResult.length){
+            res.status(400).send({msg: 'Bad validation', errors: Parser.parseValidateError(validateResult)});
+            return;
+        }
+
+        try {
+            await getRepository(Message).insert(message);   
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);
+        }
+
+        res.status(200).send({msg: 'Message has been saved successfully!'})
     }
 
 
