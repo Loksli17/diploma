@@ -125,6 +125,7 @@ export default class ChatController{
         res.status(200).send({chats: chats}); 
     }
 
+
     private static async createChat(req: Request, res: Response): Promise<void>{
 
         interface POST{
@@ -179,8 +180,6 @@ export default class ChatController{
         message.changeFields(POST);
         message.date = new Date();
 
-        console.log(message);
-
         validateResult = await validate(message);
 
         if(validateResult.length){
@@ -189,14 +188,14 @@ export default class ChatController{
         }
 
         try {
-            await getRepository(Message).insert(message);
-            console.log(message);
+            const result: InsertResult = await getRepository(Message).insert(message);
+            message.id = result.identifiers[0].id;
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);
         }
 
-        res.status(200).send({msg: 'Message has been saved successfully!'})
+        res.status(200).send({msg: 'Message has been saved successfully!', message: message})
     }
 
 

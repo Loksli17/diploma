@@ -171,6 +171,18 @@
                     text : data.notification.text,
                 });
             });
+
+            this.$socket.on('message', (data: any) => {
+
+                if(this.$route.path != "/chat"){
+                    this.$flashMessage.show({
+                        type : 'info',
+                        image: require(`../assets/notification/message-icon.svg`),
+                        text : data.user.login + ": " + data.message.text,
+                    });
+                }
+                
+            });
         },
         
     });

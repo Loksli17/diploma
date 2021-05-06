@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 
 import {Socket} from 'socket.io';
 import User     from '../models/User';
+import Message from '../models/Message';
 
 
 export default class SocketContoller{
@@ -43,8 +44,29 @@ export default class SocketContoller{
         });
     }
 
+    public static sendMessage(socket: Socket): void{
+
+        interface Data{
+            message      : Message,
+            userReceiveId: User
+        }
+
+        socket.on('message', (data: Data) => {
+            console.log(data);
+            getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
+                if(value == undefined || value.socketId == undefined){
+                    return;
+                }
+                console.log('this', value);
+                socket.to(value.socketId!).emit('message', {message: data.message, user: value});
+            });
+           
+        });
+    }
+
 
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
+        SocketContoller.sendMessage(socket);
     }
 }

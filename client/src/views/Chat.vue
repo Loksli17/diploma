@@ -87,7 +87,6 @@
                 chats       : [] as Array<Chat>,
                 currentChat : {} as Chat,
                 interlocutor: {avatar: 'default-user.png'} as User,
-                // identityUser: {} as User,
                 
                 message: "" as string,
             }
@@ -198,8 +197,13 @@
                     });
 
                     if(res.status == 200){
-                        
                         // todo send socket
+                        this.$socket.emit('message', {message: res.data.message, userReceiveId: this.interlocutor.id});
+                        this.currentChat.messages.push(res.data.message);
+                        this.message = "";
+
+                        const messagesWrap = this.$el.querySelector(".messages-wrap");
+                        messagesWrap.scrollTop = messagesWrap.scrollHeight;
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
@@ -218,6 +222,7 @@
             }
         },
 
+
         created: async function(){
             this.currentChat = await this.getChat(this.$store.state.userIdentity!.id, Number(this.$route.query.idUserReceive));
 
@@ -233,10 +238,15 @@
 
             this.chats = await this.getChats();
 
-            console.log(this.chats, this.currentChat, this.$refs.messagesWrap);
-
             const messagesWrap = this.$el.querySelector(".messages-wrap");
             messagesWrap.scrollTop = messagesWrap.scrollHeight;
+
+            this.$socket.on('message', (data: any) => {
+                this.currentChat.messages.push(data.message);
+                const messagesWrap = this.$el.querySelector(".messages-wrap");
+                messagesWrap.scrollTop = messagesWrap.scrollHeight;
+            });
+
         },
     });
 </script>
