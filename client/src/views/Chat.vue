@@ -39,7 +39,7 @@
                     <span v-else class="offline">offline</span>
                 </div>
 
-                <div class="messages-wrap">
+                <div ref="messagesWrap" class="messages-wrap">
                     <div class="message" v-for="message in currentChat.messages" :key="message">
                         <div class="identity-message" v-if="$store.state.userIdentity.id == message.userId">
                             <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${$store.state.userIdentity.avatar}`) + ')'}"></div>
@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="chat-form">
-                    <form action="">
+                    <form action="" @submit.prevent="sendMessage">
                         <input v-model="message" type="text" placeholder="Print text here..">
                         <input type="submit" value="Send">
                     </form>
@@ -100,7 +100,7 @@
         methods: {
             getChats: async function(){
                 try {
-                    const res = await this.$axios.post('/chat/getChats', {
+                    const res = await this.$axios.post('/chat/get-chats', {
                         userId: this.$store.state.userIdentity!.id,
                     });
 
@@ -186,7 +186,35 @@
                 }else{
                     this.interlocutor = this.currentChat.user1!;
                 }
+            },
 
+            sendMessage: async function(){
+
+                try {
+                    const res = await this.$axios.post('/chat/save-message', {
+                        text  : this.message,
+                        userId: this.$store.state.userIdentity!.id,
+                        chatId: this.currentChat.id,
+                    });
+
+                    if(res.status == 200){
+                        
+                        // todo send socket
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
             }
         },
 
@@ -204,12 +232,11 @@
             }
 
             this.chats = await this.getChats();
-            // this.currentChat.messages.forEach((item) => {
-            //     item.dateString = this.$filters.datetimeToViewMessage(item.date);
-            //     return item;
-            // });
 
-            console.log(this.chats, this.currentChat);
+            console.log(this.chats, this.currentChat, this.$refs.messagesWrap);
+
+            const messagesWrap = this.$el.querySelector(".messages-wrap");
+            messagesWrap.scrollTop = messagesWrap.scrollHeight;
         },
     });
 </script>

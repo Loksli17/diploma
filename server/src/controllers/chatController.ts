@@ -47,7 +47,6 @@ export default class ChatController{
             messages = await getRepository(Message).createQueryBuilder()
                     .where('chatId = :id', {id: chat!.id})
                     .limit(50)
-                    .orderBy('id', 'DESC')
                     .getMany();
 
             chat!.messages = messages == undefined ? [] : messages;
@@ -180,6 +179,8 @@ export default class ChatController{
         message.changeFields(POST);
         message.date = new Date();
 
+        console.log(message);
+
         validateResult = await validate(message);
 
         if(validateResult.length){
@@ -188,7 +189,8 @@ export default class ChatController{
         }
 
         try {
-            await getRepository(Message).insert(message);   
+            await getRepository(Message).insert(message);
+            console.log(message);
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);
@@ -201,7 +203,8 @@ export default class ChatController{
     public static routes(){
         this.router.post('/get',      this.getChat);
         this.router.post('/add',      this.createChat);
-        this.router.post('/getChats', this.getChats);
+        this.router.post('/get-chats', this.getChats);
+        this.router.post('/save-message', this.saveMessage);
 
         return this.router;
     }
