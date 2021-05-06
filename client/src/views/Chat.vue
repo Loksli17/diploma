@@ -39,7 +39,7 @@
                     <span v-else class="offline">offline</span>
                 </div>
 
-                <div ref="messagesWrap" class="messages-wrap">
+                <div ref="messagesWrap" class="messages-wrap" @scroll="moreMessages">
                     <div class="message" v-for="message in currentChat.messages" :key="message">
                         <div class="identity-message" v-if="$store.state.userIdentity.id == message.userId">
                             <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${$store.state.userIdentity.avatar}`) + ')'}"></div>
@@ -64,7 +64,7 @@
 
                 <div class="chat-form">
                     <form action="" @submit.prevent="sendMessage">
-                        <input v-model="message" type="text" placeholder="Print text here..">
+                        <input v-model="message" type="text" placeholder="Message..">
                         <input type="submit" value="Send">
                     </form>
                 </div>
@@ -197,7 +197,7 @@
                     return;
                 }
 
-                const messagesWrap = this.$refs.messagesWrap as any;
+                const messagesWrap = this.$el.querySelector(".messages-wrap");
                 messagesWrap.scrollTop = messagesWrap.scrollHeight;
             },
 
@@ -263,6 +263,43 @@
             clearSearchForm: function(){
                 this.searchValueProject = "";
                 this.chats = JSON.parse(JSON.stringify(this.allChats));
+            },
+
+
+            moreMessages: async function(){
+
+                const messagesWrap: any = this.$refs.messagesWrap as any;
+
+                if(messagesWrap.scrollTop > 150){
+                    return;
+                }
+
+                console.log(messagesWrap.scrollTop);
+
+                try {
+                    const res = await this.$axios.post('/chat/get-messages', {
+                        chatId: this.currentChat.id,
+                        take  : 50,
+                        skip  : this.currentChat.messages.length,
+                    });
+
+                    if(res.status == 200){
+                        this.currentChat.messages = res.data.messages.concat(this.currentChat.messages);
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
             }
         },
 
@@ -283,12 +320,11 @@
             this.chats    = await this.getChats();
             this.allChats = JSON.parse(JSON.stringify(this.chats));
 
-            const messagesWrap = this.$el.querySelector(".messages-wrap");
-            messagesWrap.scrollTop = messagesWrap.scrollHeight;
+            this.messageWrapScrollEnd(true);
 
             this.$socket.on('message', (data: any) => {
-                const messagesWrap = this.$refs.messagesWrap as any;
-                const scrollFlag   =  (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
+                const messagesWrap = this.$el.querySelector(".messages-wrap");
+                const scrollFlag   = (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
 
                 this.currentChat.messages.push(data.message);
                 

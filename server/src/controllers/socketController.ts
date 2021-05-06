@@ -21,6 +21,8 @@ export default class SocketContoller{
         console.log(`user with id=${user.id} socket id=${user.socketId}`);
 
         socket.on('disconnect', (reason: string) => {
+
+            //todo reconnect if user just sleeping
             user.socketId = "";
             user.status   = false;
             getRepository(User).update(user.id!, user);

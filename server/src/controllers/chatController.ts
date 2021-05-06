@@ -46,10 +46,11 @@ export default class ChatController{
 
             messages = await getRepository(Message).createQueryBuilder()
                     .where('chatId = :id', {id: chat!.id})
-                    .limit(50)
+                    .take(50)
+                    .orderBy('id', "DESC")
                     .getMany();
 
-            chat!.messages = messages == undefined ? [] : messages;
+            chat!.messages = messages == undefined ? [] : messages.reverse();
             
             if(chat == undefined){
                 res.status(200).send({msg: "Chat has not been created", chat: undefined});
@@ -199,11 +200,53 @@ export default class ChatController{
     }
 
 
+    public static async getMessages(req: Request, res: Response){
+
+        interface POST{
+            take  : number;
+            skip  : number;
+            chatId: number;
+        }
+
+        let 
+            postErrors: Array<keyof POST> = [],
+            messages  : Array<Message>    = [],
+            POST      : POST              = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['take', 'skip']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        console.log(POST);
+
+        try {
+            messages = await getRepository(Message).createQueryBuilder()
+                .where('chatId = :id', {id: POST.chatId})
+                .orderBy('id', "DESC")
+                .skip(POST.skip)
+                .take(POST.take)
+                .getMany();
+
+            console.log(messages);
+
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);  
+        }
+
+        res.status(200).send({messages: messages});
+    }
+
+
     public static routes(){
-        this.router.post('/get',      this.getChat);
-        this.router.post('/add',      this.createChat);
-        this.router.post('/get-chats', this.getChats);
+        this.router.post('/get',          this.getChat);
+        this.router.post('/add',          this.createChat);
+        this.router.post('/get-chats',    this.getChats);
         this.router.post('/save-message', this.saveMessage);
+        this.router.post('/get-messages', this.getMessages);
 
         return this.router;
     }
