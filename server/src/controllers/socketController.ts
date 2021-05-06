@@ -57,7 +57,6 @@ export default class SocketContoller{
                 if(value == undefined || value.socketId == undefined){
                     return;
                 }
-                console.log('this', value);
                 socket.to(value.socketId!).emit('message', {message: data.message, user: value});
             });
            

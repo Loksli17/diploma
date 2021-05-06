@@ -1,6 +1,6 @@
 // import Vue from 'vue';
 export default {
-    axiosPath: 'http://localhost:3000/',
+    serverPath: 'http://192.168.1.35:3000/',
     headers  : {
         'Content-Type': 'application/json',
     },

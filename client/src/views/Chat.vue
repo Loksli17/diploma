@@ -264,17 +264,13 @@
                 const scrollFlag   =  (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
 
                 this.currentChat.messages.push(data.message);
-
+                
                 nextTick(() => {
                     this.messageWrapScrollEnd(scrollFlag);
                 });
             });
 
         },
-
-        updated: function(){
-            // this.messageWrapScrollEnd();
-        }
     });
 </script>
 

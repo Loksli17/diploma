@@ -18,7 +18,7 @@ if(store.state.userIdentity != null){
     delete user.authDate;
 }
 
-const socket = io('http://localhost:3000', {
+const socket = io(config.serverPath, {
     autoConnect: store.state.userIdentity == null ? false : true,
     query: {
         user: store.state.userIdentity == null ? 'null' : JSON.stringify(user),
@@ -26,7 +26,7 @@ const socket = io('http://localhost:3000', {
 });
 
 
-axios.defaults.baseURL = config.axiosPath;
+axios.defaults.baseURL = config.serverPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;
 
 axios.interceptors.response.use(

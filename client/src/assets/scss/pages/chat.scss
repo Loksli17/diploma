@@ -156,7 +156,7 @@
                         border: 0;
                         box-sizing: border-box;
                         padding: 25px;
-                        color: $grayBorder;
+                        color: $black;
                         font-size: 22px;
                         border-top: 2px solid $grayBorder;
 
@@ -225,7 +225,6 @@
                         @include column(20px);
                         grid-template-rows: auto max-content;
                         align-items: center;
-                        // @include flex(flex-start, center);
                         box-sizing: border-box;
                         padding: 12px;
 
