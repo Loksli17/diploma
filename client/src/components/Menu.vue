@@ -181,7 +181,6 @@
                         text : data.user.login + ": " + data.message.text,
                     });
                 }
-                
             });
         },
         

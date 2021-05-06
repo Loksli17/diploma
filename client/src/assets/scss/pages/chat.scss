@@ -116,7 +116,7 @@
 
         .current-chat{ 
             @include column(0px);
-            grid-template-rows: 80px auto 60px;
+            grid-template-rows: 80px auto 80px;
             $size: 80px;
             height: calc(100vh - 172px);
 
@@ -145,6 +145,7 @@
             }
 
             .chat-form{
+
                 form{
                     width: 100%;
                     height: 100%;
@@ -152,7 +153,16 @@
                     @include row(0px);
 
                     input{
-                        outline: 0;
+                        border: 0;
+                        box-sizing: border-box;
+                        padding: 25px;
+                        color: $grayBorder;
+                        font-size: 22px;
+                        border-top: 2px solid $grayBorder;
+
+                        &:focus{
+                            outline: 0;
+                        }
                     }
 
                     input[type="submit"]{
@@ -174,6 +184,12 @@
                 padding: 30px;
                 @include column($gap);
                 grid-auto-rows: max-content;
+
+                .pseudo-block{
+                    width: 100%;
+                    background: inherit;
+                    height: 10px;
+                }
 
                 .message{
                     

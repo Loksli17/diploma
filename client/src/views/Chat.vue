@@ -58,6 +58,8 @@
                             <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${interlocutor.avatar}`) + ')'}"></div>
                         </div>
                     </div>
+
+                    <div class="pseudo-block"></div>
                 </div>
 
                 <div class="chat-form">
@@ -74,7 +76,7 @@
 
 <script lang="ts">
     declare const require: any;
-    import {defineComponent} from 'vue';
+    import {defineComponent, nextTick} from 'vue';
     import Menu              from '../components/Menu.vue';
     import Chat              from '../types/Chat';
     import User              from '../types/User';
@@ -187,6 +189,16 @@
                 }
             },
 
+            messageWrapScrollEnd: function(scrollFlag: boolean){
+
+                if(!scrollFlag){
+                    return;
+                }
+
+                const messagesWrap = this.$refs.messagesWrap as any;
+                messagesWrap.scrollTop = messagesWrap.scrollHeight;
+            },
+
             sendMessage: async function(){
 
                 try {
@@ -197,13 +209,19 @@
                     });
 
                     if(res.status == 200){
+
+                        const messagesWrap = this.$refs.messagesWrap as any;
+                        const scrollFlag   =  (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
+
                         // todo send socket
                         this.$socket.emit('message', {message: res.data.message, userReceiveId: this.interlocutor.id});
                         this.currentChat.messages.push(res.data.message);
                         this.message = "";
 
-                        const messagesWrap = this.$el.querySelector(".messages-wrap");
-                        messagesWrap.scrollTop = messagesWrap.scrollHeight;
+                        nextTick(() => {
+                            this.messageWrapScrollEnd(scrollFlag);
+                        });
+
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
@@ -242,12 +260,21 @@
             messagesWrap.scrollTop = messagesWrap.scrollHeight;
 
             this.$socket.on('message', (data: any) => {
+                const messagesWrap = this.$refs.messagesWrap as any;
+                const scrollFlag   =  (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
+
                 this.currentChat.messages.push(data.message);
-                const messagesWrap = this.$el.querySelector(".messages-wrap");
-                messagesWrap.scrollTop = messagesWrap.scrollHeight;
+
+                nextTick(() => {
+                    this.messageWrapScrollEnd(scrollFlag);
+                });
             });
 
         },
+
+        updated: function(){
+            // this.messageWrapScrollEnd();
+        }
     });
 </script>
 
