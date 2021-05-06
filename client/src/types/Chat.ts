@@ -13,4 +13,6 @@ export default interface Chat{
 
     messages: Array<Message>;
     lastMessage: Message;
+
+    active?: boolean;
 }

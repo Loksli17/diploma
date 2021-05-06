@@ -217,6 +217,8 @@ export default class UserController{
 
         postErrors = PostModule.checkData(POST, ['id']);
 
+        console.log('whaaat', POST);
+
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;

@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import {getRepository, InsertResult} from 'typeorm';
 
-import {validate, ValidationError} from 'class-validator';
+import {isRgbColor, validate, ValidationError} from 'class-validator';
 import Parser                      from '../libs/parser';
 import Chat                        from '../models/Chat';
 import User                        from '../models/User';
@@ -43,6 +43,13 @@ export default class ChatController{
                 .leftJoinAndSelect('chat.user1', 'user as u1')
                 .leftJoinAndSelect('chat.user2', 'user as u2')
                 .getOne();
+            
+            if(chat == undefined){
+                res.status(200).send({msg: "Chat has not been created", chat: undefined});
+                return;
+            }
+
+            if(chat!.messages == undefined) chat!.messages = [];
 
             messages = await getRepository(Message).createQueryBuilder()
                     .where('chatId = :id', {id: chat!.id})
@@ -51,11 +58,6 @@ export default class ChatController{
                     .getMany();
 
             chat!.messages = messages == undefined ? [] : messages.reverse();
-            
-            if(chat == undefined){
-                res.status(200).send({msg: "Chat has not been created", chat: undefined});
-                return;
-            }
 
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
@@ -151,6 +153,10 @@ export default class ChatController{
         try {
             const result: InsertResult = await getRepository(Chat).insert(chat);
             chat.id = result.identifiers[0].id;
+
+            chat.user1 = await getRepository(User).findOne(POST.user1Id);
+            chat.user2 = await getRepository(User).findOne(POST.user2Id);
+
             res.status(200).send({chat: chat});
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
@@ -220,8 +226,6 @@ export default class ChatController{
             return;
         }
 
-        console.log(POST);
-
         try {
             messages = await getRepository(Message).createQueryBuilder()
                 .where('chatId = :id', {id: POST.chatId})
@@ -229,8 +233,6 @@ export default class ChatController{
                 .skip(POST.skip)
                 .take(POST.take)
                 .getMany();
-
-            console.log(messages);
 
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});

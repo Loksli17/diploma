@@ -326,8 +326,14 @@
             },
 
             getPageUser: async function(): Promise<User | undefined>{
+
+                console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+
+                if(this.$route.path != '/user/view') return;
+
                 try{
                     const res = await this.$axios.post('user/get-id', {id: this.$route.query.id});
+                    
                     if(res.status == 200){
                         return res.data.user;
                     }else{

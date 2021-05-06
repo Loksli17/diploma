@@ -137,6 +137,7 @@
                     if(res.status == 200){
                         return res.data.chat;
                     }else{
+                        console.log("sdfsdf");
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
@@ -189,6 +190,8 @@
                 }else{
                     this.interlocutor = this.currentChat.user1!;
                 }
+
+                this.messageWrapScrollEnd(true);
             },
 
             messageWrapScrollEnd: function(scrollFlag: boolean){
@@ -223,6 +226,10 @@
                         nextTick(() => {
                             this.messageWrapScrollEnd(scrollFlag);
                         });
+
+                        if(this.currentChat.messages.length == 1){
+                            this.chats = await this.getChats();
+                        }
 
                     }else{
                         this.$flashMessage.show({
@@ -308,7 +315,8 @@
             this.currentChat = await this.getChat(this.$store.state.userIdentity!.id, Number(this.$route.query.idUserReceive));
 
             if(this.currentChat == undefined){
-                this.currentChat = await this.createChat();
+                this.currentChat          = await this.createChat();
+                this.currentChat.messages = [];
             }
 
             if(this.currentChat.user1!.id == this.$store.state.userIdentity!.id){
@@ -316,6 +324,8 @@
             }else{
                 this.interlocutor = this.currentChat.user1!;
             }
+
+            console.log(this.currentChat);
 
             this.chats    = await this.getChats();
             this.allChats = JSON.parse(JSON.stringify(this.chats));
