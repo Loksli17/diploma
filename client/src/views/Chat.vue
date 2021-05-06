@@ -9,7 +9,7 @@
                     <form class="" @submit.prevent="searchProjectsEvt" action="">
                         <div><img :src=" require(`../assets/search-icon.svg`)"></div>
                         <input v-model="searchValueProject" type="search" placeholder="User login or email">
-                        <button class="btn clear-btn">Clear</button>
+                        <button type="button" class="btn clear-btn" @click="clearSearchForm">Clear</button>
                     </form>
                 </div>
 
@@ -34,7 +34,7 @@
             <div class="current-chat">
                 <div class="header">
                     <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${interlocutor.avatar}`) + ')'}"></div>
-                    <div class="name">{{interlocutor.firstName}} {{interlocutor.lastName}} ({{interlocutor.login}})</div>
+                    <router-link class="name" :to="`/user/view?id=${interlocutor.id}`">{{interlocutor.firstName}} {{interlocutor.lastName}} ({{interlocutor.login}})</router-link>
                     <span v-if="interlocutor.status" class="online">online</span>
                     <span v-else class="offline">offline</span>
                 </div>
@@ -87,10 +87,12 @@
         data: function(){
             return {
                 chats       : [] as Array<Chat>,
+                allChats    : [] as Array<Chat>,
                 currentChat : {} as Chat,
                 interlocutor: {avatar: 'default-user.png'} as User,
                 
-                message: "" as string,
+                message           : "" as string,
+                searchValueProject: "" as string,
             }
         },
 
@@ -237,6 +239,30 @@
                     });
                     console.error(err);
                 }
+            },
+
+            searchProjectsEvt: function(){
+
+                if(this.searchValueProject == ""){
+                    this.chats = this.allChats;
+                    return;
+                }
+
+                this.chats = this.chats.filter((item: Chat) => {
+
+                    const
+                        login: string = item.user2!.login.toLowerCase(),
+                        email: string = item.user2!.login.toLowerCase();
+
+                    if(login.includes(this.searchValueProject.toLowerCase()) || email.includes(this.searchValueProject.toLowerCase())){
+                        return item;
+                    }
+                });
+            },
+
+            clearSearchForm: function(){
+                this.searchValueProject = "";
+                this.chats = JSON.parse(JSON.stringify(this.allChats));
             }
         },
 
@@ -254,7 +280,8 @@
                 this.interlocutor = this.currentChat.user1!;
             }
 
-            this.chats = await this.getChats();
+            this.chats    = await this.getChats();
+            this.allChats = JSON.parse(JSON.stringify(this.chats));
 
             const messagesWrap = this.$el.querySelector(".messages-wrap");
             messagesWrap.scrollTop = messagesWrap.scrollHeight;

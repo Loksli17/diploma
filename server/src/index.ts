@@ -26,8 +26,8 @@ export class App{
         this.server = createServer(this.app);
         this.io     = new socketServer(this.server, {
             cors: {
-                origin: "http://localhost:8080",
-                methods: ["GET", "POST", "PUT"]
+                origin: config.cors.origin,
+                methods: config.cors.methods,
             }
         });
 
@@ -65,8 +65,8 @@ export class App{
     private createMiddlewares(){
         this.app.use(cors(
             {
-                origin: "http://localhost:8080",
-                methods: ["GET", "POST", "PUT"]
+                origin: config.cors.origin,
+                methods: config.cors.methods,
             }
         ));
         this.app.use(express.json());

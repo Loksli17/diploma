@@ -136,11 +136,26 @@
                     font-size: 22px;
                     text-align: left;
                     font-weight: 600;
+                    text-decoration: none;
+                    color: $black;
+                    letter-spacing: 0.3px;
+
+                    &:hover{
+                        text-decoration: underline;
+                    }
                 }
 
                 .online, .offline{
                     font-size: 19px;
                     font-weight: 600;
+                }
+
+                .online{
+                    color: $green;
+                }
+
+                .offline{
+                    color: $red;
                 }
             }
 
