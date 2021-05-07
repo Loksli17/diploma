@@ -9,6 +9,7 @@ import flashMessage, {FlashMessagePlugin} from '@smartweb/vue-flash-message';
 import store                              from './store';
 import User                               from './types/User';
 import {Socket, io}                       from 'socket.io-client';
+import Menu                               from './components/Menu.vue'; 
 
 
 let user: User | null = null;
@@ -146,5 +147,36 @@ app.use(flashMessage, {
     time    : 6000,
     strategy: 'single',
 });
+
+
+socket.on('message', (data: any) => {
+
+    if(app.config.globalProperties.$route.path == "/chat"){
+        return;
+    }
+    
+    app.config.globalProperties.$flashMessage.show({
+        type : 'info',
+        image: require(`@/assets/notification/message-icon.svg`),
+        text : data.user.login + ": " + data.message.text,
+    });
+
+});
+
+socket.on('notification', (data: any) => {
+
+    console.log('NOTIFICATION');
+
+    app.config.globalProperties.$store.commit('addNotification', data.notification);
+
+    app.config.globalProperties.$flashMessage.show({
+        type : 'info',
+        image: require(`@/assets/notification/${data.notification.typeNotification.img}`),
+        text : data.notification.text,
+    });
+    
+});
+
+app.component('Menu', Menu);
 
 app.use(store).use(router).mount('#app');

@@ -161,27 +161,9 @@
             this.amountNotifications = this.$store.state.notifications!.length;
 
             this.$socket.on('notification', (data: any) => {
-
                 this.amountNotifications++;
-                this.$store.commit('addNotification', data.notification);
-
-                this.$flashMessage.show({
-                    type : 'info',
-                    image: require(`../assets/notification/${data.notification.typeNotification.img}`),
-                    text : data.notification.text,
-                });
             });
 
-            this.$socket.on('message', (data: any) => {
-
-                if(this.$route.path != "/chat"){
-                    this.$flashMessage.show({
-                        type : 'info',
-                        image: require(`../assets/notification/message-icon.svg`),
-                        text : data.user.login + ": " + data.message.text,
-                    });
-                }
-            });
         },
         
     });

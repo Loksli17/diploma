@@ -323,7 +323,6 @@
 
         components: {
             Form,
-            Menu,
             ActionBack,
             NotificationComp,
         }

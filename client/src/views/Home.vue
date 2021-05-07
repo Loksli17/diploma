@@ -1043,7 +1043,7 @@
         },
 
         components: {
-            Menu,
+            // Menu,
             Pagination,
             ActionBack,
             Form,

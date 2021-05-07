@@ -158,7 +158,6 @@
     export default defineComponent({
         
         components: {
-            Menu,
             UserItem,
             Pagination
         },

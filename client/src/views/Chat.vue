@@ -96,10 +96,6 @@
             }
         },
 
-        components: {
-            Menu,
-        },
-
         methods: {
             getChats: async function(){
                 try {

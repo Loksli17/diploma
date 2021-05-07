@@ -53,7 +53,7 @@ const store = createStore({
             if(state.notifications == null){
                 state.notifications = [];
             }
-            state.notifications.push(notification);
+            state.notifications.unshift(notification);
             localStorage.setItem('notifications', JSON.stringify(state.notifications));
         }
     }
