@@ -187,6 +187,8 @@
                     this.interlocutor = this.currentChat.user1!;
                 }
 
+                this.$router.push(`/chat?idUserReceive=${this.interlocutor.id}`);
+
                 nextTick(() => {
                     this.messageWrapScrollEnd(true);
                 });
@@ -333,6 +335,16 @@
             this.$socket.on('message', (data: any) => {
                 const messagesWrap = this.$el.querySelector(".messages-wrap");
                 const scrollFlag   = (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
+
+                if(this.currentChat == undefined){
+                    this.getChat(this.$store.state.userIdentity!.id, Number(this.$route.query.idUserReceive)).then((val) => {
+                        this.currentChat = val;
+                        this.currentChat.messages.push(data.message);
+                        nextTick(() => {
+                            this.messageWrapScrollEnd(scrollFlag);
+                        });
+                    }); 
+                }
 
                 this.currentChat.messages.push(data.message);
                 

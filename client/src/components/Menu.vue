@@ -117,9 +117,24 @@
             },
 
             removeTab: function(tab: Tab): void{
-                const ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
+                const
+                    ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
+                
                 this.tabs.splice(ind, 1);
-                this.$store.commit('setTabs', this.tabs);
+
+                if(this.$route.path != "/project" || Number(this.$route.query.id) != tab.link){
+                    this.$store.commit('setTabs', this.tabs);
+                    return;
+                }
+
+                if(this.tabs.length){
+                    this.tabs[this.tabs.length - 1].isActive = true;
+                    this.$router.push(`/project?id=${this.tabs[this.tabs.length - 1].link}`);
+                    this.$store.commit('setTabs', this.tabs);
+                }else{
+                    this.$router.push(`/`);
+                }
+                    
             },
 
             cleanActiveTab: function(): void{
