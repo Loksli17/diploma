@@ -5,8 +5,8 @@ import Message from './Message';
 export default interface Chat{
     id?: number;
 
-    userId1: number;
-    userId2: number;
+    user1Id: number;
+    user2Id: number;
 
     user1?: User;
     user2?: User;

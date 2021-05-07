@@ -206,7 +206,7 @@ export default class ChatController{
 
         try {
             const result: InsertResult = await getRepository(Message).insert(message);
-            
+
             message.id   = result.identifiers[0].id;
             message.user = await getRepository(User).findOne(message.userId);
         }catch(err){
@@ -255,12 +255,59 @@ export default class ChatController{
     }
 
 
+    public static async delete(req: Request, res: Response){
+        interface POST{
+            id: number;
+        }
+
+        let 
+            postErrors: Array<keyof POST> = [],
+            chat      : Chat | undefined,
+            POST      : POST              = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['id']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            chat = await getRepository(Chat).findOne(POST.id);   
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);
+        }
+
+        if(chat == undefined){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])})
+            return;
+        }
+
+        try{
+            await getRepository(Message).createQueryBuilder()
+                .where("chatId = :id", {id: POST.id})
+                .delete()
+                .execute();
+
+            await getRepository(Chat).delete(POST.id);
+
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);   
+        }
+
+        res.status(200).send({msg: `Chat with id = ${POST.id} was deleted`})
+    }
+
+
     public static routes(){
         this.router.post('/get',          this.getChat);
         this.router.post('/add',          this.createChat);
         this.router.post('/get-chats',    this.getChats);
         this.router.post('/save-message', this.saveMessage);
         this.router.post('/get-messages', this.getMessages);
+        this.router.post('/delete',       this.delete);
 
         return this.router;
     }

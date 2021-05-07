@@ -158,14 +158,13 @@ socket.on('message', (data: any) => {
     app.config.globalProperties.$flashMessage.show({
         type : 'info',
         image: require(`@/assets/notification/message-icon.svg`),
-        text : data.user.login + ": " + data.message.text,
+        text : data.message.user.login + ": " + data.message.text,
     });
 
 });
 
 socket.on('notification', (data: any) => {
 
-    console.log('NOTIFICATION');
 
     app.config.globalProperties.$store.commit('addNotification', data.notification);
 

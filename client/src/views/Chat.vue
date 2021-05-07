@@ -37,6 +37,7 @@
                     <router-link class="name" :to="`/user/view?id=${interlocutor.id}`">{{interlocutor.firstName}} {{interlocutor.lastName}} ({{interlocutor.login}})</router-link>
                     <span v-if="interlocutor.status" class="online">online</span>
                     <span v-else class="offline">offline</span>
+                    <button class="btn delete-chat" @click="removeChat">Delete chat</button>
                 </div>
 
                 <div ref="messagesWrap" class="messages-wrap" @scroll="moreMessages">
@@ -78,9 +79,8 @@
     declare const require: any;
     import {defineComponent, nextTick} from 'vue';
     
-    import Chat              from '../types/Chat';
-import Message from '../types/Message';
-    import User              from '../types/User';
+    import Chat from '../types/Chat';
+    import User from '../types/User';
 
 
     export default defineComponent({
@@ -110,14 +110,14 @@ import Message from '../types/Message';
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            image: require("@/assets/flash/fail.svg"),
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        image: require("@/assets/flash/fail.svg"),
                     });
                     console.error(err);
                 }
@@ -138,14 +138,14 @@ import Message from '../types/Message';
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            image: require("@/assets/flash/fail.svg"),
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        image: require("@/assets/flash/fail.svg"),
                     });
                     console.error(err);
                 }
@@ -165,14 +165,14 @@ import Message from '../types/Message';
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            image: require("@/assets/flash/fail.svg"),
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        image: require("@/assets/flash/fail.svg"),
                     });
                     console.error(err);
                 }
@@ -248,14 +248,14 @@ import Message from '../types/Message';
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            image: require("@/assets/flash/fail.svg"),
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        image: require("@/assets/flash/fail.svg"),
                     });
                     console.error(err);
                 }
@@ -293,8 +293,6 @@ import Message from '../types/Message';
                     return;
                 }
 
-                console.log(messagesWrap.scrollTop);
-
                 try {
                     const res = await this.$axios.post('/chat/get-messages', {
                         chatId: this.currentChat.id,
@@ -308,14 +306,62 @@ import Message from '../types/Message';
                         this.$flashMessage.show({
                             type: 'error',
                             text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            image: require("@/assets/flash/fail.svg"),
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
                         type: 'error',
                         text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        image: require("@/assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
+
+            removeChat: async function(){
+
+                try {
+                    const res = await this.$axios.post('/chat/delete', {
+                        id: this.currentChat.id
+                    });
+
+                    if(res.status == 200){
+
+                        console.log(this.chats.length)
+
+                        if(this.chats.length){
+                            
+                            this.currentChat = await this.getChat(this.chats[0].user1Id, this.chats[0].user2Id);
+                            this.chats.splice(this.chats.findIndex((item) => item.isActive == true), 1);
+                            this.chats[0].isActive = true;
+
+                            if(this.currentChat.user1!.id == this.$store.state.userIdentity!.id){
+                                this.interlocutor = this.currentChat.user2!;
+                            }else{
+                                this.interlocutor = this.currentChat.user1!;
+                            }
+
+                            console.log(this.currentChat);
+                        }
+
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("@/assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("@/assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("@/assets/flash/fail.svg"),
                     });
                     console.error(err);
                 }
