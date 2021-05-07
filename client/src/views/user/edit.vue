@@ -90,7 +90,6 @@
 
     import {defineComponent} from 'vue';
     import Form, {FormItem}  from '../../components/Form.vue';
-    import Menu              from '../../components/Menu.vue';
     import User              from "../../types/User";
     import Notification      from "../../types/Notification";
     import ActionBack        from '../../components/ActionBack.vue';

@@ -77,7 +77,7 @@
 <script lang="ts">
     declare const require: any;
     import {defineComponent, nextTick} from 'vue';
-    import Menu              from '../components/Menu.vue';
+    
     import Chat              from '../types/Chat';
     import User              from '../types/User';
 

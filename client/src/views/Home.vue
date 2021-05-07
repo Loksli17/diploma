@@ -331,7 +331,6 @@
 <script lang="ts">
     declare const require: any;
     import {defineComponent}        from 'vue';
-    import Menu                     from '../components/Menu.vue';
     import Project                  from '../types/Project';
     import User                     from '../types/User';
     import Pagination               from '../components/Pagination.vue';

@@ -148,7 +148,6 @@
 <script lang="ts">
     declare const require: any
     import {defineComponent}        from 'vue';
-    import Menu                     from '../../components/Menu.vue';
     import User                     from '../../types/User';
     import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
     import Project                  from '../../types/Project';
