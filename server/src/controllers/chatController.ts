@@ -206,7 +206,9 @@ export default class ChatController{
 
         try {
             const result: InsertResult = await getRepository(Message).insert(message);
-            message.id = result.identifiers[0].id;
+            
+            message.id   = result.identifiers[0].id;
+            message.user = await getRepository(User).findOne(message.userId);
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);

@@ -50,15 +50,16 @@ export default class SocketContoller{
 
         interface Data{
             message      : Message,
-            userReceiveId: User
+            userReceiveId: number,
+            userSend     : User,
         }
 
         socket.on('message', (data: Data) => {
-            console.log(data);
             getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
                 if(value == undefined || value.socketId == undefined){
                     return;
                 }
+                data.message.user = data.userSend;
                 socket.to(value.socketId!).emit('message', {message: data.message, user: value});
             });
            

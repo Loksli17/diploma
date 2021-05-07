@@ -14,7 +14,7 @@
                 </div>
 
                 <div class="chats-wrap">
-                    <div class="chat-item" v-for="(chat, index) in chats" :key="chat.id" @click="changeChatEvt(index, chat)">
+                    <div class="chat-item" v-for="(chat, index) in chats" :class="{active: chat.isActive}" :key="chat.id" @click="changeChatEvt(index, chat)">
                         <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.user2.avatar}`) + ')'}"></div>
                         <div class="section">
                             <div class="login">{{chat.user2.login}}</div>
@@ -79,6 +79,7 @@
     import {defineComponent, nextTick} from 'vue';
     
     import Chat              from '../types/Chat';
+import Message from '../types/Message';
     import User              from '../types/User';
 
 
@@ -189,6 +190,11 @@
 
                 this.$router.push(`/chat?idUserReceive=${this.interlocutor.id}`);
 
+                this.chats.forEach(elem => {
+                    elem.isActive = false;
+                });
+                this.chats[index].isActive = true;
+                
                 nextTick(() => {
                     this.messageWrapScrollEnd(true);
                 });
@@ -218,8 +224,7 @@
                         const messagesWrap = this.$refs.messagesWrap as any;
                         const scrollFlag   =  (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
 
-                        // todo send socket
-                        this.$socket.emit('message', {message: res.data.message, userReceiveId: this.interlocutor.id});
+                        this.$socket.emit('message', {message: res.data.message, userReceiveId: this.interlocutor.id, userSend: this.$store.state.userIdentity});
                         this.currentChat.messages.push(res.data.message);
                         this.message = "";
 
@@ -227,10 +232,18 @@
                             this.messageWrapScrollEnd(scrollFlag);
                         });
 
+                        //if currentChat is new and this doesn't have messages we need in add it to chats
                         if(this.currentChat.messages.length == 1){
                             this.chats = await this.getChats();
                         }
 
+                        const chat: Chat | undefined = this.chats.find((item) => item.isActive == true);
+
+                        if(chat == undefined){
+                            return;
+                        }
+
+                        chat.lastMessage = res.data.message;
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
@@ -271,7 +284,6 @@
                 this.searchValueProject = "";
                 this.chats = JSON.parse(JSON.stringify(this.allChats));
             },
-
 
             moreMessages: async function(){
 
@@ -325,14 +337,19 @@
                 this.interlocutor = this.currentChat.user1!;
             }
 
-            console.log(this.currentChat);
+            this.chats = await this.getChats();
+            this.chats = this.chats.map((item) => {
+                if(item.lastMessage.chatId == this.currentChat.id) item.isActive = true;
+                return item;
+            });
 
-            this.chats    = await this.getChats();
+
             this.allChats = JSON.parse(JSON.stringify(this.chats));
 
             this.messageWrapScrollEnd(true);
 
             this.$socket.on('message', (data: any) => {
+
                 const messagesWrap = this.$el.querySelector(".messages-wrap");
                 const scrollFlag   = (messagesWrap.scrollHeight - messagesWrap.scrollTop) < 700;
 
@@ -351,6 +368,15 @@
                 nextTick(() => {
                     this.messageWrapScrollEnd(scrollFlag);
                 });
+
+                //change message in chat
+                const chat: Chat | undefined = this.chats.find((item) => item.lastMessage.chatId == data.message.chatId);
+
+                if(chat == undefined){
+                    return;
+                }
+
+                chat.lastMessage = data.message;
             });
 
         },
