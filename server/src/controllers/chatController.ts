@@ -88,21 +88,31 @@ export default class ChatController{
         try {
             const chatsDb: Array<any> = await getRepository(Chat).createQueryBuilder('chat')
                 .where('user1Id = :id || user2Id = :id', {id: POST.userId})
-                .innerJoinAndSelect('message', 'm', 'm.chatId = chat.id')
-                .innerJoinAndSelect('user', 'u', 'u.id = m.userId')
                 .innerJoinAndSelect('user', 'u1', 'u1.id = chat.user1Id')
                 .innerJoinAndSelect('user', 'u2', 'u2.id = chat.user2Id')
                 .groupBy('chat_id')
                 .getRawMany();
-                
-            chats = chatsDb.map((item) => {
-                let chat: Chat = new Chat();
 
-                chat.lastMessage             = new Message();
-                chat.lastMessage.text        = item['m_text'];
-                chat.lastMessage.user        = new User();
-                chat.lastMessage.user.login  = item['u_login'];
-                chat.lastMessage.user.avatar = item['u_avatar'];
+            for(let i = 0; i < chatsDb.length; i++){
+                let 
+                    item: any  = chatsDb[i],
+                    chat: Chat = new Chat();
+
+                const message: Message | undefined = await getRepository(Message).createQueryBuilder('message')
+                    .where('message.chatId = :id', {id: item['chat_id']})
+                    .limit(1)
+                    .orderBy('message.id', 'DESC')
+                    .leftJoinAndSelect('message.user', 'user')
+                    .getOne();
+                
+                if(message == undefined){
+                    continue;
+                }
+
+                chat.lastMessage = message;
+                if(chat.lastMessage.text!.length > 40){
+                    chat.lastMessage.text = chat.lastMessage.text!.substr(0, 40) + '...';
+                }
 
                 chat.user1Id = item['chat_user1Id'];
                 chat.user2Id = item['chat_user2Id'];
@@ -117,8 +127,8 @@ export default class ChatController{
                     chat.user2.email = item['u2_email'];
                 }
 
-                return chat;
-            });
+                chats.push(chat);
+            }
 
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});

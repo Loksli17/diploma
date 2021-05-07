@@ -187,7 +187,9 @@
                     this.interlocutor = this.currentChat.user1!;
                 }
 
-                this.messageWrapScrollEnd(true);
+                nextTick(() => {
+                    this.messageWrapScrollEnd(true);
+                });
             },
 
             messageWrapScrollEnd: function(scrollFlag: boolean){
