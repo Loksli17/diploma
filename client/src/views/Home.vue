@@ -338,6 +338,7 @@
     import Form, {FormItem, Option} from '../components/Form.vue';
     import {VueDraggableNext}       from 'vue-draggable-next';
     import UserItem, {MenuUserItem} from '../components/UserItem.vue';
+import Notification from '../types/Notification';
     
 
     export default defineComponent({
@@ -423,6 +424,7 @@
                 }
             },
 
+
             getAmountProjects: async function(filter: number | boolean = true): Promise<number | undefined> {
                 try {
                     const res = await this.$axios.post('project/get-amount-projects', {userId: this.$store.state.userIdentity!.id, filter: filter});
@@ -438,6 +440,7 @@
                     throw new Error(err);
                 }
             },
+
 
             getFriends: async function(take: number = 10, skip: number = 0, id: number = 1): Promise<Array<User> | undefined> {
                 try{
@@ -455,6 +458,7 @@
                     throw new Error(err);
                 }
             },
+
 
             moreFriendsEvt: async function(){
                 const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
@@ -478,6 +482,7 @@
 
                 this.friends = this.friends?.concat(newFriends);
             },
+
 
             pageChangeEvt: async function(data: {take: number; skip: number}){
                 const newProjects: Array<Project> | undefined = await this.getProjects(data.take, data.skip, this.projectsFilter);
@@ -503,7 +508,8 @@
                 this.projects = newProjects;
             },
 
-            searchProjectsEvt: async function(e: any){
+           
+           searchProjectsEvt: async function(e: any){
                 
                 if(this.searchValueProject == ""){
                     this.$flashMessage.show({
@@ -534,6 +540,7 @@
                     throw new Error(err);
                 }   
             },
+
 
             onFilterChange: async function(e: any): Promise<void>{
 
@@ -578,6 +585,7 @@
                 this.amountProjects = amountProjects;
             },
 
+
             goViewEvt: function(){
                 const 
                     backView    = this.$refs.actionBackView! as any,
@@ -589,10 +597,12 @@
                 backView.show();
             },
 
+
             newProjectEvt: function(res: any){
                 const backAdd = this.$refs.actionBackAdd! as any;
                 backAdd.show();
             },
+
 
             addProjectFormResultParser: async function(res: any){
 
@@ -624,6 +634,7 @@
                 }
             },
             
+
             projectViewEvt: async function(id: number){
                 const background = this.$refs.actionBackView! as any;
                 let collaborators: Array<User> = [];
@@ -658,6 +669,7 @@
                 background.show();
             },
 
+
             projectEditEvt: async function(id: number){
 
                 this.projectView = this.projects!.find((project) => project.id === id);
@@ -686,6 +698,7 @@
                 this.rowsEditProjectForm[0][1].value    = Number(this.projectView!.id);
                 this.rowsEditProjectForm[1][0].selected = this.projectView!.viewStatus.id;
             },
+
 
             editProjectFormResultParser: function(res: any){
 
@@ -718,6 +731,7 @@
                     });
                 }
             },
+
 
             projectDeleteEvt: async function(id: number){
 
@@ -772,6 +786,7 @@
                     
             },
 
+
             addCollaboratorsShowBack: function(){
 
                 if(this.projectView == undefined){
@@ -794,6 +809,7 @@
                 backAddColl.show();
                 backView.hide();
             },
+
 
             searchUsersEvt: async function(){
 
@@ -855,6 +871,7 @@
                 this.searchCollabsRes = users;
             },
 
+
             addCollaboratorsEvt: async function(id: number){
                                 
                 if(!this.newCollabs!.length){
@@ -873,6 +890,7 @@
                 });
 
                 try {
+
                     const res: any = await this.$axios.post('project/add-collaborators', {
                         usersIds: collabsIds, 
                         id      : this.projectView!.id,
@@ -887,10 +905,13 @@
                         });
                         return;
                     }
+
+                    //* successfull part
                     
                     this.newCollabs!.forEach((elem) => {
                         this.projectViewCollabs!.push(elem);
                     });
+
                     this.newCollabs = [];
 
                     if(!this.newCollabs!.length){
@@ -899,6 +920,12 @@
                             image: require("../assets/flash/success.svg"),
                             text: res.data.msg,
                         });
+
+                        this.$socket.emit('manyNotifications', {
+                            userIds      : collabsIds,
+                            notifications: res.data.notifications
+                        });
+
                         return;
                     }
                     
@@ -911,6 +938,7 @@
                     return;               
                 }
             },
+
 
             clearPotentialCollaboratorsResult: function(){
                 this.newCollabs = [];

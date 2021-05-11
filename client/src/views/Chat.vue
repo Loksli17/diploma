@@ -328,8 +328,6 @@
 
                     if(res.status == 200){
 
-                        console.log(this.chats.length)
-
                         if(this.chats.length){
                             
                             this.currentChat = await this.getChat(this.chats[0].user1Id, this.chats[0].user2Id);

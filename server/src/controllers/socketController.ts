@@ -36,7 +36,12 @@ export default class SocketContoller{
 
     public static notification(socket: Socket): void{
 
-        socket.on('notification', (data: any) => {
+        interface Data{
+            userReceiveId: number;
+            notification : Notification;
+        }
+
+        socket.on('notification', (data: Data) => {
             getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
                 if(value == undefined || value.socketId == undefined){
                     return;
@@ -45,6 +50,30 @@ export default class SocketContoller{
             })
         });
     }
+
+
+    public static manyNotifications(socket: Socket): void{
+
+        interface Data{
+            userIds      : Array<number>;
+            notifications: Array<Notification>;
+        }
+
+        socket.on('manyNotifications', (data: Data) => {
+
+            getRepository(User).createQueryBuilder()
+                .whereInIds(data.userIds)
+                .getMany()
+                .then((value: Array<User>): void => {
+
+                    for(let i = 0; i < value.length; i++){
+                        if(value[i].socketId == null || value[i].socketId == ""){continue;}
+                        socket.to(value[i].socketId!).emit('notification', {notification: data.notifications[i]});
+                    }
+                });
+        });
+    }
+
 
     public static sendMessage(socket: Socket): void{
 
@@ -70,5 +99,6 @@ export default class SocketContoller{
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
         SocketContoller.sendMessage(socket);
+        SocketContoller.manyNotifications(socket);
     }
 }
