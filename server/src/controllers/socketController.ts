@@ -61,8 +61,6 @@ export default class SocketContoller{
 
         socket.on('manyNotifications', (data: Data) => {
 
-            console.log(data);
-
             getRepository(User).createQueryBuilder()
                 .whereInIds(data.userIds)
                 .getMany()

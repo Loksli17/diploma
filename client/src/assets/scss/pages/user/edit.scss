@@ -47,12 +47,11 @@
 
     .data-wrap{
         @include column(20px);
-        grid-template-rows: max-content max-content max-content;
-        // @include flex(flex-start, flex-start);
-        // flex-flow: column;
+        grid-template-rows: 53px max-content max-content;
+        align-items: center;
 
         h2{
-            height: 53px;
+            height: max-content;
         }
         
         .user-view{
@@ -95,7 +94,8 @@
 
         .header{
             @include row(20px);
-            grid-template-columns: auto 150px;
+            grid-template-columns: auto 125px;
+            align-items: center;
 
             button{
                 width: 100%;
