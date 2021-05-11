@@ -770,6 +770,10 @@ import Notification from '../types/Notification';
                         this.amountProjects!--;
                         this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
 
+                        console.log({userIds: res.data.userIds, notifications: res.data.notifications})
+
+                        this.$socket.emit('manyNotifications', {userIds: res.data.userIds, notifications: res.data.notifications});
+
                         this.$flashMessage.show({
                             type: 'success',
                             image: require("../assets/flash/success.svg"),

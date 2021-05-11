@@ -334,6 +334,7 @@ export default class ProjectController{
             notifications : Array<Notification>   = [],
             userHasProject: Array<UserHasProject> = [],
             postErrors    : Array<keyof POST>     = [],
+            userIds       : Array<number>         = [],
             project       : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['id']);
@@ -362,13 +363,15 @@ export default class ProjectController{
             await getRepository(UserHasProject).remove(userHasProject);
             await getRepository(Project).delete(POST.id);
 
-            notifications = await NotificationController.addManyNotifications(POST.userSend, userHasProject.map((item) => {return item.userId}), 5);
+            userIds = userHasProject.map((item) => {return item.userId});
+
+            notifications = await NotificationController.addManyNotifications(POST.userSend, userIds, 5);
         }catch(err){
             res.status(400).send({msg: ErrorMessage.db()});
             throw new Error(err);
         }
 
-        res.status(200).send({msg: `Project with name: ${project.name} has deleted successfully`, notifications: notifications});
+        res.status(200).send({msg: `Project with name: ${project.name} has deleted successfully`, notifications: notifications, userIds: userIds});
     }
 
 
