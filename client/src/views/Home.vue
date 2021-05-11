@@ -156,6 +156,7 @@
                         v-bind:className="'friend'"
                         v-bind:onlineStatus="true"
                         v-bind:items="userContexMenuItems"
+                        v-on:remove-friend="removeFriend"
                         >
                     </UserItem>
                 </div>
@@ -338,7 +339,7 @@
     import Form, {FormItem, Option} from '../components/Form.vue';
     import {VueDraggableNext}       from 'vue-draggable-next';
     import UserItem, {MenuUserItem} from '../components/UserItem.vue';
-import Notification from '../types/Notification';
+    import Notification             from '../types/Notification';
     
 
     export default defineComponent({
@@ -389,13 +390,50 @@ import Notification from '../types/Notification';
                 userContexMenuItems: [
                     {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
                     {value: "Go to chat", link: "/chat?idUserReceive=", img: "chat-icon.svg"}, 
-                    {value: "Remove form friends", link: "", img: "remove-icon.svg"},
+                    {value: "Remove form friends", link: "", img: "remove-icon.svg", click: "remove-friend"},
                 ] as Array<MenuUserItem>,
             }  
         },
 
 
-        methods: { 
+        methods: {
+
+            removeFriend: async function(e: any, user: User){
+                
+                try {
+                    const res = await this.$axios.post('/user/remove-friends', {currentUser: this.$store.state.userIdentity!, friendId: user.id});
+
+                    if(res.status == 200){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            image: require("../assets/flash/success.svg"),
+                            text: `User ${user.login} was removed from your friend list`,
+                        });
+
+                        this.$socket.emit('notification', {userReceiveId: user.id, notification: res.data.notification});
+
+                        if(this.friends == undefined){
+                            return;
+                        }
+
+                        this.friends.splice(this.friends.findIndex((item) => item.id == user.id), 1);
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../assets/flash/fail.svg"),
+                            text: `Error with query`,
+                        });
+                        throw new Error();
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../assets/flash/fail.svg"),
+                        text: `Error with query`,
+                    });
+                    throw new Error(err);
+                }
+            },
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {

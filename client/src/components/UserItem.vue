@@ -21,7 +21,7 @@
 
         <transition name="userMenuShow">
             <div class="contex-menu" v-if="menuStatus" v-bind:style="{top: menuTop + 'px', left: menuLeft + 'px'}" @click="reloadParent">
-                <router-link v-for="item in items" :key="item.key" class="item-link" :to="item.link + userData.id">
+                <router-link v-for="item in items" :key="item.key" @click="userItemClick(item.click, $event, item)" class="item-link" :to="item.link + userData.id">
                     <img :src="require(`@/assets/${item.img}`)" alt="">
                     <span>{{item.value}}</span>
                 </router-link>
@@ -88,6 +88,16 @@
 
         methods: {
 
+            userItemClick: async function(functionName: string, e: any) {
+
+                if(functionName == undefined){
+                    return;
+                }
+                
+                e.preventDefault();
+                this.$emit(functionName, e, this.user);
+            },
+
             reloadParent: function(): void{
                 this.hideUserMenu();
                 this.$emit('reload-page');
@@ -143,7 +153,7 @@
         },
         
         created: function(){
-            if(this.className != undefined){this.itemClassName = this.className}
+            if(this.className != undefined) {this.itemClassName = this.className}
             this.userData = this.user;
         }
     });
