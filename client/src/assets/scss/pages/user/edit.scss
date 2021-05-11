@@ -46,12 +46,18 @@
     }
 
     .data-wrap{
-        @include flex(flex-start, flex-start);
-        flex-flow: column;
+        @include column(20px);
+        grid-template-rows: max-content max-content max-content;
+        // @include flex(flex-start, flex-start);
+        // flex-flow: column;
+
+        h2{
+            height: 53px;
+        }
         
         .user-view{
             @extend %grid-view;
-            margin: 15px 0px 62px 0px;
+            margin: 0px 0px 18px 0px;
         }
     }
 
@@ -82,10 +88,19 @@
 
     .notific-wrap{
         @include column(20px);
-        grid-template-rows: max-content auto;
+        grid-template-rows: 53px auto;
         
         max-height: 100%;
         overflow-y: auto;
+
+        .header{
+            @include row(20px);
+            grid-template-columns: auto 150px;
+
+            button{
+                width: 100%;
+            }
+        }
 
         .notifications-wrap{
             @include column(20px);

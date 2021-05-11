@@ -453,13 +453,12 @@
             },
 
 
-            /*
+            /**
                 @return 
                     2 - identity user = view user
                     1 - friendship
                     0 - no friendship
             */
-
             checkFriends: async function(): Promise<number>{
 
                 if(this.$store.state.userIdentity!.id === Number(this.$route.query.id)){
@@ -491,6 +490,7 @@
 
 
             removeFriendEvt: async function(): Promise<void>{
+
                 try {
                     const res = await this.$axios.post('/user/remove-friends', {currentUser: this.$store.state.userIdentity!, friendId: this.$route.query.id});
 

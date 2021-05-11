@@ -193,7 +193,13 @@
                 this.chats.forEach(elem => {
                     elem.isActive = false;
                 });
-                this.chats[index].isActive = true;
+
+                this.allChats.forEach(elem => {
+                    elem.isActive = false;
+                });
+
+                this.chats[index].isActive    = true;
+                this.allChats[index].isActive = true;
                 
                 nextTick(() => {
                     this.messageWrapScrollEnd(true);
@@ -234,7 +240,8 @@
 
                         //if currentChat is new and this doesn't have messages we need in add it to chats
                         if(this.currentChat.messages.length == 1){
-                            this.chats = await this.getChats();
+                            this.chats    = await this.getChats();
+                            this.allChats = JSON.parse(JSON.stringify(this.chats));
                         }
 
                         const chat: Chat | undefined = this.chats.find((item) => item.isActive == true);
@@ -330,9 +337,12 @@
 
                         if(this.chats.length){
                             
+                            this.allChats.splice(this.allChats.findIndex((item) => item.id == this.currentChat.id), 1);
+                            this.chats.splice(this.chats.findIndex((item) => item.id == this.currentChat.id), 1);
+
                             this.currentChat = await this.getChat(this.chats[0].user1Id, this.chats[0].user2Id);
-                            this.chats.splice(this.chats.findIndex((item) => item.isActive == true), 1);
-                            this.chats[0].isActive = true;
+                            this.chats[0].isActive    = true;
+                            this.allChats[0].isActive = true;
 
                             if(this.currentChat.user1!.id == this.$store.state.userIdentity!.id){
                                 this.interlocutor = this.currentChat.user2!;

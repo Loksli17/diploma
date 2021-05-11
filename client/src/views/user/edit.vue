@@ -1,6 +1,6 @@
 <template>
     <div class="page-user-edit">
-        <Menu ref="menu"></Menu>
+        <Menu ref="globalMenu"></Menu>
 
         <ActionBack ref="actionBackData" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Edit`">
             <Form
@@ -69,12 +69,14 @@
             </div>
 
             <div class="notific-wrap">
-                <h2>Notifications</h2>
+
+                <div class="header">
+                    <h2>Notifications</h2>
+                    <button class="btn" @click="removeNotifications">Clear all</button>
+                </div>
 
                 <div class="notifications-wrap">
-
                     <NotificationComp v-on:remove-notification="removeNotification" v-for="notific in notifications" :key="notific.id" v-bind:notification="notific"></NotificationComp>
-
                 </div>
             </div>
 
@@ -87,7 +89,7 @@
 </template>
 
 <script lang="ts">
-
+    declare const require: any;
     import {defineComponent} from 'vue';
     import Form, {FormItem}  from '../../components/Form.vue';
     import User              from "../../types/User";
@@ -315,8 +317,52 @@
             removeNotification: function(id: number){
                 this.notifications = this.$store.state.notifications!;
 
-                const menu = this.$refs.menu as any;
+                const menu = this.$refs.globalMenu as any;
                 menu.setNotificationAmount(this.notifications.length);
+            },
+
+            removeNotifications: async function(){
+
+                if(this.notifications == undefined || this.notifications.length == 0){
+                    return;
+                }
+
+                try {
+                    const res = await this.$axios.post('/notification/delete-many', {
+                        ids: this.notifications.map((item) => {
+                            return item.id;
+                        }),
+                    });
+
+                    if(res.status == 200){
+                        
+                        this.notifications = []; 
+                        this.$store.commit('setNotifications', []);
+                        
+                        const menu = this.$refs.globalMenu as any;
+                        menu.setNotificationAmount(0);
+
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("@/assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("@/assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("@/assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+
             }
         },
 

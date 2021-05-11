@@ -188,10 +188,39 @@ export default class NotificationController{
     }
 
 
+    public static async removeNotifications(req: Request, res: Response){
+
+        interface POST{
+            ids: Array<number>;
+        }
+
+        let 
+            postErrors: Array<keyof POST> = [],
+            POST      : POST              = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['ids']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+        
+        try {
+            const result = await getRepository(Notification).delete(POST.ids);
+            console.log(result);
+        }catch(err){
+            console.error(err);
+        }
+
+        res.status(200).send({msg: `Notifications have been removed`});
+    }
+
+
     public static routes(){
         this.router.post('/add',               this.createNotification);
         this.router.post('/get-notifications', this.getNotifications);
         this.router.post('/delete',            this.removeNotification);
+        this.router.post('/delete-many',       this.removeNotifications);
 
         return this.router;
     }

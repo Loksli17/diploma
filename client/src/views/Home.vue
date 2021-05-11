@@ -1098,6 +1098,8 @@
             this.rowsEditProjectForm[1][0].options  = viewStatusElements;
             this.rowsEditProjectForm[1][0].selected = viewStatusElements[0].id;
 
+            this.rowsAddProjectForm[0][1].value = this.$store.state.userIdentity!.id
+
             this.$socket.on('notification', (data: any) => {
 
                 if(data.notification.typeNotification.id != 2){
