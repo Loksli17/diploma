@@ -173,7 +173,7 @@
                 this.tabs = this.$store.state.tabs;
             }
 
-            this.amountNotifications = this.$store.state.notifications!.length;
+            this.amountNotifications = this.$store.state.notifications == undefined ? 0 : this.$store.state.notifications!.length;
 
             this.$socket.on('notification', (data: any) => {
                 this.amountNotifications++;

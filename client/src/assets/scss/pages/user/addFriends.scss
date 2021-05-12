@@ -52,16 +52,80 @@
         }
 
         .notifications-wrap{
-            @include row(10px);
+            @include row(15px);
             grid-template-columns: 1fr 1fr;
 
             > div{
                 @include column(15px);
                 grid-template-rows: 30px auto;
+                max-height: max-content;
             }
 
             .notification{
                 width: 100%;
+                background: $white;
+                margin-top: 15px;
+                padding: 12px;
+                box-sizing: border-box;
+                @include row(10px);
+                justify-content: left;
+
+                &:first-child{
+                    margin-top: 0px;
+                }
+
+                font-size: 16px;
+
+                span:nth-child(2){
+                    font-weight: 600;
+                }
+            }
+
+            h2{
+                text-align: left;
+            }
+
+            .notifications-send{
+
+                .notification{
+                    position: relative;
+                }
+
+                >div{
+                    overflow-y: auto;
+                    max-height: 330px;
+                }
+
+                .close{
+                    @extend %pseudoElement;
+                    position: absolute;
+                    top: -2px;
+                    right: 5px;
+                    font-size: 17px;
+                    cursor: pointer;
+
+                    &:hover{
+                        transition: 0.4s;
+                        color: $blue;
+                    }
+                }
+            }
+
+            .notifications-receive{
+
+                >div{
+                    overflow-y: auto;
+                    max-height: 330px;
+                }
+
+                .notification{
+                    cursor: pointer;
+
+                    &:hover{
+                        transition: 0.4s;
+                        color: $blue;
+                    }
+                }
             }
         }
     }

@@ -17,6 +17,7 @@
                         v-bind:items="userContexMenuItems"
                         v-bind:addButtonStatus="true"
                         v-bind:fullNameStatus="true"
+                        v-on:add-to-friendlist="addToFriendlist"
                         >
                     </UserItem>
                 </div>
@@ -69,18 +70,21 @@
                         <h2>My queries to friendlist</h2>
 
                         <div>
-                            <div class="notification" v-for="notific in sendNotifications" :key="notific.id">
-                                <span>{{notific.text}}</span>
+                            <div class="notification" v-for="(notific, index) in sendNotifications" :key="notific.id">
+                                <span>TO: </span>
+                                <span>{{notific.userReceive.lastName}} {{notific.userReceive.firstName}}</span>
+                                <div class="close" @click="removeNotification(notific.id, index)">&#10006;</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="notification-receive">
+                    <div class="notifications-receive">
                         <h2>Queries to friendlist to me</h2>
 
                         <div>
                             <div class="notification" v-for="notific in receiveNotifications" :key="notific.id">
-                                <span>{{notific.text}}</span>
+                                <span>FROM: </span>
+                                <span>{{notific.userReceive.lastName}} {{notific.userReceive.firstName}}</span>
                             </div>
                         </div>
                     </div>
@@ -138,11 +142,25 @@
             this.users       = res.users;
             this.amountUsers = res.amount;
             
-            this.receiveNotifications = this.$store.state.notifications!;
+            this.receiveNotifications = this.getRecieveNotifications();
             this.sendNotifications    = await this.getSendNotifications();
         },
 
+        created: function(){
+
+            this.$socket.on('notification', (data: any) => {
+                if(this.receiveNotifications == undefined) return;
+                if(data.notification.typeNotificationId == 1) this.receiveNotifications.push(data.notification);
+            })
+        },
+
         methods: {
+
+            addToFriendlist: function(notification: Notification){
+                if(this.sendNotifications == undefined) this.sendNotifications = [];
+                console.log(notification);
+                this.sendNotifications.push(notification);
+            },
 
             getUsersAmount: async function(body: object){
                 try {
@@ -174,6 +192,7 @@
                     const res = await this.$axios.post('/notification/get-notifications', {userId: this.$store.state.userIdentity!.id, type:"send"});
 
                     if(res.status == 200){
+                        console.log(res.data.notifications);
                         return res.data.notifications;
                     }else{
                         this.$flashMessage.show({
@@ -191,6 +210,17 @@
                     console.error(err);
                 }
             },
+
+
+            getRecieveNotifications: function(): Array<Notification>{
+
+                if(this.$store.state.notifications == undefined) return [];
+
+                return this.$store.state.notifications.filter((item) => {
+                    if(item.typeNotificationId == 1) return item;
+                });
+            },
+
 
             formResultParser: async function(res: any): Promise<void> {
 
@@ -214,12 +244,46 @@
                 return;
             },
 
+
             sendSearchData: async function(){
                 const res = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: this.usersRange, skip: 0, user: this.user});
 
                 this.users       = res.users;
                 this.amountUsers = res.amount;
             },
+
+            
+            removeNotification: async function(id: number, index: number){
+
+                try {
+                    const res = await this.$axios.post('/notification/delete', {id: id});
+
+                    if(res.status == 200){
+            
+                        this.sendNotifications!.splice(index, 1);
+
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("../../assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
+
 
             pageChangeEvt: async function(data: {take: number; skip: number}){
 

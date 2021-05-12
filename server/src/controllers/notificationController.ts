@@ -105,7 +105,9 @@ export default class NotificationController{
             return;
         }
 
-        notification = await NotificationController.addNotification(POST.userSend, POST.userReceiveId, POST.typeId);
+        notification              = await NotificationController.addNotification(POST.userSend, POST.userReceiveId, POST.typeId);
+        notification!.userReceive = await getRepository(User).findOne(notification!.userReceiveId);
+        notification!.userSend    = await getRepository(User).findOne(notification!.userSendId);
 
         res.status(200).send({notification: notification});
     }
@@ -136,7 +138,10 @@ export default class NotificationController{
         try {
             notifications = await getRepository(Notification).createQueryBuilder('notification')
                 .where(whereCond, {id: POST.userId})
+                .andWhere("typeNotificationId = 1")
                 .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
+                .leftJoinAndSelect('notification.userSend', 'user as u1')
+                .leftJoinAndSelect('notification.userReceive', 'user as u2')
                 .orderBy('notification.id', 'DESC')
                 .getMany();
 

@@ -122,11 +122,12 @@
                 
                 try {
                     const res = await this.$axios.post('/notification/add', {typeId: 1, userSend: this.$store.state.userIdentity!, userReceiveId: this.userData.id});
-                    console.log(res);
 
                     if(res.status == 200){
 
                         this.$socket.emit('notification', {userReceiveId: this.userData.id, notification: res.data.notification});
+
+                        this.$emit('add-to-friendlist', res.data.notification);
 
                         this.$flashMessage.show({
                             type: 'success',
