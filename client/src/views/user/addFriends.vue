@@ -84,7 +84,7 @@
                         <div>
                             <div class="notification" v-for="notific in receiveNotifications" :key="notific.id">
                                 <span>FROM: </span>
-                                <span>{{notific.userReceive.lastName}} {{notific.userReceive.firstName}}</span>
+                                <span>{{notific.userSend.lastName}} {{notific.userSend.firstName}}</span>
                             </div>
                         </div>
                     </div>
