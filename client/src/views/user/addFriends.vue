@@ -82,7 +82,7 @@
                         <h2>Queries to friendlist to me</h2>
 
                         <div>
-                            <div class="notification" v-for="notific in receiveNotifications" :key="notific.id">
+                            <div class="notification" v-for="notific in receiveNotifications" @click="showAnswerFriendship(notific)" :key="notific.id">
                                 <span>FROM: </span>
                                 <span>{{notific.userSend.lastName}} {{notific.userSend.firstName}}</span>
                             </div>
@@ -91,6 +91,10 @@
                 </div>
             </div>
         </div>
+
+        <AnswerFriendNotification ref="answerFriendship"
+
+        ></AnswerFriendNotification>
     </div>
 </template>
 
@@ -103,13 +107,15 @@
     import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
     import Pagination               from '../../components/Pagination.vue';
     import Notification             from '../../types/Notification';
+    import AnswerFriendNotification from '../../components/AnswerFriendNotification.vue';
 
 
     export default defineComponent({
 
         components: {
             UserItem, 
-            Pagination
+            Pagination,
+            AnswerFriendNotification,
         },
 
         data: function(){
@@ -155,6 +161,14 @@
         },
 
         methods: {
+
+            showAnswerFriendship: function(notific: Notification){
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+
+                answerFriendNotification.setNotification(notific);
+                answerFriendNotification.setViewStatus(true);
+
+            },
 
             addToFriendlist: function(notification: Notification){
                 if(this.sendNotifications == undefined) this.sendNotifications = [];

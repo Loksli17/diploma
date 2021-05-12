@@ -5,10 +5,12 @@ export default interface Notification{
     text: string;
     date: Date,
     time: Date,
+
     userRecieveId?: number,
     userRecieve?: User,
+    
     userSendId?: number,
     userSend?: User,
-    typeNotificationId?: number,
     
+    typeNotificationId?: number,
 }
