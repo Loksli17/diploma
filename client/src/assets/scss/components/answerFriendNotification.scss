@@ -1,0 +1,10 @@
+@import '../utils/layout/row.scss';
+@import '../base/colors.scss';
+
+.answer-wrap{
+    @include row(20px);
+
+    button:nth-child(2){
+        background: $red;
+    }
+}

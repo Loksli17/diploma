@@ -537,6 +537,36 @@ export default class UserController{
     }
 
 
+    public static async addFriendship(req: Request, res: Response){
+
+        interface POST{
+            user1Id: number,
+            user2Id: number,
+        }
+
+        let
+            postErrors : Array<keyof POST>        = [],
+            POST       : POST                     = req.body,
+            userHasUser: UserHasUser | undefined  = undefined;
+
+        postErrors = PostModule.checkData(POST, ['user1Id', 'user2Id']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+        
+        userHasUser = new UserHasUser();
+        // userHasUser.changeFields(POST);
+
+        try {
+            // await getRepository(UserHasUser).insert()
+        } catch (error) {
+            
+        }
+    }
+
+
     public static routes(){
         this.router.post('/get-friends',          this.getFriends);
         this.router.post('/get-amount-users',     this.getAmountUsers);
@@ -549,6 +579,8 @@ export default class UserController{
         this.router.post('/search-collaborators', this.searchCollaborators);
         this.router.post('/check-friends',        this.checkFriendship);
         this.router.post('/remove-friends',       this.removeFriendship);
+        this.router.post('/add-friends',          this.addFriendship);
+
         return this.router;
     }
 }

@@ -6,8 +6,8 @@ import User                                                 from './User';
 @Entity('user_has_user')
 export default class UserHasUser{
 
-    constructor(userHasUser: Partial<UserHasUser>){
-        Object.assign(this, userHasUser);
+    public changeFields(user: Partial<UserHasUser>){
+        Object.assign(this, user);
     }
 
     @PrimaryGeneratedColumn()

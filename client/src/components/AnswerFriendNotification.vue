@@ -1,15 +1,16 @@
 
 <template>
-    <ActionBack v-if="viewStatus" ref="actionBack" v-bind:headerMainText="`${this.notification.userSend.firstName} ${this.notification.userSend.lastName} (${this.notification.userSend.login})`" v-bind:headerAddText="`Edit password`">
+    <ActionBack ref="actionBackView" v-bind:headerMainText="`${this.notification.userSend.firstName} ${this.notification.userSend.lastName} (${this.notification.userSend.login})`" v-bind:headerAddText="`Invintation to friend list`">
         <div class="answer-wrap">
-            <button class="btn">Accept</button>
-            <button class="btn">Not accept</button>
+            <button class="btn" @click="removeNotification(true)">Accept</button>
+            <button class="btn" @click="removeNotification(false)">Not accept</button>
         </div>
     </ActionBack>
 </template>
 
 
 <script lang="ts">
+    declare const require: any;
 
     import {defineComponent} from 'vue';
     import ActionBack        from '../components/ActionBack.vue';
@@ -39,8 +40,49 @@
             },
 
             setViewStatus: function(data: boolean){
-                this.viewStatus = data;
-            }
+                const actionBack = this.$refs.actionBackView! as any;
+                if(data) actionBack.show(); else actionBack.hide();
+            },
+
+
+            removeNotification: async function(status: boolean){
+
+                try {
+                    const res = await this.$axios.post('/notification/delete', {id: this.notification.id});
+
+                    console.log(res);
+
+                    if(res.status == 200){
+                        
+                        if(status){
+                            this.$emit('accept', this.notification);
+                        }else{
+                            this.$emit('not-accept', this.notification);
+                        }
+                        
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("@/assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("@/assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("@/assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
+
+            
         },
     
     });
@@ -48,5 +90,5 @@
 
 
 <style lang="scss">
-
+    @import '../assets/scss/components/answerFriendNotification.scss';
 </style>

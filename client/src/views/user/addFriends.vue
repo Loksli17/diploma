@@ -93,7 +93,8 @@
         </div>
 
         <AnswerFriendNotification ref="answerFriendship"
-
+            v-on:not-accept="removeSendNotification"
+            v-on:accept="goodAnswer"
         ></AnswerFriendNotification>
     </div>
 </template>
@@ -162,19 +163,11 @@
 
         methods: {
 
-            showAnswerFriendship: function(notific: Notification){
-                const answerFriendNotification = this.$refs.answerFriendship as any;
-
-                answerFriendNotification.setNotification(notific);
-                answerFriendNotification.setViewStatus(true);
-
-            },
-
             addToFriendlist: function(notification: Notification){
                 if(this.sendNotifications == undefined) this.sendNotifications = [];
-                console.log(notification);
                 this.sendNotifications.push(notification);
             },
+
 
             getUsersAmount: async function(body: object){
                 try {
@@ -199,6 +192,7 @@
                     console.error(err);  
                 }
             },
+
 
             getSendNotifications: async function(): Promise<Array<Notification> | undefined>{
 
@@ -296,6 +290,66 @@
                     });
                     console.error(err);
                 }
+            },
+
+            
+            showAnswerFriendship: function(notific: Notification){
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setNotification(notific);
+                answerFriendNotification.setViewStatus(true);
+            },
+
+            //negative answer to friendship
+            removeSendNotification: async function(notification: Notification){
+                const index = this.receiveNotifications!.findIndex(item => item.id == notification.id);
+
+                this.receiveNotifications!.splice(index, 1);
+                this.$store.commit('removeNotification', index);
+
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setViewStatus(false);
+                //todo socket with negative answer
+            },
+
+            goodAnswer: async function(notification: Notification){
+                const index = this.receiveNotifications!.findIndex(item => item.id == notification.id);
+
+                this.receiveNotifications!.splice(index, 1);
+                this.$store.commit('removeNotification', index);
+
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setViewStatus(false);
+
+
+                // try {
+                //     const res = await this.$axios.post('/notification/delete', {id: id});
+
+                //     if(res.status == 200){
+            
+                //         this.sendNotifications!.splice(index, 1);
+
+                //         this.$flashMessage.show({
+                //             type: 'success',
+                //             text: res.data.msg,
+                //             image: require("../../assets/flash/success.svg"),
+                //         });
+                //     }else{
+                //         this.$flashMessage.show({
+                //             type: 'error',
+                //             text: 'Error with query',
+                //             image: require("../../assets/flash/fail.svg"),
+                //         });
+                //     }
+                // }catch(err){
+                //     this.$flashMessage.show({
+                //         type: 'error',
+                //         text: 'Error with query',
+                //         image: require("../../assets/flash/fail.svg"),
+                //     });
+                //     console.error(err);
+                // }
+
+                //todo socket with good answer
             },
 
 

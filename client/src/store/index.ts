@@ -22,6 +22,7 @@ const store = createStore({
             }
         },
 
+        
         setJWT: function(state, jwt: string | null){
             if(jwt == null){
                 localStorage.setItem('jwt', "undefined");
@@ -30,6 +31,7 @@ const store = createStore({
             }
             state.jwt = jwt;
         },
+
 
         setTabs: function(state, tabs: Array<any> | null){
             if(tabs == null){
@@ -40,6 +42,7 @@ const store = createStore({
             state.tabs = JSON.parse(JSON.stringify(tabs));
         },
 
+
         setNotifications(state, notifications: Array<Notification> | null){
             if(notifications == null){
                 localStorage.setItem('notifications', "undefined");
@@ -49,11 +52,21 @@ const store = createStore({
             state.notifications = JSON.parse(JSON.stringify(notifications));
         },
 
+
         addNotification(state, notification: Notification){
             if(state.notifications == null){
                 state.notifications = [];
             }
             state.notifications.unshift(notification);
+            localStorage.setItem('notifications', JSON.stringify(state.notifications));
+        },
+
+
+        removeNotification(state, index: number){
+            if(state.notifications == null){
+                state.notifications = [];
+            }
+            state.notifications.splice(index, 1);
             localStorage.setItem('notifications', JSON.stringify(state.notifications));
         }
     }
