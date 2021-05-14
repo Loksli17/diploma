@@ -562,11 +562,8 @@ export default class UserController{
         userHasUser = new UserHasUser();
         userHasUser.changeFields(POST.userHasUser);
 
-        console.log(POST.userHasUser);
-
         try {
-            const result = await getRepository(UserHasUser).insert(userHasUser)
-            console.log(result, 'opa');
+            await getRepository(UserHasUser).insert(userHasUser)
         }catch(err){
             console.error(err);
             res.status(400).send({error: ErrorMessage.db()});

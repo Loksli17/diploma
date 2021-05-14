@@ -179,6 +179,10 @@
                 this.amountNotifications++;
             });
 
+            this.$socket.on('removeNotification', (data: any) => {
+                this.amountNotifications--;
+            });
+
         },
         
     });

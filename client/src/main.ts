@@ -165,7 +165,6 @@ socket.on('message', (data: any) => {
 
 socket.on('notification', (data: any) => {
 
-
     app.config.globalProperties.$store.commit('addNotification', data.notification);
 
     app.config.globalProperties.$flashMessage.show({
@@ -175,6 +174,18 @@ socket.on('notification', (data: any) => {
     });
     
 });
+
+
+socket.on('removeNotification', (data: any) => {
+
+    app.config.globalProperties.$store.commit('removeNotification', data.notification);
+
+    app.config.globalProperties.$flashMessage.show({
+        type : 'info',
+        image: require(`@/assets/notification/${data.notification.typeNotification.img}`),
+        text : data.msg,
+    });
+})
 
 app.component('Menu', Menu);
 

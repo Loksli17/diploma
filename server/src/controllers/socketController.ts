@@ -1,8 +1,9 @@
 import { getRepository } from 'typeorm';
 
-import {Socket} from 'socket.io';
-import User     from '../models/User';
-import Message from '../models/Message';
+import {Socket}     from 'socket.io';
+import User         from '../models/User';
+import Message      from '../models/Message';
+import Notification from '../models/Notification';
 
 
 export default class SocketContoller{
@@ -96,9 +97,29 @@ export default class SocketContoller{
     }
 
 
+    public static removeNotification(socket: Socket): void{
+
+        interface Data{
+            notification: Notification,
+            msg         : string,
+        }
+
+        socket.on('removeNotification', (data: Data) => {
+            getRepository(User).findOne(data.notification.userReceiveId)
+            .then((value: User | undefined): void => {
+                if(value == undefined || value.socketId == undefined){
+                    return;
+                }
+                socket.to(value.socketId).emit('removeNotification', {notification: data.notification, msg: data.msg});
+            });
+        })
+    }
+
+
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
         SocketContoller.sendMessage(socket);
         SocketContoller.manyNotifications(socket);
+        SocketContoller.removeNotification(socket);
     }
 }

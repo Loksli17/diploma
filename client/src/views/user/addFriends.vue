@@ -73,7 +73,7 @@
                             <div class="notification" v-for="(notific, index) in sendNotifications" :key="notific.id">
                                 <span>TO: </span>
                                 <span>{{notific.userReceive.lastName}} {{notific.userReceive.firstName}}</span>
-                                <div class="close" @click="removeNotification(notific.id, index)">&#10006;</div>
+                                <div class="close" @click="removeNotification(notific, index)">&#10006;</div>
                             </div>
                         </div>
                     </div>
@@ -158,6 +158,12 @@
                 if(this.receiveNotifications == undefined) return;
                 if(data.notification.typeNotificationId == 1) this.receiveNotifications.push(data.notification);
             });
+
+            this.$socket.on('removeNotification', (data: any) => {
+                if(this.receiveNotifications == undefined) return;
+                const index: number = this.receiveNotifications.findIndex(item => item.id == data.notification.id);
+                if(data.notification.typeNotificationId == 1) this.receiveNotifications.splice(index, 1);
+            });
         },
 
         methods: {
@@ -199,7 +205,6 @@
                     const res = await this.$axios.post('/notification/get-notifications', {userId: this.$store.state.userIdentity!.id, type:"send"});
 
                     if(res.status == 200){
-                        console.log(res.data.notifications);
                         return res.data.notifications;
                     }else{
                         this.$flashMessage.show({
@@ -260,14 +265,16 @@
             },
 
             
-            removeNotification: async function(id: number, index: number){
+            removeNotification: async function(notific: Notification, index: number){
 
                 try {
-                    const res = await this.$axios.post('/notification/delete', {id: id});
+                    const res = await this.$axios.post('/notification/delete', {id: notific.id});
 
                     if(res.status == 200){
             
                         this.sendNotifications!.splice(index, 1);
+
+                        this.$socket.emit('removeNotification', {notification: notific, msg: `User ${notific.userSend!.firstName} ${notific.userSend!.lastName} removed request for friendlist.`})
 
                         this.$flashMessage.show({
                             type: 'success',
@@ -298,6 +305,7 @@
                 answerFriendNotification.setViewStatus(true);
             },
 
+
             //negative answer to friendship
             removeSendNotification: async function(notification: Notification){
                 const index = this.receiveNotifications!.findIndex(item => item.id == notification.id);
@@ -312,6 +320,7 @@
                 answerFriendNotification.setViewStatus(false);
             },
 
+
             goodAnswer: async function(notification: Notification){
                 const index = this.receiveNotifications!.findIndex(item => item.id == notification.id);
 
@@ -324,7 +333,8 @@
                 this.addFriendInList(notification);
             },
 
-            addFriendInList: async function(notification: Notification) {
+
+            addFriendInList: async function(notification: Notification){
 
                 try {
                     const res = await this.$axios.post('/user/add-friends', {

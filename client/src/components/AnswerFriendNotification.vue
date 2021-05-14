@@ -50,15 +50,20 @@
                 try {
                     const res = await this.$axios.post('/notification/delete', {id: this.notification.id});
 
-                    console.log(res);
-
                     if(res.status == 200){
+
+                        let msg: string = "";
                         
                         if(status){
+                            msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} accepted your request for friendship.`;
                             this.$emit('accept', this.notification);
                         }else{
+                            msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} NOT accepted your request for friendship.`;
                             this.$emit('not-accept', this.notification);
                         }
+
+                        console.log("asdasdasd", msg);
+                        this.$socket.emit('removeNotification', {notification: this.notification, msg: msg});
                         
                     }else{
                         this.$flashMessage.show({
