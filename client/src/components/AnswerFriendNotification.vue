@@ -60,11 +60,6 @@
                             this.$emit('not-accept', this.notification);
                         }
                         
-                        this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("@/assets/flash/success.svg"),
-                        });
                     }else{
                         this.$flashMessage.show({
                             type: 'error',
@@ -81,7 +76,6 @@
                     console.error(err);
                 }
             },
-
             
         },
     

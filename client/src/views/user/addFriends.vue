@@ -154,11 +154,10 @@
         },
 
         created: function(){
-
             this.$socket.on('notification', (data: any) => {
                 if(this.receiveNotifications == undefined) return;
                 if(data.notification.typeNotificationId == 1) this.receiveNotifications.push(data.notification);
-            })
+            });
         },
 
         methods: {
@@ -306,9 +305,11 @@
                 this.receiveNotifications!.splice(index, 1);
                 this.$store.commit('removeNotification', index);
 
+                const menu = this.$refs.globalMenu as any;
+                menu.setNotificationAmount(this.$store.state.notifications == null ? 0 : this.$store.state.notifications.length);
+
                 const answerFriendNotification = this.$refs.answerFriendship as any;
                 answerFriendNotification.setViewStatus(false);
-                //todo socket with negative answer
             },
 
             goodAnswer: async function(notification: Notification){
@@ -320,38 +321,42 @@
                 const answerFriendNotification = this.$refs.answerFriendship as any;
                 answerFriendNotification.setViewStatus(false);
 
-
-                // try {
-                //     const res = await this.$axios.post('/notification/delete', {id: id});
-
-                //     if(res.status == 200){
-            
-                //         this.sendNotifications!.splice(index, 1);
-
-                //         this.$flashMessage.show({
-                //             type: 'success',
-                //             text: res.data.msg,
-                //             image: require("../../assets/flash/success.svg"),
-                //         });
-                //     }else{
-                //         this.$flashMessage.show({
-                //             type: 'error',
-                //             text: 'Error with query',
-                //             image: require("../../assets/flash/fail.svg"),
-                //         });
-                //     }
-                // }catch(err){
-                //     this.$flashMessage.show({
-                //         type: 'error',
-                //         text: 'Error with query',
-                //         image: require("../../assets/flash/fail.svg"),
-                //     });
-                //     console.error(err);
-                // }
-
-                //todo socket with good answer
+                this.addFriendInList(notification);
             },
 
+            addFriendInList: async function(notification: Notification) {
+
+                try {
+                    const res = await this.$axios.post('/user/add-friends', {
+                        userHasUser: {
+                            userId1: notification.userReceiveId,
+                            userId2: notification.userSendId,
+                        },
+                        userSend: notification.userSend,
+                    });
+
+                    if(res.status == 201){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("../../assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
 
             pageChangeEvt: async function(data: {take: number; skip: number}){
 

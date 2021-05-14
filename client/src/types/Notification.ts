@@ -6,8 +6,8 @@ export default interface Notification{
     date: Date,
     time: Date,
 
-    userRecieveId?: number,
-    userRecieve?: User,
+    userReceiveId?: number,
+    userReceive?: User,
     
     userSendId?: number,
     userSend?: User,

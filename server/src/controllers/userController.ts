@@ -531,8 +531,8 @@ export default class UserController{
             notification = await NotificationController.addNotification(POST.currentUser, POST.friendId, 2);
             res.status(200).send({msg: ErrorMessage.notFound(`Users with id: ${POST.currentUser.id} and ${POST.friendId}`), notification: notification});
         }catch(err){
+            console.error(err);
             res.status(400).send({msg: ErrorMessage.db()});
-            throw new Error(err);
         }
     }
 
@@ -540,8 +540,11 @@ export default class UserController{
     public static async addFriendship(req: Request, res: Response){
 
         interface POST{
-            user1Id: number,
-            user2Id: number,
+            userHasUser: {
+                userId1 : number,
+                userId2 : number,
+            }
+            userSend: User,
         }
 
         let
@@ -549,7 +552,7 @@ export default class UserController{
             POST       : POST                     = req.body,
             userHasUser: UserHasUser | undefined  = undefined;
 
-        postErrors = PostModule.checkData(POST, ['user1Id', 'user2Id']);
+        postErrors = PostModule.checkData(POST, ['userHasUser', 'userSend']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -557,13 +560,19 @@ export default class UserController{
         }
         
         userHasUser = new UserHasUser();
-        // userHasUser.changeFields(POST);
+        userHasUser.changeFields(POST.userHasUser);
+
+        console.log(POST.userHasUser);
 
         try {
-            // await getRepository(UserHasUser).insert()
-        } catch (error) {
-            
+            const result = await getRepository(UserHasUser).insert(userHasUser)
+            console.log(result, 'opa');
+        }catch(err){
+            console.error(err);
+            res.status(400).send({error: ErrorMessage.db()});
         }
+
+        res.status(201).send({msg: `You accept request for friendship form ${POST.userSend.firstName} ${POST.userSend.lastName}`});
     }
 
 
