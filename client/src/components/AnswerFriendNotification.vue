@@ -15,7 +15,7 @@
     import {defineComponent} from 'vue';
     import ActionBack        from '../components/ActionBack.vue';
     import Notification      from '../types/Notification';
-import NotificationVue from './Notification.vue';
+    
 
     export default defineComponent({
         
@@ -62,7 +62,7 @@ import NotificationVue from './Notification.vue';
                             msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} NOT accepted your request for friendship.`;
                             this.$emit('not-accept', this.notification);
                         }
-                        
+
                         this.$socket.emit('answerFriendship', {
                             msg: msg,
                             notification: this.notification,

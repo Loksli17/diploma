@@ -180,7 +180,6 @@
                 this.sendNotifications.push(notification);
             },
 
-
             getUsersAmount: async function(body: object){
                 try {
                     const res = await this.$axios.post('/user/search-user', body);

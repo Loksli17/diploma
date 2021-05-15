@@ -76,7 +76,14 @@
                 </div>
 
                 <div class="notifications-wrap">
-                    <NotificationComp v-on:remove-notification="removeNotification" v-for="notific in notifications" :key="notific.id" v-bind:notification="notific"></NotificationComp>
+                    <NotificationComp 
+                        v-on:remove-notification="removeNotification"
+                        v-on:open-action-back="answerFriendship" 
+                        v-for="notific in notifications" 
+                        :key="notific.id" 
+                        v-bind:notification="notific"
+                    >
+                    </NotificationComp>
                 </div>
             </div>
 
@@ -85,6 +92,11 @@
                 <button class="btn btn-error" @click="deleteUserEvt">Delete</button>
             </div>
         </div>
+
+        <AnswerFriendNotification ref="answerFriendship"
+            v-on:not-accept="removeFriendshipNotification"
+            v-on:accept="goodAnswer"
+        ></AnswerFriendNotification>
     </div>
 </template>
 
@@ -96,6 +108,8 @@
     import Notification      from "../../types/Notification";
     import ActionBack        from '../../components/ActionBack.vue';
     import NotificationComp  from '../../components/Notification.vue';
+
+    import AnswerFriendNotification from '../../components/AnswerFriendNotification.vue';
     
     export default defineComponent({
 
@@ -197,6 +211,76 @@
 
 
         methods: {
+
+            answerFriendship: function(data: Notification){
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setNotification(data);
+                answerFriendNotification.setViewStatus(true);
+            },
+
+            removeFriendshipNotification: function(notification: Notification){
+                const index = this.notifications!.findIndex(item => item.id == notification.id);
+
+                this.notifications!.splice(index, 1);
+                this.$store.commit('removeNotification', index);
+
+                const menu = this.$refs.globalMenu as any;
+                menu.setNotificationAmount(this.$store.state.notifications == null ? 0 : this.$store.state.notifications.length);
+
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setViewStatus(false);
+            },
+
+            goodAnswer: function(notification: Notification){
+                const index = this.notifications!.findIndex(item => item.id == notification.id);
+
+                this.notifications!.splice(index, 1);
+                this.$store.commit('removeNotification', index);
+
+                const answerFriendNotification = this.$refs.answerFriendship as any;
+                answerFriendNotification.setViewStatus(false);
+
+                const menu = this.$refs.globalMenu as any;
+                menu.setNotificationAmount(this.$store.state.notifications == null ? 0 : this.$store.state.notifications.length);
+
+                this.addFriendInList(notification);
+            },
+
+            addFriendInList: async function(notification: Notification){
+
+                try {
+                    const res = await this.$axios.post('/user/add-friends', {
+                        userHasUser: {
+                            userId1: notification.userReceiveId,
+                            userId2: notification.userSendId,
+                        },
+                        userSend: notification.userSend,
+                    });
+
+                    if(res.status == 201){
+                        this.$flashMessage.show({
+                            type: 'success',
+                            text: res.data.msg,
+                            image: require("../../assets/flash/success.svg"),
+                        });
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("../../assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("../../assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            },
+            
+
 
             editDataEvt: function(e: any){
                 const backComp = this.$refs.actionBackData! as any;
@@ -370,6 +454,7 @@
             Form,
             ActionBack,
             NotificationComp,
+            AnswerFriendNotification,
         }
     })
 </script>

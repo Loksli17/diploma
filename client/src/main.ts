@@ -163,6 +163,7 @@ socket.on('message', (data: any) => {
 
 });
 
+
 socket.on('notification', (data: any) => {
 
     app.config.globalProperties.$store.commit('addNotification', data.notification);
@@ -196,7 +197,6 @@ socket.on('answerFriendship', (data: any) => {
         text : data.msg,
     });
 });
-
 
 
 app.component('Menu', Menu);

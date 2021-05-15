@@ -1,5 +1,5 @@
 <template>
-    <div class="notification" :class="initClass">
+    <div @click="clickNotification" class="notification" :class="initClass">
         <div>
             <img :src="require(`../assets/notification/${data.typeNotification.img}`)" alt="">
         </div>
@@ -37,8 +37,25 @@
         },
 
         methods: {
+
             initClass: function(): string{
                 return "add-to-friendlist";
+            },
+
+            answer: function(){
+                this.$flashMessage.show({
+                    type: 'info',
+                    text: 'Yout request was sended',
+                    image: require("@/assets/flash/fail.svg"),
+                });
+            },
+
+            clickNotification: function(){
+                switch(this.data.typeNotificationId){
+                    case 1:
+                        this.$emit('open-action-back', this.data);
+                        break;
+                }
             },
 
             removeNotification: async function(): Promise<void>{
@@ -79,3 +96,7 @@
         },
     })
 </script>
+
+<style lang="scss">
+
+</style>
