@@ -154,6 +154,7 @@
         },
 
         created: function(){
+
             this.$socket.on('notification', (data: any) => {
                 if(this.receiveNotifications == undefined) return;
                 if(data.notification.typeNotificationId == 1) this.receiveNotifications.push(data.notification);
@@ -163,6 +164,12 @@
                 if(this.receiveNotifications == undefined) return;
                 const index: number = this.receiveNotifications.findIndex(item => item.id == data.notification.id);
                 if(data.notification.typeNotificationId == 1) this.receiveNotifications.splice(index, 1);
+            });
+
+            this.$socket.on('answerFriendship', (data: any) => {
+                if(this.sendNotifications == undefined) return;
+                const index: number = this.sendNotifications.findIndex(item => item.id == data.notification.id);
+                if(data.notification.typeNotificationId == 1) this.sendNotifications.splice(index, 1);
             });
         },
 
@@ -234,7 +241,7 @@
             },
 
 
-            formResultParser: async function(res: any): Promise<void> {
+            formResultParser: async function(res: any): Promise<void>{
 
                 if(res.status == 400){
                    this.$flashMessage.show({

@@ -15,6 +15,7 @@
     import {defineComponent} from 'vue';
     import ActionBack        from '../components/ActionBack.vue';
     import Notification      from '../types/Notification';
+import NotificationVue from './Notification.vue';
 
     export default defineComponent({
         
@@ -61,9 +62,12 @@
                             msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} NOT accepted your request for friendship.`;
                             this.$emit('not-accept', this.notification);
                         }
-
-                        console.log("asdasdasd", msg);
-                        this.$socket.emit('removeNotification', {notification: this.notification, msg: msg});
+                        
+                        this.$socket.emit('answerFriendship', {
+                            msg: msg,
+                            notification: this.notification,
+                            userSendId: this.notification.userSendId,
+                        });
                         
                     }else{
                         this.$flashMessage.show({

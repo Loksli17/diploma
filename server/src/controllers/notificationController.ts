@@ -172,14 +172,13 @@ export default class NotificationController{
             return;
         }
 
+
         try {
             notification = await getRepository(Notification).findOne(POST.id);
         }catch(err){
             res.status(400).send({error: ErrorMessage.db()});
             console.error(err);
         }
-
-        console.log(notification);
 
         if(notification == undefined){
             res.status(400).send({msg: ErrorMessage.notFound('Notification')});

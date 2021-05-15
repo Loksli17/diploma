@@ -79,9 +79,9 @@ export default class SocketContoller{
     public static sendMessage(socket: Socket): void{
 
         interface Data{
-            message      : Message,
-            userReceiveId: number,
-            userSend     : User,
+            message      : Message;
+            userReceiveId: number;
+            userSend     : User;
         }
 
         socket.on('message', (data: Data) => {
@@ -100,8 +100,8 @@ export default class SocketContoller{
     public static removeNotification(socket: Socket): void{
 
         interface Data{
-            notification: Notification,
-            msg         : string,
+            notification: Notification;
+            msg         : string;
         }
 
         socket.on('removeNotification', (data: Data) => {
@@ -112,7 +112,28 @@ export default class SocketContoller{
                 }
                 socket.to(value.socketId).emit('removeNotification', {notification: data.notification, msg: data.msg});
             });
-        })
+        });
+    }
+
+
+    //todo this
+    public static answerFriendship(socket: Socket): void{
+
+        interface Data{
+            msg         : string;
+            userSendId  : number;
+            notification: Notification;
+        }
+
+        socket.on('answerFriendship', (data: Data) => {
+            getRepository(User).findOne(data.userSendId)
+            .then((value: User | undefined): void => {
+                if(value == undefined || value.socketId == undefined){
+                    return;
+                }
+                socket.to(value.socketId).emit('answerFriendship', {msg: data.msg, notification: data.notification});
+            });
+        });
     }
 
 
@@ -121,5 +142,6 @@ export default class SocketContoller{
         SocketContoller.sendMessage(socket);
         SocketContoller.manyNotifications(socket);
         SocketContoller.removeNotification(socket);
+        SocketContoller.answerFriendship(socket);
     }
 }

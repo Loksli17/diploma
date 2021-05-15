@@ -177,7 +177,7 @@ socket.on('notification', (data: any) => {
 
 
 socket.on('removeNotification', (data: any) => {
-
+    
     app.config.globalProperties.$store.commit('removeNotification', data.notification);
 
     app.config.globalProperties.$flashMessage.show({
@@ -185,7 +185,19 @@ socket.on('removeNotification', (data: any) => {
         image: require(`@/assets/notification/${data.notification.typeNotification.img}`),
         text : data.msg,
     });
-})
+});
+
+
+socket.on('answerFriendship', (data: any) => {
+
+    app.config.globalProperties.$flashMessage.show({
+        type : 'info',
+        image: require(`@/assets/notification/add-friend.svg`),
+        text : data.msg,
+    });
+});
+
+
 
 app.component('Menu', Menu);
 
