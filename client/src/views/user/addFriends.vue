@@ -132,7 +132,7 @@
 
                 userContexMenuItems: [
                     {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
-                    {value: "Go to chat", link: "/chat?roomId=", img: "chat-icon.svg"}, 
+                    {value: "Go to chat", link: "/chat?idUserReceive=", img: "chat-icon.svg"}, 
                 ] as Array<MenuUserItem>,
 
                 formData       : {take: 0} as object,
@@ -175,7 +175,7 @@
 
         methods: {
 
-            addToFriendlist: function(notification: Notification){
+            addToFriendlist: function(notification: Notification, user: User){
                 if(this.sendNotifications == undefined) this.sendNotifications = [];
                 this.sendNotifications.push(notification);
             },
