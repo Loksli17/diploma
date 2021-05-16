@@ -7,4 +7,6 @@ export default interface User{
     email: string;
     password: string;
     authDate?: Date;
+
+    potentialFriendStatus?: boolean;
 };

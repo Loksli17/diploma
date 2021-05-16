@@ -15,7 +15,7 @@
                         v-bind:className="'user'"
                         v-bind:onlineStatus="false"
                         v-bind:items="userContexMenuItems"
-                        v-bind:addButtonStatus="true"
+                        v-bind:addButtonStatus="!user.potentialFriendStatus"
                         v-bind:fullNameStatus="true"
                         v-on:add-to-friendlist="addToFriendlist"
                         >
@@ -151,6 +151,18 @@
             
             this.receiveNotifications = this.getRecieveNotifications();
             this.sendNotifications    = await this.getSendNotifications();
+
+            //! create status for active or non-active "plus-button"
+            if(this.users == undefined || this.sendNotifications == undefined) return;
+
+            this.users = this.users.map((user: User) => {
+                user.potentialFriendStatus = this.sendNotifications!.findIndex(
+                    (notific: Notification) => notific.typeNotificationId == 1 && notific.userReceiveId == user.id
+                ) == -1 ? false : true;
+                return user;
+            });
+
+            console.log(this.users);
         },
 
         created: function(){
@@ -175,9 +187,11 @@
 
         methods: {
 
-            addToFriendlist: function(notification: Notification, user: User){
+            addToFriendlist: function(notification: Notification){
                 if(this.sendNotifications == undefined) this.sendNotifications = [];
                 this.sendNotifications.push(notification);
+
+                if(this.users != undefined) this.users[this.users.findIndex(user => user.id == notification.userReceiveId)].potentialFriendStatus = true;
             },
 
             getUsersAmount: async function(body: object){
@@ -280,7 +294,9 @@
             
                         this.sendNotifications!.splice(index, 1);
 
-                        this.$socket.emit('removeNotification', {notification: notific, msg: `User ${notific.userSend!.firstName} ${notific.userSend!.lastName} removed request for friendlist.`})
+                        if(this.users != undefined) this.users[this.users.findIndex(user => user.id == notific.userReceiveId)].potentialFriendStatus = false;
+
+                        this.$socket.emit('removeNotification', {notification: notific, msg: `User ${notific.userSend!.firstName} ${notific.userSend!.lastName} removed request for friendlist.`});
 
                         this.$flashMessage.show({
                             type: 'success',
