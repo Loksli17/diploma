@@ -119,6 +119,8 @@ export default class UserController{
             POST      : POST              = req.body,
             postErrors: Array<keyof POST> = [],
             amount    : number            = 0,
+            friends   : Array<User>       = [],
+            friendsIds: Array<number>     = [],
             whereCond : string            = '',
             users     : Array<User>       = [];
 
@@ -137,8 +139,20 @@ export default class UserController{
         whereCond += whereCond == "" ? 'id != :id' : ' and id != :id';
 
         try {
+
+            friends = await getRepository(User).createQueryBuilder('user')
+                .innerJoin('user_has_user', 'uhu', 'uhu.userId1 = user.id or uhu.userId2 = user.id')
+                .where('(uhu.userId1 = :id || uhu.userId2 = :id) and user.id != :id', {id: POST.userId})
+                .skip(POST.skip)
+                .take(POST.take)
+                .orderBy('user.status')
+                .getMany();
+
+            if(friends.length) friendsIds = friends.map(item => item.id!);
+            
             users = await getRepository(User).createQueryBuilder()
-                .where(whereCond, {
+                .where(friends.length ? "id not in (:ids)" : "", {ids: friendsIds})
+                .andWhere(whereCond, {
                     login    : `%${POST.user.login}%`, 
                     email    : `%${POST.user.email}%`,
                     firstName: `%${POST.user.firstName}%`,
@@ -150,7 +164,8 @@ export default class UserController{
                 .getMany();
 
             amount = await getRepository(User).createQueryBuilder()
-                .where(whereCond, {
+                .where(friends.length ? "id not in (:ids)" : "", {ids: friendsIds})
+                .andWhere(whereCond, {
                     login    : `%${POST.user.login}%`, 
                     email    : `%${POST.user.email}%`,
                     firstName: `%${POST.user.firstName}%`,
