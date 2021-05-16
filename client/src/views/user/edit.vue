@@ -100,6 +100,7 @@
     </div>
 </template>
 
+
 <script lang="ts">
     declare const require: any;
     import {defineComponent} from 'vue';
@@ -297,6 +298,7 @@
                 background.show();
             },
 
+
             //? for file Upload
             checkFile: function(file: any): {msg: string; success: boolean}{
 
@@ -311,12 +313,14 @@
                 return {msg: 'Good file', success: true};
             },
 
+
             //? for file Upload
             determineCapableDragAndDrop: function(){
                 const div = document.createElement('div');
 
                 return (('draggable' in div) || ('ondragstart' in div && 'ondrag' in div)) && 'FileReader' in window;
             },
+
 
             //? for file Upload
             readFile: function(file: any){
@@ -328,6 +332,7 @@
 
                 fr.readAsDataURL(file);
             },
+
 
             //? for file Upload
             sendFile: async function(file: any){
@@ -362,6 +367,7 @@
 
             },
 
+
             //* for edit User
             editFormResultParser: function(res: any){
 
@@ -371,15 +377,14 @@
                 
                 this.$store.commit('setUserIdentity', res.data.user);
                 this.user = res.data.user;
-
-                console.log();
                 
                 this.$flashMessage.show({
                     type: 'success',
-                    // image: require("../../assets/flashMessage/fail.svg"),
+                    image: require("@/assets/flash/success.svg"),
                     text: res.data.msg,
                 });
             },
+
 
             passwordFormResultParser: function(res: any){
 
@@ -391,12 +396,13 @@
                 
                 this.$flashMessage.show({
                     type: 'success',
-                    // image: require("../../assets/flashMessage/fail.svg"),
+                    image: require("@/assets/flash/fail.svg"),
                     text: res.data.msg,
                 });
 
                 console.log(res.data.user.password);
             },
+
 
             removeNotification: function(id: number){
                 this.notifications = this.$store.state.notifications!;
@@ -404,6 +410,7 @@
                 const menu = this.$refs.globalMenu as any;
                 menu.setNotificationAmount(this.notifications.length);
             },
+
 
             removeNotifications: async function(){
 

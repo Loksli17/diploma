@@ -14,6 +14,7 @@ import NotificationController      from './notificationController';
 import Notification                from '../models/Notification';
 
 
+
 export default class UserController{
 
     private static router: Router = Router();
@@ -290,7 +291,6 @@ export default class UserController{
             return;
         }
 
-        user = new User();
         user.changeFields(POST.user);
 
         validateResult = await validate(user);
