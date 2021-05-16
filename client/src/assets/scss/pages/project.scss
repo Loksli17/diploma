@@ -1,0 +1,64 @@
+@import '../index';
+
+$projectButtonsWrapHeight: 50px;
+$elemsWrapWidth          : 294px;
+$usersWrapHeight         : 50px;
+$drawButtonsWrapWidth    : 60px;
+
+
+.page-project{
+    
+    .page-wrap{
+        @extend %page-wrap !optional;
+        @include pageWrapperTheme($white);
+        padding: 0px;
+        position: relative;
+
+        .project-buttons-wrap{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(100vw - #{$elemsWrapWidth});
+            height: $projectButtonsWrapHeight;
+            background: $blueHover;
+            box-sizing: border-box;
+            border-bottom: 2px solid $grayBorder;
+        }
+
+        .draw-buttons-wrap{
+            position: absolute;
+            top: $projectButtonsWrapHeight;
+            left: 0;
+            height: calc(100% - #{$projectButtonsWrapHeight});
+            width: $drawButtonsWrapWidth;
+            background: $grayMain;
+            border-right: 2px solid $grayBorder;
+        }
+
+        .users-wrap{
+            position: absolute;
+            bottom: 0;
+            left: $drawButtonsWrapWidth + 2px;
+            width: calc(100vw - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth});
+            height: $usersWrapHeight;
+            border-top: 2px solid $grayBorder;
+            background: $blueHover;
+        }
+
+        .elems-wrap{
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: $grayMain;
+            width: $elemsWrapWidth;
+            height: 100%;
+            box-sizing: border-box;
+            border-left: 2px solid $grayBorder;
+        }
+
+        canvas{
+            position: absolute;
+            
+        }
+    }
+}

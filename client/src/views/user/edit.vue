@@ -396,7 +396,7 @@
                 
                 this.$flashMessage.show({
                     type: 'success',
-                    image: require("@/assets/flash/fail.svg"),
+                    image: require("@/assets/flash/success.svg"),
                     text: res.data.msg,
                 });
 
