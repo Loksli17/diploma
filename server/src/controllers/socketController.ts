@@ -1,18 +1,18 @@
 import { getRepository } from 'typeorm';
 
-import {Socket}     from 'socket.io';
+import {Socket, Server as SocketServer} from 'socket.io';
 import User         from '../models/User';
 import Message      from '../models/Message';
 import Notification from '../models/Notification';
 
 
 export default class SocketContoller{
+    
+    public static io: SocketServer;
 
     public static connection(socket: Socket): void{
 
-        if(socket.handshake.query.user == undefined || typeof socket.handshake.query.user != "string"){
-            return;
-        }
+        if(socket.handshake.query.user == undefined || typeof socket.handshake.query.user != "string") return;
 
         let user: User = JSON.parse(socket.handshake.query.user);
         user.socketId = socket.id;
@@ -44,9 +44,7 @@ export default class SocketContoller{
 
         socket.on('notification', (data: Data) => {
             getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
-                if(value == undefined || value.socketId == undefined){
-                    return;
-                }
+                if(value == undefined || value.socketId == undefined) return;
                 socket.to(value.socketId).emit('notification', {notification: data.notification});
             })
         });
@@ -86,9 +84,7 @@ export default class SocketContoller{
 
         socket.on('message', (data: Data) => {
             getRepository(User).findOne(data.userReceiveId).then((value: User | undefined): void => {
-                if(value == undefined || value.socketId == undefined){
-                    return;
-                }
+                if(value == undefined || value.socketId == undefined) return;
                 data.message.user = data.userSend;
                 socket.to(value.socketId!).emit('message', {message: data.message, user: value});
             });
@@ -107,16 +103,13 @@ export default class SocketContoller{
         socket.on('removeNotification', (data: Data) => {
             getRepository(User).findOne(data.notification.userReceiveId)
             .then((value: User | undefined): void => {
-                if(value == undefined || value.socketId == undefined){
-                    return;
-                }
+                if(value == undefined || value.socketId == undefined) return;
                 socket.to(value.socketId).emit('removeNotification', {notification: data.notification, msg: data.msg});
             });
         });
     }
 
 
-    //todo this
     public static answerFriendship(socket: Socket): void{
 
         interface Data{
@@ -128,20 +121,51 @@ export default class SocketContoller{
         socket.on('answerFriendship', (data: Data) => {
             getRepository(User).findOne(data.userSendId)
             .then((value: User | undefined): void => {
-                if(value == undefined || value.socketId == undefined){
-                    return;
-                }
+                if(value == undefined || value.socketId == undefined) return;
                 socket.to(value.socketId).emit('answerFriendship', {msg: data.msg, notification: data.notification});
             });
         });
     }
 
 
+    public static joinProject(socket: Socket): void{
+
+        interface Data{
+            userId   : number;
+            projectId: number;
+        }
+
+        socket.on('joinProject', (data: Data) => {
+
+            socket.join(`project${data.projectId}`);
+
+            console.log('joinProject', data);
+
+            getRepository(User).findOne(data.userId)
+            .then(async (value: User | undefined) => {
+                if(value == undefined || value.socketId == undefined) return;
+
+                let 
+                    clients: Set<string> | undefined = this.io.sockets.adapter.rooms.get(`project${data.projectId}`),
+                    users  : Array<User>             = [];
+
+                if(clients != undefined) {
+                    users = await getRepository(User).createQueryBuilder().where('socketId in (:ids)', {ids: Array.from(clients)}).getMany();
+                }
+  
+                this.io.sockets.to(`project${data.projectId}`).emit('joinProject', {user: value, users: users});
+            });
+        });
+
+    } 
+
+    
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
         SocketContoller.sendMessage(socket);
         SocketContoller.manyNotifications(socket);
         SocketContoller.removeNotification(socket);
         SocketContoller.answerFriendship(socket);
+        SocketContoller.joinProject(socket);
     }
 }

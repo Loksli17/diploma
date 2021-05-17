@@ -49,6 +49,7 @@ export class App{
     }
 
     private ioInit(){
+        SocketContoller.io = this.io;
         this.io.on('connection', SocketContoller.connection);
     }
 

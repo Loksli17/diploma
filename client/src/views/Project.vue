@@ -30,6 +30,7 @@
     </div>
 </template>
 
+
 <script lang="ts">
     declare const require: any;
     import {defineComponent} from 'vue';
@@ -53,14 +54,20 @@
             
             if(this.project == undefined) return;
 
-            this.users.push(this.project.author!);
-
-            console.log(this.users![0].avatar!.includes('default-user'))
+            this.users.push(this.$store.state.userIdentity!);
 
             if(this.project.users!.length){
                 //todo connect to project room socket
-
+                this.$socket.emit('joinProject', {userId: this.$store.state.userIdentity!.id, projectId: this.projectId});
             }
+
+        },
+
+        created: function(){
+
+            this.$socket.on('joinProject', (data: any) => {
+                this.users = data.users;
+            });
         },
 
         methods: {

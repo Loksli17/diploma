@@ -26,7 +26,6 @@ const socket = io(config.serverPath, {
     }
 });
 
-
 axios.defaults.baseURL = config.serverPath;
 axios.defaults.headers.common['Authorization'] = store.state.jwt;
 

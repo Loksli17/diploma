@@ -43,6 +43,8 @@ $drawButtonsWrapWidth    : 60px;
             height: $usersWrapHeight;
             border-top: 2px solid $grayBorder;
             background: $blueHover;
+            @include row(0px);
+            grid-auto-columns: max-content;
 
             .user{
                 width: 60px;
@@ -50,10 +52,13 @@ $drawButtonsWrapWidth    : 60px;
                 box-sizing: border-box;
                 border-right: 2px solid $grayBorder;
                 cursor: pointer;
+                background: $white;
+                @include flex(center, center);
 
                 .avatar{
                     @include backImage();
                     height: 100%;
+                    width: 100%;
                 }
             }
         }

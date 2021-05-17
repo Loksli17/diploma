@@ -492,8 +492,7 @@ export default class ProjectController{
                 .leftJoinAndSelect('project.users', 'user as u1')
                 .leftJoinAndSelect('project.author', 'user as u2')
                 .getOne();
-
-            console.log(project);
+                
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.db()})   

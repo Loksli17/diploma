@@ -117,8 +117,11 @@
             },
 
             removeTab: function(tab: Tab): void{
+
                 const
                     ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
+
+                console.log(tab, this.tabs, ind);
                 
                 this.tabs.splice(ind, 1);
 
