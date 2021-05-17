@@ -32,14 +32,8 @@
 <script lang="ts">
     declare const require: any;
     import {defineComponent} from 'vue';
-    import User              from '../types/User';
+    import UserCanvas        from '../types/Canvas/UserCanvas';
     import Project           from '../types/Project';
-
-
-    interface UserCanvas extends User{
-        color?: string;
-        cursor?: {x: number; y: number}; 
-    }
 
 
     export default defineComponent({
