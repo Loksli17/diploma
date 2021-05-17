@@ -156,7 +156,6 @@ export default class SocketContoller{
 
     }
 
-
     public static leaveProject(socket: Socket){
 
         interface Data{
@@ -165,9 +164,23 @@ export default class SocketContoller{
         }
 
         socket.on('leaveProject', (data: Data) => {
-            console.log(data);
             socket.leave(`project${data.projectId}`);
             this.io.sockets.to(`project${data.projectId}`).emit('leaveProject', {id: data.userId});
+        });
+    }
+
+
+    public static mouseMove(socket: Socket){
+
+        interface Data{
+            x        : number;
+            y        : number;
+            userId   : number;
+            projectId: number;
+        }
+
+        socket.on('mouseMove', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('mouseMove', data);
         });
     }
 
@@ -180,5 +193,6 @@ export default class SocketContoller{
         SocketContoller.answerFriendship(socket);
         SocketContoller.joinProject(socket);
         SocketContoller.leaveProject(socket);
+        SocketContoller.mouseMove(socket);
     }
 }

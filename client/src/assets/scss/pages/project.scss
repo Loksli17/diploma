@@ -83,7 +83,11 @@ $drawButtonsWrapWidth    : 60px;
 
         canvas{
             position: absolute;
-            
+            top: $projectButtonsWrapHeight;
+            left: $drawButtonsWrapWidth;
+            width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth});
+
+            height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight});
         }
     }
 }
