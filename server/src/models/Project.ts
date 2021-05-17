@@ -1,10 +1,11 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, Unique} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable} from 'typeorm';
 
 
 import {IsNotEmpty} from 'class-validator';
 import User         from './User';
 import ViewStatus   from './ViewStatus';
 import {IsUniq}     from '@join-com/typeorm-class-validator-is-uniq';
+
 
 @Entity()
 export default class Project{

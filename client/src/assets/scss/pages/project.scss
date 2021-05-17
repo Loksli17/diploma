@@ -2,7 +2,7 @@
 
 $projectButtonsWrapHeight: 50px;
 $elemsWrapWidth          : 294px;
-$usersWrapHeight         : 50px;
+$usersWrapHeight         : 60px;
 $drawButtonsWrapWidth    : 60px;
 
 
@@ -43,6 +43,19 @@ $drawButtonsWrapWidth    : 60px;
             height: $usersWrapHeight;
             border-top: 2px solid $grayBorder;
             background: $blueHover;
+
+            .user{
+                width: 60px;
+                height: 100%;
+                box-sizing: border-box;
+                border-right: 2px solid $grayBorder;
+                cursor: pointer;
+
+                .avatar{
+                    @include backImage();
+                    height: 100%;
+                }
+            }
         }
 
         .elems-wrap{

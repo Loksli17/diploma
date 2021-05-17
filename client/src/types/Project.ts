@@ -12,4 +12,7 @@ export default interface Project{
     author?: User;
     image: string;
     isOwn?: boolean;
+
+
+    users?: Array<User>;
 }

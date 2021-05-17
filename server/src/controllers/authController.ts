@@ -40,6 +40,8 @@ export default class AuthController{
         //TODO: !!add TRY CATCH
         user = await getRepository(User).findOne({where: {email: POST.email}});
 
+        console.log(user);
+
         if(user == undefined){
             res.status(400).send({msg: 'Bad validation', errors: [{msg: `User with this email doesn' exists`, name: 'email'}]});
             return;

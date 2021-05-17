@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable} from 'typeorm';
 
 import {IsEmail, MinLength, IsNotEmpty, MaxLength} from 'class-validator';
 import {IsUniq}                                    from '@join-com/typeorm-class-validator-is-uniq';
@@ -58,6 +58,11 @@ export default class User{
     public ownProjects?: Array<Project> | undefined;
 
     @ManyToMany(() => Project, project => project.users)
+    @JoinTable({
+        name              : "user_has_project",
+        joinColumns       : [{name: 'userId'}],
+        inverseJoinColumns: [{name: 'projectId'}],
+    })
     public projects?: Array<Project> | undefined;
 
 

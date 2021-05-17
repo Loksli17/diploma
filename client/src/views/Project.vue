@@ -13,7 +13,10 @@
             </div>
 
             <div class="users-wrap">
-                
+                <div class="user" v-for="user in users" :key="user.id" :title="user.firstName + ' ' + user.lastName">
+                    <div class="avatar" v-if="!user.avatar.includes('default-user')" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}"></div>
+                    <span v-else>{{user.firstName[0]}} {{user.lastName[0]}}</span>
+                </div>
             </div>
 
             <div class="elems-wrap">
@@ -28,10 +31,66 @@
 </template>
 
 <script lang="ts">
+    declare const require: any;
     import {defineComponent} from 'vue';
-    
+    import User              from '../types/User';
+    import Project           from '../types/Project';
+
+
     export default defineComponent({
 
+        data: function(){
+            return {
+                projectId: 0 as number,
+                project  : {} as Project | undefined,
+                users    : [] as Array<User>, 
+            }
+        },
+
+        mounted: async function(){
+            this.projectId = Number(this.$route.query.id);
+            this.project   = await this.getProject();
+            
+            if(this.project == undefined) return;
+
+            this.users.push(this.project.author!);
+
+            console.log(this.users![0].avatar!.includes('default-user'))
+
+            if(this.project.users!.length){
+                //todo connect to project room socket
+
+            }
+        },
+
+        methods: {
+
+            getProject: async function(){
+                
+                try {
+                    const res = await this.$axios.post('/project/get-project', {
+                        id: this.projectId,
+                    });
+
+                    if(res.status == 200){
+                        return res.data.project;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("@/assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("@/assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+            }
+        },
     });
 </script>
 

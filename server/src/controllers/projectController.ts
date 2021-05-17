@@ -468,17 +468,59 @@ export default class ProjectController{
     }
 
 
+    public static async getProjectById(req: Request, res: Response){
+
+        interface POST{
+            id: number,
+        }
+
+        let
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [], 
+            project   : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['id']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            project = await getRepository(Project).createQueryBuilder('project')
+                .where('project.id = :id', {id: POST.id})
+                .leftJoinAndSelect('project.users', 'user as u1')
+                .leftJoinAndSelect('project.author', 'user as u2')
+                .getOne();
+
+            console.log(project);
+        }catch(err){
+            console.error(err);
+            res.status(400).send({msg: ErrorMessage.db()})   
+        }
+
+        if(project == undefined){
+            res.status(400).send({msg: ErrorMessage.notFound('project')});
+            return;
+        }
+
+        res.status(200).send({project: project})
+    }
+
+
     public static routes(){
-        this.router.all('/get-projects' ,       this.getProjects);
-        this.router.all('/get-amount-projects', this.getAmountProjects);
-        this.router.all('/search-project',      this.searchProject);
-        this.router.all('/get-collaborators',   this.getCollaborators);
-        this.router.all('/get-view-status',     this.getStatus);
-        this.router.all('/add',                 this.addProject);
-        this.router.all('/edit',                this.editProject);
-        this.router.all('/delete',              this.removeProject);
-        this.router.all('/add-collaborators',   this.addCollaborators);
-        this.router.all('/remove-collaborator', this.removeCollaborator);
+        this.router.post('/get-projects' ,       this.getProjects);
+        this.router.post('/get-amount-projects', this.getAmountProjects);
+        this.router.post('/search-project',      this.searchProject);
+        this.router.post('/get-collaborators',   this.getCollaborators);
+        this.router.post('/get-view-status',     this.getStatus);
+        this.router.post('/add',                 this.addProject);
+        this.router.post('/edit',                this.editProject);
+        this.router.post('/delete',              this.removeProject);
+        this.router.post('/add-collaborators',   this.addCollaborators);
+        this.router.post('/remove-collaborator', this.removeCollaborator);
+        this.router.post('/get-project',          this.getProjectById);
+
         return this.router;
     }
 }
