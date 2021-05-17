@@ -71,6 +71,13 @@ router.beforeEach(async (to, from, next) => {
         next({name: '404'});
     }else if(to.path === '/logout'){
         
+        const projects = store.state.tabs;
+        
+        if(projects != undefined) projects.forEach((item) => {
+            console.log(item);
+            socket.emit('leaveProject', {userId: store.state.userIdentity!.id, projectId: item.link});
+        });
+        
         socket.close();
         store.commit('setUserIdentity', null);
         store.commit('setJWT', null);

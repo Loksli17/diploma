@@ -22,7 +22,6 @@ export default class SocketContoller{
         console.log(`user with id=${user.id} socket id=${user.socketId}`);
 
         socket.on('disconnect', (reason: string) => {
-
             //todo reconnect if user just sleeping
             user.socketId = "";
             user.status   = false;
@@ -166,6 +165,7 @@ export default class SocketContoller{
         }
 
         socket.on('leaveProject', (data: Data) => {
+            console.log(data);
             socket.leave(`project${data.projectId}`);
             this.io.sockets.to(`project${data.projectId}`).emit('leaveProject', {id: data.userId});
         });
