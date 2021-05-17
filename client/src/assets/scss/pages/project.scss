@@ -2,7 +2,7 @@
 
 $projectButtonsWrapHeight: 50px;
 $elemsWrapWidth          : 294px;
-$usersWrapHeight         : 60px;
+$usersWrapHeight         : 70px;
 $drawButtonsWrapWidth    : 60px;
 
 
@@ -43,14 +43,16 @@ $drawButtonsWrapWidth    : 60px;
             height: $usersWrapHeight;
             border-top: 2px solid $grayBorder;
             background: $blueHover;
-            @include row(0px);
+            @include row(10px);
             grid-auto-columns: max-content;
+            align-items: center;
+            padding-left: 10px;
 
             .user{
-                width: 60px;
-                height: 100%;
+                width: 50px;
+                height: 50px;
                 box-sizing: border-box;
-                border-right: 2px solid $grayBorder;
+                border: 2px solid $grayBorder;
                 cursor: pointer;
                 background: $white;
                 @include flex(center, center);
@@ -59,6 +61,11 @@ $drawButtonsWrapWidth    : 60px;
                     @include backImage();
                     height: 100%;
                     width: 100%;
+                }
+
+                span{
+                    font-size: 20px;
+                    font-weight: 600;
                 }
             }
         }

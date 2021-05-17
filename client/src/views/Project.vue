@@ -68,6 +68,11 @@
             this.$socket.on('joinProject', (data: any) => {
                 this.users = data.users;
             });
+
+            this.$socket.on('leaveProject', (data: any) => {
+                const ind: number = this.users.findIndex(item => item.id == data.id);
+                this.users.splice(ind, 1);
+            });
         },
 
         methods: {

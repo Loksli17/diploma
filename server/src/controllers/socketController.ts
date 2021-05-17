@@ -139,8 +139,6 @@ export default class SocketContoller{
 
             socket.join(`project${data.projectId}`);
 
-            console.log('joinProject', data);
-
             getRepository(User).findOne(data.userId)
             .then(async (value: User | undefined) => {
                 if(value == undefined || value.socketId == undefined) return;
@@ -157,7 +155,21 @@ export default class SocketContoller{
             });
         });
 
-    } 
+    }
+
+
+    public static leaveProject(socket: Socket){
+
+        interface Data{
+            userId   : number;
+            projectId: number;
+        }
+
+        socket.on('leaveProject', (data: Data) => {
+            socket.leave(`project${data.projectId}`);
+            this.io.sockets.to(`project${data.projectId}`).emit('leaveProject', {id: data.userId});
+        });
+    }
 
     
     public static route(socket: Socket): void{
@@ -167,5 +179,6 @@ export default class SocketContoller{
         SocketContoller.removeNotification(socket);
         SocketContoller.answerFriendship(socket);
         SocketContoller.joinProject(socket);
+        SocketContoller.leaveProject(socket);
     }
 }

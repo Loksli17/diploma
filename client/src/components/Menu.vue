@@ -116,19 +116,19 @@
 
             },
 
+
             removeTab: function(tab: Tab): void{
 
-                const
-                    ind: number = this.tabs.findIndex((item) => {item.link == tab.link});
-
-                console.log(tab, this.tabs, ind);
-                
+                const ind: number = this.tabs.findIndex(item => item.link == tab.link);
+           
                 this.tabs.splice(ind, 1);
 
                 if(this.$route.path != "/project" || Number(this.$route.query.id) != tab.link){
                     this.$store.commit('setTabs', this.tabs);
                     return;
                 }
+
+                this.$socket.emit('leaveProject', {userId: this.$store.state.userIdentity!.id, projectId: tab.link});
 
                 if(this.tabs.length){
                     this.tabs[this.tabs.length - 1].isActive = true;
@@ -164,6 +164,7 @@
             }
         },
 
+
         created: function(){
 
             if(this.$store.state.userIdentity == null){
@@ -185,7 +186,7 @@
             this.$socket.on('removeNotification', (data: any) => {
                 this.amountNotifications--;
             });
-
+            
         },
         
     });

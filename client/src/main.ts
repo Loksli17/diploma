@@ -70,6 +70,7 @@ router.beforeEach(async (to, from, next) => {
     }else if((to.name === 'Login' || to.name === 'Signup') && isAuth){
         next({name: '404'});
     }else if(to.path === '/logout'){
+        
         socket.close();
         store.commit('setUserIdentity', null);
         store.commit('setJWT', null);
