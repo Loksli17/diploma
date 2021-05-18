@@ -3,7 +3,7 @@
 $projectButtonsWrapHeight: 50px;
 $elemsWrapWidth          : 294px;
 $usersWrapHeight         : 70px;
-$drawButtonsWrapWidth    : 60px;
+$drawButtonsWrapWidth    : 70px;
 
 
 .page-project{
@@ -33,6 +33,27 @@ $drawButtonsWrapWidth    : 60px;
             width: $drawButtonsWrapWidth;
             background: $grayMain;
             border-right: 2px solid $grayBorder;
+            
+            .draw-button{
+                padding: 12px;
+                background: $white;
+                border-bottom: 2px solid $grayBorder;
+                cursor: pointer;
+
+                &:hover{
+                    transition: 0.4s;
+                    background: $blueHover;
+                }
+
+                img{
+                    width: 100%;
+                }
+            }
+
+            .active-draw-button{
+                background: $blue;
+            }
+
         }
 
         .users-wrap{

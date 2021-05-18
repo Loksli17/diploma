@@ -10,10 +10,18 @@
 
             <div class="draw-buttons-wrap">
 
+                <div class="settings draw-button">
+                    <img :src="require('@/assets/draw-items/settings.svg')" alt="" @click="showSettingsMenu">
+                </div>
+
+                <div v-for="(button, index) in buttons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}">
+                    <img :src="require(`@/assets/draw-items/${button.icon}`)" alt="" @click="setCanvasState(button, index)">
+                </div>
+
             </div>
 
             <div class="users-wrap">
-                <div class="user" v-for="user in users" :key="user.id" :title="user.firstName + ' ' + user.lastName">
+                <div class="user" v-for="user in users" :key="user.id" :title="user.firstName + ' ' + user.lastName" >
                     <div class="avatar" v-if="!user.avatar.includes('default-user')" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}"></div>
                     <span v-else>{{user.firstName[0]}} {{user.lastName[0]}}</span>
                 </div>
@@ -23,7 +31,7 @@
 
             </div>
 
-            <canvas @mousemove="mouseMove" ref="canvas"></canvas>
+            <canvas ref="canvas" @mousemove="mouseMove"></canvas>
         </div> 
     </div>
 </template>
@@ -34,6 +42,7 @@
     import {defineComponent} from 'vue';
     import UserCanvas        from '../types/Canvas/UserCanvas';
     import Project           from '../types/Project';
+    import Canvas, {State}   from '../canvas/Canvas';
 
 
     export default defineComponent({
@@ -42,7 +51,13 @@
             return {
                 projectId: 0 as number,
                 project  : {} as Project | undefined,
-                users    : [] as Array<UserCanvas>, 
+                users    : [] as Array<UserCanvas>,
+                canvas   : {} as Canvas,
+
+                buttons: [
+                    {name: 'Brush', icon: "brush.svg", state: State.BRUSH, isActive: false},
+                    {name: 'Line',  icon: "line.svg",  state: State.LINE, isActive: false},
+                ]
             }
         },
 
@@ -64,6 +79,8 @@
                 //todo connect to project room socket
                 this.$socket.emit('joinProject', {userId: this.$store.state.userIdentity!.id, projectId: this.projectId});
             }
+
+            this.canvas = new Canvas(this.$refs.canvas as HTMLCanvasElement, this.users);
         },
 
 
@@ -86,7 +103,9 @@
 
             this.$socket.on('mouseMove', (data: any) => {
                 const x = 228;
-            })
+            });
+
+            
         },
 
         methods: {
@@ -117,6 +136,18 @@
                 }
             },
 
+
+            setCanvasState: function(btn: any, index: number){
+                this.canvas.setState(btn.state);
+                console.log(this.canvas.getState(), index);
+
+                this.buttons.forEach(item => {
+                    item.isActive = false;
+                });
+                this.buttons[index].isActive = true;
+
+                
+            },
 
             mouseMove: function(e: any){
 

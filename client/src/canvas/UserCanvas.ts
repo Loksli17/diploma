@@ -1,6 +1,6 @@
-import User from '../User';
+import User from '../types/User';
 
 export default interface UserCanvas extends User{
-    color?: string;
+    color? : string;
     cursor?: {x: number; y: number}; 
 }
