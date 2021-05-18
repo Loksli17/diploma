@@ -31,7 +31,7 @@
 
             </div>
 
-            <canvas ref="canvas" @mousemove="mouseMove"></canvas>
+            <canvas width="1000" height="1000" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
         </div> 
     </div>
 </template>
@@ -40,7 +40,7 @@
 <script lang="ts">
     declare const require: any;
     import {defineComponent} from 'vue';
-    import UserCanvas        from '../types/Canvas/UserCanvas';
+    import UserCanvas        from '../canvas/UserCanvas';
     import Project           from '../types/Project';
     import Canvas, {State}   from '../canvas/Canvas';
 
@@ -145,11 +145,22 @@
                     item.isActive = false;
                 });
                 this.buttons[index].isActive = true;
+            },
 
-                
+            canvasClick: function(e: any){
+
+                const
+                    bounds = e.target.getBoundingClientRect(),
+                    x      = e.clientX - bounds.left,
+                    y      = e.clientY - bounds.top;
+
+                console.log({x: x, y: y});
+                this.canvas.click({x: x, y: y});
             },
 
             mouseMove: function(e: any){
+
+                this.canvas.mouseMove(e);
 
                 const
                     bounds = e.target.getBoundingClientRect(),

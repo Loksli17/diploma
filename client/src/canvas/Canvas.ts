@@ -1,5 +1,7 @@
-import User from '@/types/User';
-import UserCanvas        from './UserCanvas';
+import Point      from './Point';
+import Line       from './shapes/Line';
+import Shape      from './shapes/Shape';
+import UserCanvas from './UserCanvas';
 
 
 export enum State{
@@ -15,13 +17,27 @@ export default class Canvas{
     private ctx: CanvasRenderingContext2D | null;
     private users: Array<UserCanvas>;
     private state: State;
+    private countClick: number = 0;
+    private currentShape: Shape | undefined;
+    private shapes: Array<Shape>;
 
-    
+
     constructor(canvas: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
         this.canvas = canvas;
         this.ctx    = canvas.getContext('2d');
         this.users  = userCanvas; 
         this.state  = State.POINTER;
+        this.shapes = [];
+    }
+
+    public render(){
+
+        this.clear();
+        
+        for(let i = 0; i < this.shapes.length; i++){
+            this.shapes[i].render(this.ctx);
+        }
+        
     }
 
     public userAdd(user: UserCanvas){
@@ -33,8 +49,37 @@ export default class Canvas{
         this.users.splice(ind, 1);
     }
 
-    public drawLine(){
-        console.log('azaza')
+
+    private drawLineProcess(coords: {x: number; y: number}, action: string){
+
+        switch(this.countClick){
+
+            case 0:
+                this.currentShape = new Line(
+                    new Point(0, coords.x, coords.y),
+                    new Point(1, coords.x, coords.y),
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].x = coords.x;
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    this.countClick = 0;
+                    this.shapes.push(this.currentShape);
+                    this.render();
+                }else{
+                    this.render();
+                    this.currentShape.render(this.ctx);
+                }
+
+                break;
+        }
     }
 
     public setState(state: State){
@@ -43,6 +88,42 @@ export default class Canvas{
 
     public getState(){
         return this.state;
+    }
+
+
+    public click(e: any){
+
+        switch (this.state){
+            case State.LINE:
+                this.drawLineProcess(e, 'click');
+                break;
+            case State.BRUSH:
+                console.log('brush');
+                break;
+            case State.POINTER: 
+                break;
+        }
+    }
+
+
+    public mouseMove(e: any){
+
+        // switch (this.state){
+        //     case State.LINE:
+        //         this.drawLineProcess(e, 'move');
+        //         console.log('line');
+        //         break;
+        //     case State.BRUSH:
+        //         console.log('brush');
+        //         break;
+        //     case State.POINTER: 
+        //         break;
+        // }
+    }
+
+    public clear(){
+        if(this.ctx == undefined) return;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
 }

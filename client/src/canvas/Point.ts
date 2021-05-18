@@ -3,10 +3,10 @@
 export default class Point{
 
     public id: number;
-    public x : number;
-    public y : number;
+    public x: number;
+    public y: number;
 
-    constructor(x: number, y: number, id: number){
+    constructor(id: number, x: number, y: number){
         this.id = id;
         this.x  = x;
         this.y  = y;

@@ -13,7 +13,17 @@ export default class Line extends Shape{
         this.distance = Point.ditanseBetweenPoint(p1, p2);
     }
 
-    public render(){
-        console.log('render...')
+    render(ctx: CanvasRenderingContext2D | null): void{
+
+        if(ctx == undefined){
+            throw new Error("CTX is null. Why?");
+        }
+
+        console.log('points', this.points)
+
+        ctx.beginPath();
+        ctx.moveTo(this.points[0].x, this.points[0].y);    
+        ctx.lineTo(this.points[1].x, this.points[1].y);
+        ctx.stroke(); 
     }
 }

@@ -106,9 +106,10 @@ $drawButtonsWrapWidth    : 70px;
             position: absolute;
             top: $projectButtonsWrapHeight;
             left: $drawButtonsWrapWidth;
-            width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth});
+            overflow: auto;
 
-            height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight});
+            // width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth});
+            // height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight});
         }
     }
 }

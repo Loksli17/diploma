@@ -22,5 +22,7 @@ export default abstract class Shape{
         const id: number = this.points.findIndex(item => item.id == Point.id);
         this.points.splice(id, 1);
     }
+
+    public abstract render(ctx: CanvasRenderingContext2D | null): void;
     
 }
