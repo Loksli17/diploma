@@ -31,7 +31,7 @@
 
             </div>
 
-            <canvas width="1000" height="1000" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
+            <canvas width="1000" height="800" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
         </div> 
     </div>
 </template>

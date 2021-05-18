@@ -70,14 +70,14 @@ export default class Canvas{
                 this.currentShape.points[1].y = coords.y;
                 
                 if(action == 'click'){
-                    this.countClick = 0;
                     this.shapes.push(this.currentShape);
                     this.render();
+                    this.countClick = 0;
                 }else{
                     this.render();
                     this.currentShape.render(this.ctx);
                 }
-
+                
                 break;
         }
     }
