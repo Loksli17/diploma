@@ -9,8 +9,8 @@ export default abstract class Shape{
     public userId: number;
 
 
-    constructor(name: string = "object", userId: number){
-        this.color  = "#000";
+    constructor(name: string = "object", userId: number, color: string = "#000"){
+        this.color  = color;
         this.points = [];
         this.name   = name;
         this.userId = userId;

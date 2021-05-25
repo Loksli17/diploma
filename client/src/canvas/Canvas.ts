@@ -26,6 +26,9 @@ export default class Canvas{
     private shapes: Array<Shape>;
     private shapesHistory: Array<Shape>;
 
+    public brushWidth: number = 1;
+    public brushColor: string = "#000000";
+
 
     constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
         
@@ -43,7 +46,6 @@ export default class Canvas{
 
 
     public render(){
-        console.log(this.shapes[this.shapes.length - 1]);
         this.shapes[this.shapes.length - 1].render(this.ctx);
     }
 
@@ -93,6 +95,8 @@ export default class Canvas{
                     new Point(0, coords.x, coords.y),
                     new Point(1, coords.x, coords.y),
                     userId,
+                    this.brushColor,
+                    this.brushWidth,
                 );
                 this.countClick = 1;
                 break;
@@ -105,7 +109,7 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice()
+                    this.shapesHistory = this.shapes.slice();
 
                     this.render();
                     this.countClick = 0;
