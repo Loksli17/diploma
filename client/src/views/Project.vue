@@ -7,10 +7,33 @@
             <div class="project-buttons-wrap">
 
                 <div @click="settingsButtonClick(button.click)" :title="button.name" v-for="button in settingsButtons" :key="button.name" class="settings-button" :class="{padding: button.padding, border: button.border, 'first-border': button.firstBorder}">
-                    <img :src="require(`@/assets/settings-items/${button.icon}`)" alt="" @click="showSettingsMenu">
+                    <img :src="require(`@/assets/settings-items/${button.icon}`)" alt="">
                     <span v-if="button.text">{{button.text}}</span>
                 </div>
 
+            </div>
+
+            <div v-if="showSettingsMenu" class="settings-menu">
+                
+                <div class="row">
+                    <span>Width:</span>
+                    <input type="number" min="1" max="10" v-model="canvas.brushWidth">
+                </div>
+
+                <div class="row">
+                    <span>Color:</span>
+                    <input type="color" v-model="canvas.brushColor">
+                </div>
+
+                <div class="row">
+                    <span>Area width:</span>
+                    <input type="number" min="1" max="10" v-model="canvas.width">
+                </div>
+
+                <div class="row">
+                    <span>Area height:</span>
+                    <input type="number" min="1" max="10" v-model="canvas.height">
+                </div>
             </div>
 
             <div class="draw-buttons-wrap">
@@ -61,15 +84,16 @@
                 users    : [] as Array<UserCanvas>,
                 canvas   : {} as Canvas,
 
+                showSettingsMenu: false as boolean,
 
                 settingsButtons: [
-                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',         padding: true},
-                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",      padding: true},
-                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "toggleSettings", padding: true},
-                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "saveProject",    border: true, firstBorder: true},
-                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "importProject",  border: true},
-                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "exportProject",  border: true},
-                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "reset",          border: true},
+                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',           padding: true},
+                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",        padding: true},
+                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "openSettingsMenu", padding: true},
+                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "saveProject",      border: true, firstBorder: true},
+                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "importProject",    border: true},
+                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "exportProject",    border: true},
+                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "reset",            border: true},
                 ],
 
                 drawButtons: [
@@ -133,11 +157,11 @@
         methods: {
 
             settingsButtonClick: function(name: string){
-                console.log(name);
 
                 switch(name){
-                    case "goBack"   : this.goBack(); break;
-                    case "goForward": this.goForward(); break;
+                    case "goBack"          : this.goBack(); break;
+                    case "goForward"       : this.goForward(); break;
+                    case "openSettingsMenu": this.openSettingsMenu(); break;
                 }
             },
 
@@ -147,6 +171,10 @@
 
             goForward: function(){
                 this.canvas.forwardStep();
+            },
+
+            openSettingsMenu: function(){
+                this.showSettingsMenu = !this.showSettingsMenu;
             },
 
             getProject: async function(){

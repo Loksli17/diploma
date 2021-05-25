@@ -14,6 +14,33 @@ $drawButtonsWrapWidth    : 70px;
         padding: 0px;
         position: relative;
 
+        .settings-menu{
+            position: absolute;
+            top: $projectButtonsWrapHeight - 2px;
+            left: 135px;
+            background: $blueHover;
+            border: 2px solid $grayBorder;
+            z-index: 9999;
+
+            .row{
+                @include row(20px);
+                grid-template-columns: 160px auto;
+
+                border-bottom: 2px solid $grayBorder;
+                box-sizing: border-box;
+                padding: 15px 20px;
+
+                span{
+                    font-size: 20px;
+                    text-align: left;
+                }
+
+                &:last-child{
+                    border-bottom: 0px solid $grayBorder;
+                }
+            }
+        }
+
         .project-buttons-wrap{
             position: absolute;
             top: 0;
