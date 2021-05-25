@@ -27,11 +27,12 @@ export default class Canvas{
     private state: State;
     private countClick: number = 0;
     private currentShape: Shape | undefined;
-    private shapes: Array<Shape>;
+    public  shapes: Array<Shape>;
     private shapesHistory: Array<Shape>;
 
     public brushWidth: number = 1;
     public brushColor: string = "#000000";
+    public fillStatus: boolean = false;
 
 
     constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
@@ -140,6 +141,7 @@ export default class Canvas{
                     userId,
                     this.brushColor,
                     this.brushWidth,
+                    this.fillStatus
                 );
                 this.countClick = 1;
                 break;
@@ -158,8 +160,6 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.animateClear();
-
-                    console.log(coords);
 
                 }else{
                     this.animateClear();
@@ -184,6 +184,7 @@ export default class Canvas{
                     userId,
                     this.brushColor,
                     this.brushWidth,
+                    this.fillStatus
                 );
                 this.countClick = 1;
                 break;

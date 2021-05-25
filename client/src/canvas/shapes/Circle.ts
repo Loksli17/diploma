@@ -9,13 +9,14 @@ export default class Circle extends Shape{
     public radius: number = 10;
 
 
-    constructor(p1: Point, p2: Point, userId: number, color: string, width: number){
+    constructor(p1: Point, p2: Point, userId: number, color: string, width: number, fill: boolean){
         super('line', userId, color);
 
         this.points.push(p1);
         this.points.push(p2);
 
         this.width = width;
+        this.fill  = fill;
     }
 
 
@@ -32,7 +33,6 @@ export default class Circle extends Shape{
 
         ctx.beginPath();
         ctx.arc(this.points[0].x, this.points[0].y, this.radius, 0, 360, false);
-        ctx.stroke();
-
+        this.fill ? ctx.fill() : ctx.stroke();
     }
 }

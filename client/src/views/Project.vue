@@ -26,8 +26,8 @@
                 </div>
 
                 <div class="row">
-                    <span>Area width:</span>
-                    <input type="number" min="1" max="10" v-model="fillStatus">
+                    <span>Fill shape:</span>
+                    <input type="checkbox" v-model="canvas.fillStatus">
                 </div>
 
                 <div class="row">
@@ -58,6 +58,9 @@
 
             <div class="elems-wrap">
 
+                <div v-for="shape in canvas.shapes" :key="shape.name">
+                    <span>{{shape.name}}</span>
+                </div>
             </div>
 
             <div class="work-area">

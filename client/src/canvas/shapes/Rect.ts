@@ -8,13 +8,14 @@ export default class Rectangle extends Shape{
     public fill: boolean = false;
 
 
-    constructor(p1: Point, p2: Point, userId: number, color: string, width: number){
+    constructor(p1: Point, p2: Point, userId: number, color: string, width: number, fill: boolean){
         super('line', userId, color);
 
         this.points.push(p1);
         this.points.push(p2);
 
         this.width = width;
+        this.fill  = fill;
     }
 
 
@@ -25,8 +26,15 @@ export default class Rectangle extends Shape{
         }
 
         ctx.lineWidth   = this.width;
-        ctx.strokeStyle = this.color;
         
-        ctx.strokeRect(this.points[0].x, this.points[0].y, this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y);
+        if(this.fill){
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.points[0].x, this.points[0].y, this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y); 
+        }else{
+            ctx.strokeStyle = this.color;
+            ctx.strokeRect(this.points[0].x, this.points[0].y, this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y);
+        }
+        
+        
     }
 }
