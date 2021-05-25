@@ -1,5 +1,6 @@
 import Point      from './Point';
 import Line       from './shapes/Line';
+import Rectangle from './shapes/Rect';
 import Shape      from './shapes/Shape';
 import UserCanvas from './UserCanvas';
 
@@ -8,6 +9,7 @@ export enum State{
     POINTER,
     LINE,
     BRUSH,
+    RECT,
 }
 
 
@@ -85,7 +87,6 @@ export default class Canvas{
 
     private drawLineProcess(coords: {x: number; y: number}, action: string, userId: number){
 
-
         switch(this.countClick){
 
             case 0:
@@ -124,6 +125,51 @@ export default class Canvas{
         }
     }
 
+    private drawRectangleProcess(coords: {x: number; y: number}, action: string, userId: number){
+
+        switch(this.countClick){
+
+            case 0:
+                if(action != 'click') break;
+                
+                this.currentShape = new Rectangle(
+                    new Point(0, coords.x, coords.y),
+                    new Point(1, coords.x, coords.y),
+                    userId,
+                    this.brushColor,
+                    this.brushWidth,
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].x = coords.x;
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice();
+
+                    this.render();
+                    this.countClick = 0;
+                    this.animateClear();
+
+                    console.log(coords);
+
+                }else{
+                    this.animateClear();
+                    this.currentShape.render(this.ctxAnimate);
+                }
+
+                break;
+
+        }
+    }
+
+
     public setState(state: State){
         this.state = state;
     }
@@ -134,29 +180,25 @@ export default class Canvas{
 
 
     public click(e: any, userId: number){
-
-        switch (this.state){
-            case State.LINE:
-                this.drawLineProcess(e, 'click', userId);
-                break;
-            case State.BRUSH:
-                console.log('brush');
-                break;
-            case State.POINTER: 
-                break;
-        }
+        this.stateLogic(e, userId, 'click');
     }
 
-
     public mouseMove(e: any, userId: number){
+        this.stateLogic(e, userId, 'move');
+    }
+
+    private stateLogic(e: any, userId: number, action: string){
 
         switch (this.state){
             case State.LINE:
-                this.drawLineProcess(e, 'move', userId);
+                this.drawLineProcess(e, action, userId);
                 break;
             case State.BRUSH:
                 break;
-            case State.POINTER: 
+            case State.RECT:
+                this.drawRectangleProcess(e, action, userId);
+                break;
+            case State.POINTER:
                 break;
         }
     }

@@ -97,8 +97,9 @@
                 ],
 
                 drawButtons: [
-                    {name: 'Brush', icon: "brush.svg", state: State.BRUSH, isActive: false},
-                    {name: 'Line',  icon: "line.svg",  state: State.LINE, isActive: false},
+                    {name: 'Brush',      icon: "brush.svg", state: State.BRUSH, isActive: false},
+                    {name: 'Line',       icon: "line.svg",  state: State.LINE,  isActive: false},
+                    {name: 'Rectangle',  icon: "rect.svg",  state: State.RECT,  isActive: false},
                 ],
             }
         },
