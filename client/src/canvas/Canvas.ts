@@ -24,6 +24,7 @@ export default class Canvas{
     private countClick: number = 0;
     private currentShape: Shape | undefined;
     private shapes: Array<Shape>;
+    private shapesHistory: Array<Shape>;
 
 
     constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
@@ -36,10 +37,13 @@ export default class Canvas{
         this.users  = userCanvas; 
         this.state  = State.POINTER;
         this.shapes = [];
+
+        this.shapesHistory = [];
     }
 
 
     public render(){
+        console.log(this.shapes[this.shapes.length - 1]);
         this.shapes[this.shapes.length - 1].render(this.ctx);
     }
 
@@ -61,6 +65,22 @@ export default class Canvas{
     }
 
 
+    public backStep(){
+        this.shapes.pop();
+        this.renderAll();
+    }
+
+    public forwardStep(){
+        const index: number = this.shapes.length - 1;
+
+        console.log(this.shapesHistory[index + 1]);
+
+        if(this.shapesHistory[index + 1] == undefined) return;
+        this.shapes.push(this.shapesHistory[index + 1]);
+        this.render();
+    }
+
+
     private drawLineProcess(coords: {x: number; y: number}, action: string, userId: number){
 
 
@@ -74,12 +94,10 @@ export default class Canvas{
                     new Point(1, coords.x, coords.y),
                     userId,
                 );
-                console.log(action, this.countClick);
                 this.countClick = 1;
                 break;
 
             case 1:
-
                 if(this.currentShape == undefined) return;
 
                 this.currentShape.points[1].x = coords.x;
@@ -87,6 +105,8 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice()
+
                     this.render();
                     this.countClick = 0;
                     this.animateClear();

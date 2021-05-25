@@ -6,7 +6,7 @@
 
             <div class="project-buttons-wrap">
 
-                <div :title="button.name" v-for="button in settingsButtons" :key="button.name" class="settings-button" :class="{padding: button.padding, border: button.border, 'first-border': button.firstBorder}">
+                <div @click="settingsButtonClick(button.click)" :title="button.name" v-for="button in settingsButtons" :key="button.name" class="settings-button" :class="{padding: button.padding, border: button.border, 'first-border': button.firstBorder}">
                     <img :src="require(`@/assets/settings-items/${button.icon}`)" alt="" @click="showSettingsMenu">
                     <span v-if="button.text">{{button.text}}</span>
                 </div>
@@ -14,10 +14,6 @@
             </div>
 
             <div class="draw-buttons-wrap">
-
-                <!-- <div class="settings draw-button">
-                    <img :src="require('@/assets/draw-items/settings.svg')" alt="" @click="showSettingsMenu">
-                </div> -->
 
                 <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}">
                     <img :src="require(`@/assets/draw-items/${button.icon}`)" alt="" @click="setCanvasState(button, index)">
@@ -67,13 +63,13 @@
 
 
                 settingsButtons: [
-                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: "", padding: true},
-                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "", padding: true},
-                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "", padding: true},
-                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "", border: true, firstBorder: true},
-                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "", border: true},
-                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "", border: true},
-                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "", border: true},
+                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',         padding: true},
+                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",      padding: true},
+                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "toggleSettings", padding: true},
+                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "saveProject",    border: true, firstBorder: true},
+                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "importProject",  border: true},
+                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "exportProject",  border: true},
+                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "reset",          border: true},
                 ],
 
                 drawButtons: [
@@ -136,6 +132,23 @@
 
         methods: {
 
+            settingsButtonClick: function(name: string){
+                console.log(name);
+
+                switch(name){
+                    case "goBack"   : this.goBack(); break;
+                    case "goForward": this.goForward(); break;
+                }
+            },
+
+            goBack: function(){
+                this.canvas.backStep();
+            },
+
+            goForward: function(){
+                this.canvas.forwardStep();
+            },
+
             getProject: async function(){
                 
                 try {
@@ -181,7 +194,7 @@
                     y      = e.clientY - bounds.top;
 
                 console.log({x: x, y: y});
-                this.canvas.click({x: x, y: y});
+                this.canvas.click({x: x, y: y}, this.$store.state.userIdentity!.id);
             },
 
             mouseMove: function(e: any){
@@ -191,7 +204,7 @@
                     x      = e.clientX - bounds.left,
                     y      = e.clientY - bounds.top;
 
-                this.canvas.mouseMove({x: x, y: y});
+                this.canvas.mouseMove({x: x, y: y}, this.$store.state.userIdentity!.id);
 
                 this.$socket.emit('mouseMove', {
                     userId   : this.$store.state.userIdentity!.id,
