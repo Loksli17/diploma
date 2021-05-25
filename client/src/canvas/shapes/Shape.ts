@@ -3,15 +3,17 @@ import Point from '../Point';
 
 export default abstract class Shape{
 
-    public color : string;
+    public color: string;
     public points: Array<Point>; 
-    public name  : string;
+    public name: string;
+    public userId: number;
 
 
-    constructor(name: string = "object"){
+    constructor(name: string = "object", userId: number){
         this.color  = "#000";
         this.points = [];
         this.name   = name;
+        this.userId = userId;
     }
 
     public setPoints(arr: Array<Point>){this.points = arr}

@@ -61,7 +61,7 @@ export default class Canvas{
     }
 
 
-    private drawLineProcess(coords: {x: number; y: number}, action: string){
+    private drawLineProcess(coords: {x: number; y: number}, action: string, userId: number){
 
 
         switch(this.countClick){
@@ -72,6 +72,7 @@ export default class Canvas{
                 this.currentShape = new Line(
                     new Point(0, coords.x, coords.y),
                     new Point(1, coords.x, coords.y),
+                    userId,
                 );
                 console.log(action, this.countClick);
                 this.countClick = 1;
@@ -108,11 +109,11 @@ export default class Canvas{
     }
 
 
-    public click(e: any){
+    public click(e: any, userId: number){
 
         switch (this.state){
             case State.LINE:
-                this.drawLineProcess(e, 'click');
+                this.drawLineProcess(e, 'click', userId);
                 break;
             case State.BRUSH:
                 console.log('brush');
@@ -123,11 +124,11 @@ export default class Canvas{
     }
 
 
-    public mouseMove(e: any){
+    public mouseMove(e: any, userId: number){
 
         switch (this.state){
             case State.LINE:
-                this.drawLineProcess(e, 'move');
+                this.drawLineProcess(e, 'move', userId);
                 break;
             case State.BRUSH:
                 break;
