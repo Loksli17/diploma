@@ -1,6 +1,6 @@
 @import '../index';
 
-$projectButtonsWrapHeight: 50px;
+$projectButtonsWrapHeight: 60px;
 $elemsWrapWidth          : 294px;
 $usersWrapHeight         : 70px;
 $drawButtonsWrapWidth    : 70px;
@@ -23,6 +23,48 @@ $drawButtonsWrapWidth    : 70px;
             background: $blueHover;
             box-sizing: border-box;
             border-bottom: 2px solid $grayBorder;
+            box-sizing: border-box;
+            padding-left: 30px;
+        
+            @include row(0px);
+            justify-content: flex-start;
+
+            .settings-button{
+                @include row(15px);
+                align-items: center;
+                cursor: pointer;
+
+                img {
+                    width: 35px;
+                }
+
+                span{
+                    font-size: 19px;
+                }
+
+                &:hover{
+                    transition: 0.4s;
+                    background: $blue;
+                }
+            }
+
+            .padding{
+                padding: 0px 10px;
+            }
+
+            .border{
+                border-right: 2px solid $black;
+                padding: 0px 15px;
+
+                img{
+                    width: 30px;
+                }
+            }
+
+            .first-border{
+                margin-left: 30px;
+                border-left: 2px solid $black;
+            }
         }
 
         .draw-buttons-wrap{
@@ -100,24 +142,41 @@ $drawButtonsWrapWidth    : 70px;
             height: 100%;
             box-sizing: border-box;
             border-left: 2px solid $grayBorder;
+            z-index: 9999;
         }
 
-        canvas{
+        .work-area{
             position: absolute;
             top: $projectButtonsWrapHeight;
-            left: $drawButtonsWrapWidth;
-            overflow: auto;
+            left: $drawButtonsWrapWidth + 2px;
+            background: $grayMain;
 
-            // width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth});
-            // height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight});
-        }
+            width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth} - 2px);
+            height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight} - 2px);
 
-        #canvas-main{
-            z-index: 2;
-        }
+            // ! fix width and height in future
+            div{
+                position: relative;
+                width: 1200px;
+                height: 700px;
+                background: $white;
+                overflow: auto;
 
-        #canvas-animate{
-            z-index: 1;
+                canvas{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+
+                #canvas-main{
+                    z-index: 2;
+                }
+
+                #canvas-animate{
+                    z-index: 1;
+                }
+            }
+            
         }
     }
 }

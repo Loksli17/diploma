@@ -6,15 +6,20 @@
 
             <div class="project-buttons-wrap">
 
+                <div :title="button.name" v-for="button in settingsButtons" :key="button.name" class="settings-button" :class="{padding: button.padding, border: button.border, 'first-border': button.firstBorder}">
+                    <img :src="require(`@/assets/settings-items/${button.icon}`)" alt="" @click="showSettingsMenu">
+                    <span v-if="button.text">{{button.text}}</span>
+                </div>
+
             </div>
 
             <div class="draw-buttons-wrap">
 
-                <div class="settings draw-button">
+                <!-- <div class="settings draw-button">
                     <img :src="require('@/assets/draw-items/settings.svg')" alt="" @click="showSettingsMenu">
-                </div>
+                </div> -->
 
-                <div v-for="(button, index) in buttons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}">
+                <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}">
                     <img :src="require(`@/assets/draw-items/${button.icon}`)" alt="" @click="setCanvasState(button, index)">
                 </div>
 
@@ -31,9 +36,13 @@
 
             </div>
 
-            <canvas id="canvas-main" width="1200" height="800" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
-
-            <canvas id="canvas-animate" width="1200" height="800" ref="canvasAnimate"></canvas>
+            <div class="work-area">
+                <div>
+                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"></canvas>
+                    <canvas id="canvas-main" width="1200" height="700" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
+                </div>
+            </div>
+            
         </div> 
     </div>
 </template>
@@ -56,10 +65,21 @@
                 users    : [] as Array<UserCanvas>,
                 canvas   : {} as Canvas,
 
-                buttons: [
+
+                settingsButtons: [
+                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: "", padding: true},
+                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "", padding: true},
+                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "", padding: true},
+                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "", border: true, firstBorder: true},
+                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "", border: true},
+                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "", border: true},
+                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "", border: true},
+                ],
+
+                drawButtons: [
                     {name: 'Brush', icon: "brush.svg", state: State.BRUSH, isActive: false},
                     {name: 'Line',  icon: "line.svg",  state: State.LINE, isActive: false},
-                ]
+                ],
             }
         },
 
@@ -147,10 +167,10 @@
                 this.canvas.setState(btn.state);
                 console.log(this.canvas.getState(), index);
 
-                this.buttons.forEach(item => {
+                this.drawButtons.forEach(item => {
                     item.isActive = false;
                 });
-                this.buttons[index].isActive = true;
+                this.drawButtons[index].isActive = true;
             },
 
             canvasClick: function(e: any){

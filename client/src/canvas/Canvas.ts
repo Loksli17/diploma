@@ -40,13 +40,16 @@ export default class Canvas{
 
 
     public render(){
+        this.shapes[this.shapes.length - 1].render(this.ctx);
+    }
 
+    public renderAll(){
         this.clear();
-        
         for(let i = 0; i < this.shapes.length; i++){
             this.shapes[i].render(this.ctx);
         } 
     }
+
 
     public userAdd(user: UserCanvas){
         this.users.push(user);
