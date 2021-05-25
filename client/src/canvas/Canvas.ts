@@ -1,6 +1,7 @@
 import Point      from './Point';
 import Line       from './shapes/Line';
-import Rectangle from './shapes/Rect';
+import Rectangle  from './shapes/Rect';
+import Circle     from './shapes/Circle';
 import Shape      from './shapes/Shape';
 import UserCanvas from './UserCanvas';
 
@@ -10,6 +11,7 @@ export enum State{
     LINE,
     BRUSH,
     RECT,
+    CIRCLE,
 }
 
 
@@ -115,7 +117,6 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.animateClear();
-                    console.log(action, this.countClick);
                 }else{
                     this.animateClear();
                     this.currentShape.render(this.ctxAnimate);
@@ -124,6 +125,7 @@ export default class Canvas{
                 break;
         }
     }
+
 
     private drawRectangleProcess(coords: {x: number; y: number}, action: string, userId: number){
 
@@ -169,6 +171,49 @@ export default class Canvas{
         }
     }
 
+    public drawCircleProcess(coords: {x: number; y: number}, action: string, userId: number){
+        
+                switch(this.countClick){
+
+            case 0:
+                if(action != 'click') break;
+                
+                this.currentShape = new Circle(
+                    new Point(0, coords.x, coords.y),
+                    new Point(1, coords.x, coords.y),
+                    userId,
+                    this.brushColor,
+                    this.brushWidth,
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].x = coords.x;
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice();
+
+                    this.render();
+                    this.countClick = 0;
+                    this.animateClear();
+
+
+                }else{
+                    this.animateClear();
+                    this.currentShape.render(this.ctxAnimate);
+                }
+
+                break;
+
+        }
+    }
+
 
     public setState(state: State){
         this.state = state;
@@ -189,6 +234,8 @@ export default class Canvas{
 
     private stateLogic(e: any, userId: number, action: string){
 
+        console.log(this.state);
+
         switch (this.state){
             case State.LINE:
                 this.drawLineProcess(e, action, userId);
@@ -197,6 +244,9 @@ export default class Canvas{
                 break;
             case State.RECT:
                 this.drawRectangleProcess(e, action, userId);
+                break;
+            case State.CIRCLE:
+                this.drawCircleProcess(e, action, userId);
                 break;
             case State.POINTER:
                 break;
