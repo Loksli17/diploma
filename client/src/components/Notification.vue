@@ -1,3 +1,4 @@
+
 <template>
     <div @click="clickNotification" class="notification" :class="initClass">
         <div>

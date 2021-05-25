@@ -19,8 +19,6 @@ export default class Line extends Shape{
             throw new Error("CTX is null. Why?");
         }
 
-        console.log('points', this.points)
-
         ctx.beginPath();
         ctx.moveTo(this.points[0].x, this.points[0].y);    
         ctx.lineTo(this.points[1].x, this.points[1].y);

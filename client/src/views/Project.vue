@@ -31,7 +31,9 @@
 
             </div>
 
-            <canvas width="1000" height="800" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
+            <canvas id="canvas-main" width="1200" height="800" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
+
+            <canvas id="canvas-animate" width="1200" height="800" ref="canvasAnimate"></canvas>
         </div> 
     </div>
 </template>
@@ -80,7 +82,11 @@
                 this.$socket.emit('joinProject', {userId: this.$store.state.userIdentity!.id, projectId: this.projectId});
             }
 
-            this.canvas = new Canvas(this.$refs.canvas as HTMLCanvasElement, this.users);
+            this.canvas = new Canvas(
+                this.$refs.canvas as HTMLCanvasElement,
+                this.$refs.canvasAnimate as HTMLCanvasElement,
+                this.users,
+            );
         },
 
 
@@ -160,12 +166,12 @@
 
             mouseMove: function(e: any){
 
-                this.canvas.mouseMove(e);
-
                 const
                     bounds = e.target.getBoundingClientRect(),
                     x      = e.clientX - bounds.left,
                     y      = e.clientY - bounds.top;
+
+                this.canvas.mouseMove({x: x, y: y});
 
                 this.$socket.emit('mouseMove', {
                     userId   : this.$store.state.userIdentity!.id,
