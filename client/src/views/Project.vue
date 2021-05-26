@@ -43,8 +43,8 @@
 
             <div class="draw-buttons-wrap">
 
-                <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}">
-                    <img :src="require(`@/assets/draw-items/${button.icon}`)" alt="" @click="setCanvasState(button, index)">
+                <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}" @click="setCanvasState(button, index)">
+                    <img :src="require(`@/assets/draw-items/${button.icon}`)" alt="" >
                 </div>
 
             </div>
@@ -58,7 +58,8 @@
 
             <div class="elems-wrap">
 
-                <div v-for="shape in canvas.shapes" :key="shape.name">
+                <div class="item" v-for="shape in canvas.shapes" :key="shape.name">
+                    <img :src="require(`@/assets/draw-items/${shape.icon}`)">
                     <span>{{shape.name}}</span>
                 </div>
             </div>

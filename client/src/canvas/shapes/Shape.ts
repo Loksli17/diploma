@@ -7,6 +7,8 @@ export default abstract class Shape{
     public points: Array<Point>; 
     public name: string;
     public userId: number;
+    public id: number = 0;
+    public icon: string = "";
 
 
     constructor(name: string = "object", userId: number, color: string = "#000"){

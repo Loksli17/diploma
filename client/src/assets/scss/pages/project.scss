@@ -170,6 +170,21 @@ $drawButtonsWrapWidth    : 70px;
             box-sizing: border-box;
             border-left: 2px solid $grayBorder;
             z-index: 9999;
+            overflow: auto;
+
+            .item{
+                @include row(10px);
+                grid-template-columns: 50px auto;
+                padding: 15px;
+                background: $white;
+                align-items: center;
+                border-bottom: 2px solid $grayBorder;
+
+                span{
+                    text-align: left;
+                    font-size: 23px;
+                }
+            }
         }
 
         .work-area{
