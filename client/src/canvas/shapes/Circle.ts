@@ -23,7 +23,7 @@ export default class Circle extends Shape{
     }
 
 
-    render(ctx: CanvasRenderingContext2D | null): void{
+    public render(ctx: CanvasRenderingContext2D | null): void{
 
         if(ctx == undefined){
             throw new Error("CTX is null. Why?");

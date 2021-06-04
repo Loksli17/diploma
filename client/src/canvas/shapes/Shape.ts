@@ -3,7 +3,7 @@ import Point from '../Point';
 
 export default abstract class Shape{
 
-    public color: string;
+    public color: string = "#000000";
     public points: Array<Point>; 
     public name: string;
     public userId: number;

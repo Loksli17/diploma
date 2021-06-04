@@ -66,8 +66,16 @@
 
             <div class="work-area">
                 <div>
+                    <canvas id="canvas-main" width="1200" height="700" ref="canvas" 
+                        @mousemove="mouseMove" 
+                        @click="canvasClick" 
+                        @mouseover="drawCursor"
+                        @mouseout="normalCursor"
+                        @mousedown="mouseDown"
+                        @mouseup="mouseUp"
+                        >
+                    </canvas>
                     <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"></canvas>
-                    <canvas id="canvas-main" width="1200" height="700" ref="canvas" @mousemove="mouseMove" @click="canvasClick"></canvas>
                 </div>
             </div>
             
@@ -167,6 +175,34 @@
 
         methods: {
 
+            mouseDown: function(e: any){
+
+                if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
+
+                console.log('down')
+
+                const
+                    bounds = e.target.getBoundingClientRect(),
+                    x      = e.clientX - bounds.left,
+                    y      = e.clientY - bounds.top;
+
+                this.canvas.click({x: x, y: y}, this.$store.state.userIdentity!.id);
+            },
+
+
+            mouseUp: function(e: any){
+                if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
+
+                console.log('up')
+
+                const
+                    bounds = e.target.getBoundingClientRect(),
+                    x      = e.clientX - bounds.left,
+                    y      = e.clientY - bounds.top;
+
+                this.canvas.click({x: x, y: y}, this.$store.state.userIdentity!.id);
+            },
+
             settingsButtonClick: function(name: string){
 
                 switch(name){
@@ -227,12 +263,13 @@
 
             canvasClick: function(e: any){
 
+                if(this.drawButtons.filter(item => item.isActive!)[0].state == State.BRUSH) return;
+
                 const
                     bounds = e.target.getBoundingClientRect(),
                     x      = e.clientX - bounds.left,
                     y      = e.clientY - bounds.top;
 
-                console.log({x: x, y: y});
                 this.canvas.click({x: x, y: y}, this.$store.state.userIdentity!.id);
             },
 
@@ -252,6 +289,14 @@
                     y        : y, 
                 });
             },
+
+            drawCursor: function(){
+                document.body.style.cursor = "crosshair";
+            },
+
+            normalCursor: function(){
+                document.body.style.cursor = "default"
+            }
         },
     });
 </script>

@@ -4,6 +4,7 @@ import Rectangle  from './shapes/Rect';
 import Circle     from './shapes/Circle';
 import Shape      from './shapes/Shape';
 import UserCanvas from './UserCanvas';
+import Brush      from './shapes/Brush';
 
 
 export enum State{
@@ -173,7 +174,7 @@ export default class Canvas{
 
     public drawCircleProcess(coords: {x: number; y: number}, action: string, userId: number){
         
-                switch(this.countClick){
+        switch(this.countClick){
 
             case 0:
                 if(action != 'click') break;
@@ -215,6 +216,48 @@ export default class Canvas{
         }
     }
 
+    public drawBrushProcess(coords: {x: number; y: number}, action: string, userId: number){
+
+        switch(this.countClick){
+
+            case 0:
+
+                if(action != 'click') break;
+
+                console.log('first')
+                
+                this.currentShape = new Brush(
+                    new Point(0, coords.x, coords.y),
+                    userId,
+                    this.brushColor,
+                    this.brushWidth
+                );
+                
+                (this.currentShape as Brush).renderLastPoint(this.ctx);
+                // this.currentShape.renderPoint() as Brush;
+                this.countClick = 1;
+                break;
+
+            case 1:
+                
+                this.currentShape!.points.push(
+                    new Point(
+                        this.currentShape!.points.length,
+                        coords.x,
+                        coords.y,
+                    )
+                );
+
+                (this.currentShape as Brush).renderLastPoint(this.ctx);
+
+                if(action != 'move'){
+                    this.countClick = 0;
+                    console.log('second');
+                }
+                break;
+        }
+    }
+
 
     public setState(state: State){
         this.state = state;
@@ -235,13 +278,12 @@ export default class Canvas{
 
     private stateLogic(e: any, userId: number, action: string){
 
-        console.log(this.state);
-
         switch (this.state){
             case State.LINE:
                 this.drawLineProcess(e, action, userId);
                 break;
             case State.BRUSH:
+                this.drawBrushProcess(e, action, userId);
                 break;
             case State.RECT:
                 this.drawRectangleProcess(e, action, userId);
