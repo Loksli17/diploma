@@ -9,13 +9,18 @@ export default abstract class Shape{
     public userId: number;
     public id: number = 0;
     public icon: string = "";
+    protected static countNumber: number = 0;
 
+    public static countId: number = 0;
 
     constructor(name: string = "object", userId: number, color: string = "#000"){
         this.color  = color;
         this.points = [];
         this.name   = name;
         this.userId = userId;
+
+        Shape.countId++;
+        this.id = Shape.countId;
     }
 
     public setPoints(arr: Array<Point>){this.points = arr}

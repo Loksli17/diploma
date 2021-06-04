@@ -7,11 +7,10 @@ export default class Circle extends Shape{
     public width: number = 1;
     public fill: boolean = false;
     public radius: number = 10;
-    private static countId: number = 0;
 
 
     constructor(p1: Point, p2: Point, userId: number, color: string, width: number, fill: boolean){
-        super(`Circle${++Circle.countId}`, userId, color);
+        super(`Circle${++Circle.countNumber}`, userId, color);
 
         this.points.push(p1);
         this.points.push(p2);

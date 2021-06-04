@@ -5,12 +5,11 @@ import Shape from './Shape';
 export default class Brush extends Shape{
 
     public width: number = 1;
-    private static countId: number = 0;
     public points: Array<Point> = [];
 
 
     constructor(p1: Point, userId: number, color: string, width: number){
-        super(`brush${++Brush.countId}`, userId, color);
+        super(`brush${++Brush.countNumber}`, userId, color);
 
         this.color = color;
         this.width = width;
@@ -43,7 +42,7 @@ export default class Brush extends Shape{
         ctx.fillStyle = this.color;
 
         ctx.beginPath();
-        ctx.arc(point.x, point.y, this.width, 0, 360, false);
+        ctx.arc(point.x, point.y, this.width, 0, Math.PI * 2, false);
         ctx.fill();
     }
 } 

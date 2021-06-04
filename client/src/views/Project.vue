@@ -179,8 +179,6 @@
 
                 if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
 
-                console.log('down')
-
                 const
                     bounds = e.target.getBoundingClientRect(),
                     x      = e.clientX - bounds.left,
@@ -191,9 +189,8 @@
 
 
             mouseUp: function(e: any){
+                
                 if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
-
-                console.log('up')
 
                 const
                     bounds = e.target.getBoundingClientRect(),

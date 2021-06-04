@@ -223,8 +223,6 @@ export default class Canvas{
             case 0:
 
                 if(action != 'click') break;
-
-                console.log('first')
                 
                 this.currentShape = new Brush(
                     new Point(0, coords.x, coords.y),
@@ -234,11 +232,12 @@ export default class Canvas{
                 );
                 
                 (this.currentShape as Brush).renderLastPoint(this.ctx);
-                // this.currentShape.renderPoint() as Brush;
                 this.countClick = 1;
                 break;
 
             case 1:
+
+                if(this.currentShape == undefined) return;
                 
                 this.currentShape!.points.push(
                     new Point(
@@ -251,9 +250,10 @@ export default class Canvas{
                 (this.currentShape as Brush).renderLastPoint(this.ctx);
 
                 if(action != 'move'){
+                    this.shapes.push(this.currentShape);
                     this.countClick = 0;
-                    console.log('second');
                 }
+
                 break;
         }
     }

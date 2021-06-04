@@ -6,11 +6,9 @@ export default class Line extends Shape{
 
     public distance: number;
     public width: number = 1;
-    private static countId: number = 0;
-
 
     constructor(p1: Point, p2: Point, userId: number, color: string, width: number){
-        super(`line${++Line.countId}`, userId, color);
+        super(`line${++Line.countNumber}`, userId, color);
         this.points.push(p1);
         this.points.push(p2);
 
