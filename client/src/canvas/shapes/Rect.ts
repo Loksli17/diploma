@@ -16,7 +16,6 @@ export default class Rectangle extends Shape{
 
         this.width = width;
         this.fill  = fill;
-        this.id    = Rectangle.countId;
         this.icon  = "rect.svg";
     }
 
@@ -27,7 +26,7 @@ export default class Rectangle extends Shape{
             throw new Error("CTX is null. Why?");
         }
 
-        ctx.lineWidth   = this.width;
+        ctx.lineWidth = this.width;
         
         if(this.fill){
             ctx.fillStyle = this.color;

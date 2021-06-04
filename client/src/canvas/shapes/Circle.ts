@@ -17,7 +17,6 @@ export default class Circle extends Shape{
 
         this.width = width;
         this.fill  = fill;
-        this.id    = Circle.countId;
         this.icon  = "circle.svg";
     }
 
@@ -30,6 +29,7 @@ export default class Circle extends Shape{
 
         ctx.lineWidth   = this.width;
         ctx.strokeStyle = this.color;
+        ctx.fillStyle   = this.color;
 
         this.radius = Point.ditanseBetweenPoint(this.points[0], this.points[1]);
 

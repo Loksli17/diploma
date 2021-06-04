@@ -114,10 +114,11 @@
                 ],
 
                 drawButtons: [
-                    {name: 'Brush',      icon: "brush.svg",   state: State.BRUSH,   isActive: false},
-                    {name: 'Line',       icon: "line.svg",    state: State.LINE,    isActive: false},
-                    {name: 'Rectangle',  icon: "rect.svg",    state: State.RECT,    isActive: false},
-                    {name: 'Ellipse',    icon: "circle.svg",  state: State.CIRCLE,  isActive: false},
+                    {name: 'Brush',              icon: "brush.svg",              state: State.BRUSH,             isActive: false},
+                    {name: 'Line',               icon: "line.svg",               state: State.LINE,              isActive: false},
+                    {name: 'Rectangle',          icon: "rect.svg",               state: State.RECT,              isActive: false},
+                    {name: 'Ellipse',            icon: "circle.svg",             state: State.CIRCLE,            isActive: false},
+                    {name: 'Isosceles triangle', icon: "isosceles-triangle.svg", state: State.ISOSCELESTRIANGLE, isActive: false},
                 ],
             }
         },
@@ -189,7 +190,7 @@
 
 
             mouseUp: function(e: any){
-                
+
                 if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
 
                 const

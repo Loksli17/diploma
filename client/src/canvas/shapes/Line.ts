@@ -14,7 +14,6 @@ export default class Line extends Shape{
 
         this.distance = Point.ditanseBetweenPoint(p1, p2);
         this.width    = width;
-        this.id       = Line.countId;
         this.icon     = "line.svg";
     }
 
