@@ -146,7 +146,6 @@
 
             this.canvas = new Canvas(
                 this.$refs.canvas as HTMLCanvasElement,
-                this.$refs.canvasAnimate as HTMLCanvasElement,
                 this.users,
             );
         },
