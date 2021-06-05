@@ -476,10 +476,12 @@ export default class ProjectController{
 
         let
             POST      : POST              = req.body,
-            postErrors: Array<keyof POST> = [], 
+            postErrors: Array<keyof POST> = [],
+            shapes    : Array<object>     = [],
             project   : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['id']);
+
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -495,7 +497,8 @@ export default class ProjectController{
                 
         }catch(err){
             console.error(err);
-            res.status(400).send({msg: ErrorMessage.db()});   
+            res.status(400).send({msg: ErrorMessage.db()});
+            return;  
         }
 
         if(project == undefined){
@@ -503,7 +506,15 @@ export default class ProjectController{
             return;
         }
 
-        res.status(200).send({project: project})
+        try {
+            shapes = JSON.parse(fs.readFileSync(`projects/${project.fileName}`, 'utf8'));
+        }catch(err){
+            console.error(err);
+            res.status(400).send({msg: ErrorMessage.file()});
+            return;
+        }
+
+        res.status(200).send({project: project, shapes: shapes});
     }
 
 
@@ -531,6 +542,7 @@ export default class ProjectController{
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.db()});
+            return;
         }
         
         if(project == undefined){
@@ -543,14 +555,17 @@ export default class ProjectController{
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.file()});
+            return;
         }
         
         project.fileName = `project${POST.id}.json`;
+
         try {
             await getRepository(Project).update(POST.id, project);
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.db()});
+            return;
         }
 
         res.status(200).send({msg: 'File has been saved successfully'});

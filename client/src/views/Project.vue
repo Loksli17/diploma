@@ -90,6 +90,7 @@
     import UserCanvas        from '../canvas/UserCanvas';
     import Project           from '../types/Project';
     import Canvas, {State}   from '../canvas/Canvas';
+    import Shape             from '../canvas/shapes/Shape';
 
 
     export default defineComponent({
@@ -117,7 +118,7 @@
                     {name: 'Brush',              icon: "brush.svg",              state: State.BRUSH,             isActive: false},
                     {name: 'Line',               icon: "line.svg",               state: State.LINE,              isActive: false},
                     {name: 'Rectangle',          icon: "rect.svg",               state: State.RECT,              isActive: false},
-                    {name: 'Ellipse',            icon: "circle.svg",             state: State.CIRCLE,            isActive: false},
+                    {name: 'Circle',             icon: "circle.svg",             state: State.CIRCLE,            isActive: false},
                     {name: 'Isosceles triangle', icon: "isosceles-triangle.svg", state: State.ISOSCELESTRIANGLE, isActive: false},
                     {name: 'Right triangle',     icon: "right-triangle.svg",     state: State.RIGHTTRIANGLE,     isActive: false},
                     {name: 'Bezier',             icon: "bezier.svg",             state: State.BEZIER,            isActive: false}, 
@@ -129,7 +130,9 @@
         mounted: async function(){
 
             this.projectId = Number(this.$route.query.id);
-            this.project   = await this.getProject();
+            
+            const data: {project: Project; shapes: Array<Shape>} = await this.getProject();
+            this.project = data.project;
             
             if(this.project == undefined) return;
 
@@ -149,6 +152,9 @@
                 this.$refs.canvas as HTMLCanvasElement,
                 this.users,
             );
+            
+            this.canvas.addShapes(data.shapes);
+            this.canvas.renderAll();
         },
 
 
@@ -265,7 +271,7 @@
                     });
 
                     if(res.status == 200){
-                        return res.data.project;
+                        return res.data;
                     }else{
                         this.$flashMessage.show({
                             type: 'error',

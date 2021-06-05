@@ -510,6 +510,119 @@ export default class Canvas{
         }
     }
 
+
+    public addShapes(shapes: Array<Shape>){
+
+        if(shapes == undefined) return;
+
+        for(let i: number = 0; i < shapes.length; i++){
+
+            switch(shapes[i].icon){
+
+                case 'line.svg':
+
+                    this.shapes.push(
+                        new Line(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Line).width,
+                        )
+                    );
+                    break;
+
+                case 'rect.svg':
+                    
+                    this.shapes.push(          
+                        new Rectangle(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Rectangle).width,
+                            (shapes[i] as Rectangle).fill,
+                        )
+                    )
+                    break;
+
+                case 'circle.svg':
+
+                    this.shapes.push(          
+                        new Circle(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Circle).width,
+                            (shapes[i] as Circle).fill,
+                        )
+                    )
+                    break;
+
+
+                case 'isosceles-triangle.svg':
+
+                    this.shapes.push(          
+                        new IsoscelesTriangle(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as IsoscelesTriangle).width,
+                            (shapes[i] as IsoscelesTriangle).fill,
+                        )
+                    )
+                    break;
+
+                case 'right-triangle.svg':
+
+                    this.shapes.push(          
+                        new RightTriangle(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as RightTriangle).width,
+                            (shapes[i] as RightTriangle).fill,
+                        )
+                    )
+                    break;
+
+                case 'bezier.svg':
+
+                    this.shapes.push(          
+                        new Bezier(
+                            shapes[i].points.slice(),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Bezier).width,
+                        )
+                    )
+                    break;
+                    
+
+                case 'brush.svg':
+                    
+                    this.shapes.push(
+                        new Brush(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Brush).width,
+                        )
+                    );
+
+                    this.shapes[this.shapes.length - 1].points = shapes[i].points.slice();
+
+                    break;
+                
+            }
+
+            
+        }
+    }
+
     public clear(){
         if(this.ctx == undefined) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
