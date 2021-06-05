@@ -209,6 +209,7 @@
                     case "goBack"          : this.goBack(); break;
                     case "goForward"       : this.goForward(); break;
                     case "openSettingsMenu": this.openSettingsMenu(); break;
+                    case "saveProject"     : this.saveProject(); break;
                 }
             },
 
@@ -218,6 +219,38 @@
 
             goForward: function(){
                 this.canvas.forwardStep();
+            },
+
+            saveProject: async function(){
+
+                try {
+                    const res: any = await this.$axios.post('project/save-file', {
+                        id: this.project!.id,
+                        shapes: this.canvas.shapes,
+                    });
+
+                    if(res.status == 400){
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../assets/flash/fail.svg"),
+                            text: res.data.msg,
+                        });
+                        return;  
+                    }
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: require("../assets/flash/success.svg"),
+                        text: res.data.msg,
+                    });
+                }catch(err){
+                    console.error(err);
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../assets/flash/fail.svg"),
+                        text: `Error with query`,
+                    }); 
+                }
             },
 
             openSettingsMenu: function(){

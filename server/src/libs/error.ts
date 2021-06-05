@@ -11,4 +11,8 @@ export default class Error{
     public static dataNotSended(obj: string): string{
         return `Data about '${obj}' has not been sended`;
     }
+
+    public static file(): string{
+        return 'Error with saving file';
+    }
 }

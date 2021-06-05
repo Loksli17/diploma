@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {Brackets, getRepository}   from 'typeorm';
+import {Brackets, Db, getRepository}   from 'typeorm';
 
 
 import Project                     from '../models/Project';
@@ -12,7 +12,7 @@ import Parser                      from '../libs/parser';
 import UserHasProject              from '../models/UserHasProject';
 import Notification                from '../models/Notification';
 import NotificationController      from './notificationController';
-import { chownSync } from 'fs';
+import fs                          from 'fs';
 
 
 
@@ -495,7 +495,7 @@ export default class ProjectController{
                 
         }catch(err){
             console.error(err);
-            res.status(400).send({msg: ErrorMessage.db()})   
+            res.status(400).send({msg: ErrorMessage.db()});   
         }
 
         if(project == undefined){
@@ -504,6 +504,56 @@ export default class ProjectController{
         }
 
         res.status(200).send({project: project})
+    }
+
+
+    public static async saveFile(req: Request, res: Response){
+        
+        interface POST{
+            shapes: Array<object>,
+            id    : number,
+        }
+
+        let
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [], 
+            project   : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['shapes', 'id']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        try {
+            project = await getRepository(Project).findOne(POST.id);
+        }catch(err){
+            console.error(err);
+            res.status(400).send({msg: ErrorMessage.db()});
+        }
+        
+        if(project == undefined){
+            res.status(400).send({msg: ErrorMessage.notFound('project')});
+            return;
+        }
+
+        try {
+            fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.shapes));
+        }catch(err){
+            console.error(err);
+            res.status(400).send({msg: ErrorMessage.file()});
+        }
+        
+        project.fileName = `project${POST.id}.json`;
+        try {
+            await getRepository(Project).update(POST.id, project);
+        }catch(err){
+            console.error(err);
+            res.status(400).send({msg: ErrorMessage.db()});
+        }
+
+        res.status(200).send({msg: 'File has been saved successfully'});
     }
 
 
@@ -518,7 +568,8 @@ export default class ProjectController{
         this.router.post('/delete',              this.removeProject);
         this.router.post('/add-collaborators',   this.addCollaborators);
         this.router.post('/remove-collaborator', this.removeCollaborator);
-        this.router.post('/get-project',          this.getProjectById);
+        this.router.post('/get-project',         this.getProjectById);
+        this.router.post('/save-file',           this.saveFile);
 
         return this.router;
     }
