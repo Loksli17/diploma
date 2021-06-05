@@ -108,6 +108,10 @@ $drawButtonsWrapWidth    : 70px;
                 background: $white;
                 border-bottom: 2px solid $grayBorder;
                 cursor: pointer;
+                box-sizing: border-box;
+                height: 75px;
+                display: flex;
+                align-items: center;
 
                 &:hover{
                     transition: 0.4s;

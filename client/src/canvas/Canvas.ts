@@ -8,6 +8,7 @@ import Brush             from './shapes/Brush';
 import IsoscelesTriangle from './shapes/IsoscelesTriangle';
 import RightTriangle     from './shapes/RightTriangle';
 import Bezier            from './shapes/Bezier';
+import Ellipse           from './shapes/Ellipse';
 
 
 export enum State{
@@ -19,6 +20,7 @@ export enum State{
     ISOSCELESTRIANGLE,
     RIGHTTRIANGLE,
     BEZIER,
+    ELLIPSE,
 }
 
 
@@ -416,6 +418,48 @@ export default class Canvas{
         }
     }
 
+    public drawEllipseProcess(coords: {x: number; y: number}, action: string, userId: number){
+        
+        switch(this.countClick){
+
+            case 0:
+                if(action != 'click') break;
+                
+                this.currentShape = new Ellipse(
+                    new Point(0, coords.x, coords.y),
+                    new Point(1, coords.x, coords.y),
+                    userId,
+                    this.brushColor,
+                    this.brushWidth,
+                    this.fillStatus
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].x = coords.x;
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice();
+
+                    this.render();
+                    this.countClick = 0;
+
+                }else{
+                    this.renderAll();
+                    this.currentShape.render(this.ctx);
+                }
+
+                break;
+
+        }
+    }
+
 
     public setState(state: State){
         this.state = state;
@@ -457,6 +501,9 @@ export default class Canvas{
                 break;
             case State.BEZIER:
                 this.drawBezierProcess(e, action, userId);
+                break;
+            case State.ELLIPSE:
+                this.drawEllipseProcess(e, action, userId);
                 break;
             case State.POINTER:
                 break;

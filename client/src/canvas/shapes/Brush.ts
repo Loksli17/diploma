@@ -2,7 +2,6 @@ import Point from '../Point';
 import Shape from './Shape';
 
 
-//!FIX IT APPROXIMATE !!!!!
 export default class Brush extends Shape{
 
     public width: number = 1;
@@ -29,9 +28,11 @@ export default class Brush extends Shape{
         });
     }
 
+    
     public renderLastPoint(ctx: CanvasRenderingContext2D | null){
         this.renderPoint(ctx, this.points[this.points.length - 1]);
     }
+
 
     private renderPoint(ctx: CanvasRenderingContext2D | null, point: Point){
         
