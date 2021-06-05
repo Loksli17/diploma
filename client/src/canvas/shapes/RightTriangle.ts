@@ -2,14 +2,13 @@ import Shape from "./Shape";
 import Point from '../Point';
 
 
-export default class IsoscelesTriangle extends Shape{
+export default class RightlTriangle extends Shape{
 
     public width: number = 1;
     public fill: boolean = false;
 
-    
     constructor(p1: Point, p2: Point, userId: number, color: string, width: number, fill: boolean){
-        super(`Isosceles triangle${++IsoscelesTriangle.countNumber}`, userId, color);
+        super(`RightTriangle${++RightlTriangle.countNumber}`, userId, color);
 
         this.points.push(p1);
         this.points.push(p2);
@@ -19,15 +18,15 @@ export default class IsoscelesTriangle extends Shape{
         this.fill  = fill;
         this.icon  = "isosceles-triangle.svg";
     }
-    
+
 
     public render(ctx: CanvasRenderingContext2D | null){
-
+     
         if(ctx == undefined){
-            throw new Error("CTX is null. Why ¯\_(ツ)_/¯?");
+            throw new Error("CTX is null. Why ?");
         }
 
-        this.points[2] = new Point(2, 2 * this.points[0].x - this.points[1].x, this.points[1].y);
+        this.points[2] = new Point(2, this.points[0].x, this.points[1].y);
 
         ctx.beginPath();
         ctx.lineWidth   = this.width;
@@ -41,5 +40,4 @@ export default class IsoscelesTriangle extends Shape{
 
         this.fill ? ctx.fill() : ctx.stroke();
     }
-
-}
+} 
