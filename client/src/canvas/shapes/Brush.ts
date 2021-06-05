@@ -2,6 +2,7 @@ import Point from '../Point';
 import Shape from './Shape';
 
 
+//!FIX IT APPROXIMATE !!!!!
 export default class Brush extends Shape{
 
     public width: number = 1;
@@ -38,12 +39,21 @@ export default class Brush extends Shape{
             throw new Error("CTX is null. Why?");
         }
 
-        ctx.lineWidth = this.width;
-        ctx.fillStyle = this.color;
+        ctx.lineWidth   = this.width * 2;
+        ctx.fillStyle   = this.color;
+        ctx.strokeStyle = this.color;
+
+        if(this.points.length > 1){
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
+        }
 
         ctx.beginPath();
         ctx.arc(point.x, point.y, this.width, 0, Math.PI * 2, false);
         ctx.fill();
+
+        ctx.beginPath();
+		ctx.moveTo(point.x, point.y);
     }
 } 
 
