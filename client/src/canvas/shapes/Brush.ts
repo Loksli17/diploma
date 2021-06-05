@@ -43,7 +43,7 @@ export default class Brush extends Shape{
         ctx.fillStyle   = this.color;
         ctx.strokeStyle = this.color;
 
-        if(this.points.length > 1){
+        if(point.id > 0){
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
         }
