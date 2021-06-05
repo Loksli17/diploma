@@ -17,6 +17,7 @@ export enum State{
     CIRCLE,
     ISOSCELESTRIANGLE,
     RIGHTTRIANGLE,
+    BEZIER,
 }
 
 

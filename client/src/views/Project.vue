@@ -119,7 +119,8 @@
                     {name: 'Rectangle',          icon: "rect.svg",               state: State.RECT,              isActive: false},
                     {name: 'Ellipse',            icon: "circle.svg",             state: State.CIRCLE,            isActive: false},
                     {name: 'Isosceles triangle', icon: "isosceles-triangle.svg", state: State.ISOSCELESTRIANGLE, isActive: false},
-                    {name: 'Right triangle',     icon: "isosceles-triangle.svg", state: State.RIGHTTRIANGLE,     isActive: false},
+                    {name: 'Right triangle',     icon: "right-triangle.svg",     state: State.RIGHTTRIANGLE,     isActive: false},
+                    {name: 'Bezier',             icon: "bezier.svg",             state: State.BEZIER,            isActive: false},              
                 ],
             }
         },
