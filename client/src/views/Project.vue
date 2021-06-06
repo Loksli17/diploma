@@ -102,6 +102,8 @@
                 users    : [] as Array<UserCanvas>,
                 canvas   : {} as Canvas,
 
+                oldShapesState: [] as Array<Shape>,
+
                 showSettingsMenu: false as boolean,
 
                 settingsButtons: [
@@ -155,6 +157,8 @@
             
             this.canvas.addShapes(data.shapes);
             this.canvas.renderAll();
+
+            this.oldShapesState = this.canvas.shapes.slice();
         },
 
 
@@ -216,7 +220,8 @@
                     case "goForward"       : this.goForward(); break;
                     case "openSettingsMenu": this.openSettingsMenu(); break;
                     case "saveProject"     : this.saveProject(); break;
-                }
+                    case "reset"           : this.reset(); break;
+                 }
             },
 
             goBack: function(){
@@ -225,6 +230,11 @@
 
             goForward: function(){
                 this.canvas.forwardStep();
+            },
+
+            reset: function(){
+                this.canvas.shapes = this.oldShapesState.slice();
+                this.canvas.renderAll();
             },
 
             saveProject: async function(){

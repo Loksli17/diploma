@@ -16,7 +16,7 @@ export default class RightlTriangle extends Shape{
 
         this.width = width;
         this.fill  = fill;
-        this.icon  = "isosceles-triangle.svg";
+        this.icon  = "right-triangle.svg";
     }
 
 
