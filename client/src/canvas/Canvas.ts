@@ -9,6 +9,7 @@ import IsoscelesTriangle from './shapes/IsoscelesTriangle';
 import RightTriangle     from './shapes/RightTriangle';
 import Bezier            from './shapes/Bezier';
 import Ellipse           from './shapes/Ellipse';
+import Rhombus           from './shapes/Rhombus';
 
 
 export enum State{
@@ -21,6 +22,7 @@ export enum State{
     RIGHTTRIANGLE,
     BEZIER,
     ELLIPSE,
+    RHOMBUS,
 }
 
 
@@ -177,7 +179,7 @@ export default class Canvas{
         }
     }
 
-    public drawCircleProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawCircleProcess(coords: {x: number; y: number}, action: string, userId: number){
         
         switch(this.countClick){
 
@@ -219,7 +221,7 @@ export default class Canvas{
         }
     }
 
-    public drawBrushProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawBrushProcess(coords: {x: number; y: number}, action: string, userId: number){
 
         switch(this.countClick){
 
@@ -262,7 +264,7 @@ export default class Canvas{
         }
     }
 
-    public drawIsoscelesTriangleProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawIsoscelesTriangleProcess(coords: {x: number; y: number}, action: string, userId: number){
 
         switch(this.countClick){
 
@@ -304,7 +306,7 @@ export default class Canvas{
         }
     }
 
-    public drawRightTriangleProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawRightTriangleProcess(coords: {x: number; y: number}, action: string, userId: number){
 
         switch(this.countClick){
 
@@ -347,7 +349,7 @@ export default class Canvas{
     }
 
 
-    public drawBezierProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawBezierProcess(coords: {x: number; y: number}, action: string, userId: number){
 
         switch(this.countClick){
 
@@ -381,9 +383,6 @@ export default class Canvas{
 
                 this.clearAnimate();
                 this.currentShape.render(this.ctxAnimate);
-
-                // this.renderAll();
-                // this.currentShape.render(this.ctx);
                 
                 if(action == 'click') this.countClick = 2;
 
@@ -400,9 +399,6 @@ export default class Canvas{
 
                 this.clearAnimate();
                 this.currentShape.render(this.ctxAnimate);
-
-                // this.renderAll();
-                // this.currentShape.render(this.ctx);
                 
                 if(action == 'click') this.countClick = 3;
 
@@ -431,7 +427,7 @@ export default class Canvas{
         }
     }
 
-    public drawEllipseProcess(coords: {x: number; y: number}, action: string, userId: number){
+    private drawEllipseProcess(coords: {x: number; y: number}, action: string, userId: number){
         
         switch(this.countClick){
 
@@ -461,9 +457,6 @@ export default class Canvas{
                 
                 this.clearAnimate();
                 (this.currentShape as Ellipse).renderStepFirst(this.ctxAnimate);
-
-                // this.renderAll();
-                // (this.currentShape as Ellipse).renderStepFirst(this.ctx);
                 
                 if(action == 'click') this.countClick = 2;
 
@@ -486,12 +479,67 @@ export default class Canvas{
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
-                    // this.renderAll();
-                    // this.currentShape.render(this.ctx);
                 }
                 
                 break;
+        }
+    }
 
+    private drawRhombusProcess(coords: {x: number; y: number}, action: string, userId: number){
+
+        switch(this.countClick){
+
+            case 0:
+                if(action != 'click') break;
+                
+                this.currentShape = new Rhombus(
+                    [
+                        new Point(0, coords.x, coords.y),
+                        new Point(1, coords.x, coords.y),
+                        new Point(2, coords.x, coords.y),
+                        new Point(3, coords.x, coords.y)
+                    ],
+                    userId,
+                    this.brushColor,
+                    this.brushWidth,
+                    this.fillStatus
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[2].x = coords.x;
+                
+                this.clearAnimate();
+                (this.currentShape as Rhombus).renderStepFirst(this.ctxAnimate);
+                
+                if(action == 'click') this.countClick = 2;
+
+                break;
+
+            case 2:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    console.log('aaaaaa')
+                    this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice();
+
+                    this.render();
+                    this.countClick = 0;
+
+                }else{
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
+                }
+                
+                break;
         }
     }
 
@@ -539,6 +587,9 @@ export default class Canvas{
                 break;
             case State.ELLIPSE:
                 this.drawEllipseProcess(e, action, userId);
+                break;
+            case State.RHOMBUS:
+                this.drawRhombusProcess(e, action, userId);
                 break;
             case State.POINTER:
                 break;

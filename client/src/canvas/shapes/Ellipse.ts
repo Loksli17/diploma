@@ -1,4 +1,3 @@
-import { popScopeId } from '@vue/runtime-core';
 import Point from '../Point';
 import Shape from './Shape';
 
