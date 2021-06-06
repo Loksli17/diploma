@@ -125,7 +125,8 @@
                     {name: 'Right triangle',     icon: "right-triangle.svg",     state: State.RIGHTTRIANGLE,     isActive: false},
                     {name: 'Bezier',             icon: "bezier.svg",             state: State.BEZIER,            isActive: false}, 
                     {name: 'Ellipse',            icon: "ellipse.svg",            state: State.ELLIPSE,           isActive: false},
-                    {name: 'Rhombus',            icon: "rhombus.svg",            state: State.RHOMBUS,           isActive: false},        
+                    {name: 'Rhombus',            icon: "rhombus.svg",            state: State.RHOMBUS,           isActive: false}, 
+                    {name: 'Arrow',              icon: "arrow.svg",              state: State.ARROW,             isActive: false},      
                 ],
             }
         },

@@ -510,8 +510,6 @@ export default class ProjectController{
             shapes = JSON.parse(fs.readFileSync(`projects/${project.fileName}`, 'utf8'));
         }catch(err){
             console.error(err);
-            res.status(400).send({msg: ErrorMessage.file()});
-            return;
         }
 
         res.status(200).send({project: project, shapes: shapes});

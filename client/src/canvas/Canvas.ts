@@ -10,6 +10,7 @@ import RightTriangle     from './shapes/RightTriangle';
 import Bezier            from './shapes/Bezier';
 import Ellipse           from './shapes/Ellipse';
 import Rhombus           from './shapes/Rhombus';
+import Arrow             from './shapes/Arrow';
 
 
 export enum State{
@@ -23,6 +24,7 @@ export enum State{
     BEZIER,
     ELLIPSE,
     RHOMBUS,
+    ARROW,
 }
 
 
@@ -527,13 +529,50 @@ export default class Canvas{
                 this.currentShape.points[1].y = coords.y;
                 
                 if(action == 'click'){
-                    console.log('aaaaaa')
                     this.shapes.push(this.currentShape);
                     this.shapesHistory = this.shapes.slice();
 
                     this.render();
                     this.countClick = 0;
 
+                }else{
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
+                }
+                
+                break;
+        }
+    }
+
+    private drawArrowProcess(coords: {x: number; y: number}, action: string, userId: number){
+
+        switch(this.countClick){
+
+            case 0:
+                if(action != 'click') break;
+
+                this.currentShape = new Arrow(
+                    new Point(0, coords.x, coords.y),
+                    new Point(1, coords.x, coords.y),
+                    userId,
+                    this.brushColor,
+                    this.brushWidth,
+                );
+                this.countClick = 1;
+                break;
+
+            case 1:
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[1].x = coords.x;
+                this.currentShape.points[1].y = coords.y;
+                
+                if(action == 'click'){
+                    this.shapes.push(this.currentShape);
+                    this.shapesHistory = this.shapes.slice();
+
+                    this.render();
+                    this.countClick = 0;
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -590,6 +629,9 @@ export default class Canvas{
                 break;
             case State.RHOMBUS:
                 this.drawRhombusProcess(e, action, userId);
+                break;
+            case State.ARROW:
+                this.drawArrowProcess(e, action, userId);
                 break;
             case State.POINTER:
                 break;
@@ -700,6 +742,48 @@ export default class Canvas{
                     );
 
                     this.shapes[this.shapes.length - 1].points = shapes[i].points.slice();
+
+                    break;
+
+                case 'ellipse.svg':
+                    
+                    this.shapes.push(
+                        new Ellipse(
+                            shapes[i].points.slice(),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Ellipse).width,
+                            (shapes[i] as Ellipse).fill,
+                        )
+                    );
+
+                    break;
+
+                case 'rhombus.svg':
+                    
+                    this.shapes.push(
+                        new Rhombus(
+                            shapes[i].points.slice(),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Rhombus).width,
+                            (shapes[i] as Rhombus).fill,
+                        )
+                    );
+
+                    break;
+
+                case 'arrow.svg':
+                    
+                    this.shapes.push(
+                        new Arrow(
+                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
+                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
+                            shapes[i].userId,
+                            shapes[i].color,
+                            (shapes[i] as Arrow).width,
+                        )
+                    );
 
                     break;
                 
