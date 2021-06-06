@@ -41,6 +41,21 @@
                 </div>
             </div>
 
+            <div v-if="showExportMenu" class="export-menu">
+                
+                <div class="row">
+                    <span @click="createJson">JSON</span>
+                </div>
+
+                <div class="row">
+                    <span @click="createImage('png')">PNG</span>
+                </div>
+
+                <div class="row">
+                    <span @click="createImage('jpeg')">JPEG</span>
+                </div>
+            </div>
+
             <div class="draw-buttons-wrap">
 
                 <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}" @click="setCanvasState(button, index)">
@@ -105,15 +120,16 @@
                 oldShapesState: [] as Array<Shape>,
 
                 showSettingsMenu: false as boolean,
+                showExportMenu  : false as boolean,
 
                 settingsButtons: [
-                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',           padding: true},
-                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",        padding: true},
-                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "openSettingsMenu", padding: true},
-                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "saveProject",      border: true, firstBorder: true},
-                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "importProject",    border: true},
-                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "exportProject",    border: true},
-                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "reset",            border: true},
+                    {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',             padding: true},
+                    {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",          padding: true},
+                    {name: 'Settings', icon: 'settings.svg',      text: null,     click: "toggleSettingsMenu", padding: true},
+                    {name: 'Save',     icon: 'save.svg',          text: 'Save',   click: "saveProject",        border: true, firstBorder: true},
+                    {name: 'Import',   icon: 'import.svg',        text: 'Import', click: "toggleImportMenu",   border: true},
+                    {name: 'Export',   icon: 'export.svg',        text: 'Export', click: "toggleExportMenu",   border: true},
+                    {name: 'Reset',    icon: 'reset.svg',         text: 'Reset',  click: "reset",              border: true},
                 ],
 
                 drawButtons: [
@@ -219,12 +235,38 @@
             settingsButtonClick: function(name: string){
 
                 switch(name){
-                    case "goBack"          : this.goBack(); break;
-                    case "goForward"       : this.goForward(); break;
-                    case "openSettingsMenu": this.openSettingsMenu(); break;
-                    case "saveProject"     : this.saveProject(); break;
-                    case "reset"           : this.reset(); break;
+                    case "goBack"            : this.goBack(); break;
+                    case "goForward"         : this.goForward(); break;
+                    case "toggleSettingsMenu": this.toggleSettingsMenu(); break;
+                    case "saveProject"       : this.saveProject(); break;
+                    case "reset"             : this.reset(); break;
+                    case "toggleExportMenu"  : this.toggleExportMenu(); break;
                  }
+            },
+
+            createImage: function(type: string){
+                
+                const canvas = this.$refs.canvas! as any;
+ 
+                const link: HTMLElement = document.createElement('a');
+                link.setAttribute('href', canvas.toDataURL(`image/${type}`).replace(`image/${type}`, "image/octet-stream"));
+                link.setAttribute('download', `${this.project!.name}.${type}`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            },
+
+            createJson: function(){
+
+                const json: string = JSON.stringify(this.canvas.shapes);
+
+                const data: string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json));
+                const dlAnchorElem: HTMLElement = document.createElement('a');
+                dlAnchorElem.setAttribute("href", data);
+                dlAnchorElem.setAttribute("download", `${this.project!.name}.json`);
+                document.body.appendChild(dlAnchorElem);
+                dlAnchorElem.click();
+                dlAnchorElem.remove();
             },
 
             goBack: function(){
@@ -272,8 +314,14 @@
                 }
             },
 
-            openSettingsMenu: function(){
+            toggleSettingsMenu: function(){
                 this.showSettingsMenu = !this.showSettingsMenu;
+                this.showExportMenu   = false;
+            },
+
+            toggleExportMenu: function(){
+                this.showExportMenu   = !this.showExportMenu;
+                this.showSettingsMenu = false;
             },
 
             getProject: async function(){

@@ -6,6 +6,33 @@ $usersWrapHeight         : 70px;
 $drawButtonsWrapWidth    : 70px;
 
 
+@mixin menu {
+    position: absolute;
+    top: $projectButtonsWrapHeight - 2px;
+    background: $blueHover;
+    border: 2px solid $grayBorder;
+    z-index: 9999;
+
+    .row{
+        @include row(20px);
+        grid-template-columns: 160px auto;
+
+        border-bottom: 2px solid $grayBorder;
+        box-sizing: border-box;
+        padding: 15px 20px;
+
+        span{
+            font-size: 20px;
+            text-align: left;
+        }
+
+        &:last-child{
+            border-bottom: 0px solid $grayBorder;
+        }
+    }
+}
+
+
 .page-project{
     
     .page-wrap{
@@ -15,29 +42,18 @@ $drawButtonsWrapWidth    : 70px;
         position: relative;
 
         .settings-menu{
-            position: absolute;
-            top: $projectButtonsWrapHeight - 2px;
+            @include menu;
             left: 135px;
-            background: $blueHover;
-            border: 2px solid $grayBorder;
-            z-index: 9999;
+        }
 
-            .row{
-                @include row(20px);
-                grid-template-columns: 160px auto;
+        .export-menu{
+            @include menu;
+            left: 470px;
 
-                border-bottom: 2px solid $grayBorder;
-                box-sizing: border-box;
-                padding: 15px 20px;
-
-                span{
-                    font-size: 20px;
-                    text-align: left;
-                }
-
-                &:last-child{
-                    border-bottom: 0px solid $grayBorder;
-                }
+            .row:hover{
+                cursor: pointer;
+                background: $white;
+                transition: 0.4s;
             }
         }
 
