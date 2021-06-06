@@ -426,8 +426,11 @@ export default class Canvas{
                 if(action != 'click') break;
                 
                 this.currentShape = new Ellipse(
-                    new Point(0, coords.x, coords.y),
-                    new Point(1, coords.x, coords.y),
+                    [
+                        new Point(0, coords.x, coords.y),
+                        new Point(1, coords.x, coords.y),
+                        new Point(2, coords.x, coords.y)
+                    ],
                     userId,
                     this.brushColor,
                     this.brushWidth,
@@ -442,6 +445,20 @@ export default class Canvas{
 
                 this.currentShape.points[1].x = coords.x;
                 this.currentShape.points[1].y = coords.y;
+
+                this.renderAll();
+                (this.currentShape as Ellipse).renderStepFirst(this.ctx);
+                
+                if(action == 'click') this.countClick = 2;
+
+                break;
+
+            case 2:
+
+                if(this.currentShape == undefined) return;
+
+                this.currentShape.points[2].x = coords.x;
+                this.currentShape.points[2].y = coords.y;
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
@@ -454,7 +471,7 @@ export default class Canvas{
                     this.renderAll();
                     this.currentShape.render(this.ctx);
                 }
-
+                
                 break;
 
         }
