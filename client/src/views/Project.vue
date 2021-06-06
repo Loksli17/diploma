@@ -66,6 +66,7 @@
 
             <div class="work-area">
                 <div>
+                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"></canvas>
                     <canvas id="canvas-main" width="1200" height="700" ref="canvas" 
                         @mousemove="mouseMove" 
                         @click="canvasClick" 
@@ -75,7 +76,6 @@
                         @mouseup="mouseUp"
                         >
                     </canvas>
-                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"></canvas>
                 </div>
             </div>
             
@@ -152,6 +152,7 @@
 
             this.canvas = new Canvas(
                 this.$refs.canvas as HTMLCanvasElement,
+                this.$refs.canvasAnimate as HTMLCanvasElement,
                 this.users,
             );
             
@@ -302,7 +303,6 @@
 
             setCanvasState: function(btn: any, index: number){
                 this.canvas.setState(btn.state);
-                console.log(this.canvas.getState(), index);
 
                 this.drawButtons.forEach(item => {
                     item.isActive = false;
@@ -323,6 +323,8 @@
             },
 
             mouseMove: function(e: any){
+
+                if(this.canvas == undefined) return;
 
                 const
                     bounds = e.target.getBoundingClientRect(),

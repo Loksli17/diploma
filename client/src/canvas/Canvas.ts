@@ -29,6 +29,9 @@ export default class Canvas{
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D | null;
 
+    private canvasAnimate: HTMLCanvasElement;
+    private ctxAnimate: CanvasRenderingContext2D | null;
+
     private users: Array<UserCanvas>;
     private state: State;
     private countClick: number = 0;
@@ -41,10 +44,13 @@ export default class Canvas{
     public fillStatus: boolean = false;
 
 
-    constructor(canvas: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
+    constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
         
         this.canvas = canvas;
         this.ctx    = canvas.getContext('2d');
+
+        this.canvasAnimate = canvasAnimate;
+        this.ctxAnimate    = canvasAnimate.getContext('2d');
 
         this.users  = userCanvas; 
         this.state  = State.POINTER;
@@ -120,8 +126,8 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
                 
                 break;
@@ -162,8 +168,8 @@ export default class Canvas{
                     this.countClick = 0;
 
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
 
                 break;
@@ -204,8 +210,8 @@ export default class Canvas{
                     this.countClick = 0;
 
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
 
                 break;
@@ -290,8 +296,8 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
 
                 break;
@@ -332,8 +338,8 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
 
                 break;
@@ -373,8 +379,11 @@ export default class Canvas{
                 this.currentShape.points[3].x = coords.x;
                 this.currentShape.points[3].y = coords.y;
 
-                this.renderAll();
-                this.currentShape.render(this.ctx);
+                this.clearAnimate();
+                this.currentShape.render(this.ctxAnimate);
+
+                // this.renderAll();
+                // this.currentShape.render(this.ctx);
                 
                 if(action == 'click') this.countClick = 2;
 
@@ -389,8 +398,11 @@ export default class Canvas{
                 this.currentShape.points[2].x = coords.x;
                 this.currentShape.points[2].y = coords.y;
 
-                this.renderAll();
-                this.currentShape.render(this.ctx);
+                this.clearAnimate();
+                this.currentShape.render(this.ctxAnimate);
+
+                // this.renderAll();
+                // this.currentShape.render(this.ctx);
                 
                 if(action == 'click') this.countClick = 3;
 
@@ -404,14 +416,15 @@ export default class Canvas{
                 this.currentShape.points[2].y = coords.y;
 
                 if(action == 'click'){
+                    this.clearAnimate();
                     this.shapes.push(this.currentShape);
                     this.shapesHistory = this.shapes.slice();
 
                     this.render();
                     this.countClick = 0;
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
                 }
 
                 break;
@@ -445,9 +458,12 @@ export default class Canvas{
 
                 this.currentShape.points[1].x = coords.x;
                 this.currentShape.points[1].y = coords.y;
+                
+                this.clearAnimate();
+                (this.currentShape as Ellipse).renderStepFirst(this.ctxAnimate);
 
-                this.renderAll();
-                (this.currentShape as Ellipse).renderStepFirst(this.ctx);
+                // this.renderAll();
+                // (this.currentShape as Ellipse).renderStepFirst(this.ctx);
                 
                 if(action == 'click') this.countClick = 2;
 
@@ -468,8 +484,10 @@ export default class Canvas{
                     this.countClick = 0;
 
                 }else{
-                    this.renderAll();
-                    this.currentShape.render(this.ctx);
+                    this.clearAnimate();
+                    this.currentShape.render(this.ctxAnimate);
+                    // this.renderAll();
+                    // this.currentShape.render(this.ctx);
                 }
                 
                 break;
@@ -643,6 +661,11 @@ export default class Canvas{
     public clear(){
         if(this.ctx == undefined) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    public clearAnimate(){
+        if(this.ctxAnimate == undefined) return;
+        this.ctxAnimate.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
 }
