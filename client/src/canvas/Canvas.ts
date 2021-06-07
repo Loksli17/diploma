@@ -47,6 +47,9 @@ export default class Canvas{
     public brushColor: string = "#000000";
     public fillStatus: boolean = false;
 
+    public width: number = 900;
+    public height: number = 500;
+
 
     constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
         
@@ -129,6 +132,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -170,7 +174,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
-
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -212,7 +216,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
-
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -260,6 +264,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.shapesHistory = this.shapes.slice();
                     this.countClick = 0;
+                    this.clearAnimate();
                 }
 
                 break;
@@ -299,6 +304,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -341,6 +347,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -477,7 +484,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
-
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -534,7 +541,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
-
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -573,6 +580,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
+                    this.clearAnimate();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);

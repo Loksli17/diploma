@@ -32,12 +32,12 @@
 
                 <div class="row">
                     <span>Area width:</span>
-                    <input type="number" min="1" max="10" v-model="canvas.width">
+                    <input type="number" min="200" max="2000" v-model="canvas.width">
                 </div>
 
                 <div class="row">
                     <span>Area height:</span>
-                    <input type="number" min="1" max="10" v-model="canvas.height">
+                    <input type="number" min="200" max="2000" v-model="canvas.height">
                 </div>
             </div>
 
@@ -88,17 +88,19 @@
             </div>
 
             <div class="work-area">
-                <div>
-                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"
-                        @mousemove="mouseMove" 
-                        @click="canvasClick" 
-                        @mouseover="drawCursor"
-                        @mouseout="normalCursor"
-                        @mousedown="mouseDown"
-                        @mouseup="mouseUp"
-                    ></canvas>
-                    <canvas id="canvas-main" width="1200" height="700" ref="canvas"></canvas>
-                </div>
+                <!-- <vue-resizable> -->
+                    <div ref="canvasWrap">
+                        <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"
+                            @mousemove="mouseMove" 
+                            @click="canvasClick" 
+                            @mouseover="drawCursor"
+                            @mouseout="normalCursor"
+                            @mousedown="mouseDown"
+                            @mouseup="mouseUp"
+                        ></canvas>
+                        <canvas id="canvas-main" width="1200" height="700" ref="canvas"></canvas>
+                    </div>
+                <!-- </vue-resizable> -->
             </div>
             
         </div> 
@@ -157,6 +159,8 @@
             }
         },
 
+        // components: {VueResizable},
+
         mounted: async function(){
 
             this.projectId = Number(this.$route.query.id);
@@ -188,6 +192,13 @@
             this.canvas.renderAll();
 
             this.oldShapesState = this.canvas.shapes.slice();
+
+            const canvasWrap = this.$refs.canvasWrap! as any;
+            
+            canvasWrap.style.width = this.canvas.width;
+            canvasWrap.style.height = this.canvas.height;
+
+            console.log(canvasWrap.style.width);
         },
 
 
@@ -211,8 +222,6 @@
             this.$socket.on('mouseMove', (data: any) => {
                 const x = 228;
             });
-
-            
         },
 
         methods: {
