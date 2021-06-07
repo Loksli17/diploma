@@ -169,6 +169,7 @@
             if(!this.capableDragAndDrop){
                 this.$flashMessage.show({
                     type: 'error',
+                    image: require("../../assets/flash/fail.svg"),
                     text: 'Your browser can not works with drag and drop. Baaaad.',
                 });
                 return;

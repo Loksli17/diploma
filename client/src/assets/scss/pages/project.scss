@@ -56,6 +56,29 @@ $drawButtonsWrapWidth    : 70px;
                 transition: 0.4s;
             }
         }
+        
+        .import-menu{
+            @include menu;
+            left: 335px;
+            padding: 20px;
+            box-sizing: border-box;
+
+            form{
+                span{
+                    display: block;
+                    border: 2px dashed #000;
+                    padding: 100px;
+                    background: $white;
+                    font-size: 18px;
+                }
+            }
+
+            .form-active{
+                span{
+                    color: $blue;
+                }
+            }
+        }
 
         .project-buttons-wrap{
             position: absolute;

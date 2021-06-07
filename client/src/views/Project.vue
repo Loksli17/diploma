@@ -56,6 +56,14 @@
                 </div>
             </div>
 
+            <div v-if="showImportMenu" class="import-menu">
+
+                <form :class="{'form-active': fileOverStatus}" id="fileForm" ref="fileForm" @drop.prevent="fileDrop" @dragenter.prevent @dragover.prevent="fileOver" @dragleave="fileLeave">
+                    <span>Drop new image here</span>
+                </form>
+
+            </div>
+
             <div class="draw-buttons-wrap">
 
                 <div :title="button.name" v-for="(button, index) in drawButtons" :key="button.name" class="draw-button" :class="{'active-draw-button': button.isActive}" @click="setCanvasState(button, index)">
@@ -121,6 +129,8 @@
 
                 showSettingsMenu: false as boolean,
                 showExportMenu  : false as boolean,
+                showImportMenu  : false as boolean,
+                fileOverStatus  : false as boolean,
 
                 settingsButtons: [
                     {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',             padding: true},
@@ -207,6 +217,45 @@
 
         methods: {
 
+            fileOver: function(e: any){
+                this.fileOverStatus = true;
+            },
+
+            fileLeave: function(){
+                this.fileOverStatus = false;
+            },
+
+            fileDrop: function(e: any){
+
+                const
+                    reader: FileReader = new FileReader(), 
+                    file: File = e.dataTransfer.files[0];
+
+                switch(file.type){
+                    case 'application/json':
+                        reader.readAsText(file);
+                        reader.addEventListener('load', (e: any) => {
+                            const data: Array<Shape> = JSON.parse(JSON.parse(e.target.result));
+                            this.canvas.addShapes(data);
+                            this.canvas.renderAll();
+                            this.$flashMessage.show({
+                                type: 'success',
+                                image: require("../assets/flash/success.svg"),
+                                text: 'File has been imported successfully',
+                            });
+                        })
+                        break;
+                    default: 
+                        this.$flashMessage.show({
+                            type: 'warning',
+                            image: require("../assets/flash/warning.svg"),
+                            text: 'Format of file must be JSON',
+                        });
+                }
+
+                this.fileOverStatus = false;
+            },
+
             mouseDown: function(e: any){
 
                 if(this.drawButtons.filter(item => item.isActive!)[0].state != State.BRUSH) return;
@@ -241,6 +290,7 @@
                     case "saveProject"       : this.saveProject(); break;
                     case "reset"             : this.reset(); break;
                     case "toggleExportMenu"  : this.toggleExportMenu(); break;
+                    case "toggleImportMenu"  : this.toggleImportMenu(); break;
                  }
             },
 
@@ -257,7 +307,6 @@
             },
 
             createJson: function(){
-
                 const json: string = JSON.stringify(this.canvas.shapes);
 
                 const data: string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json));
@@ -283,6 +332,15 @@
             },
 
             saveProject: async function(){
+                
+                if(this.canvas.shapes.length == 0){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: 'Nothing to save',
+                    });
+                    return;
+                }
 
                 try {
                     const res: any = await this.$axios.post('project/save-file', {
@@ -317,11 +375,19 @@
             toggleSettingsMenu: function(){
                 this.showSettingsMenu = !this.showSettingsMenu;
                 this.showExportMenu   = false;
+                this.showImportMenu   = false;
             },
 
             toggleExportMenu: function(){
                 this.showExportMenu   = !this.showExportMenu;
                 this.showSettingsMenu = false;
+                this.showImportMenu   = false;
+            },
+
+            toggleImportMenu: function(){
+                this.showImportMenu   = !this.showImportMenu;
+                this.showSettingsMenu = false;
+                this.showExportMenu   = false;
             },
 
             getProject: async function(){
