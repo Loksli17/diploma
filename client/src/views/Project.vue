@@ -88,7 +88,7 @@
                         <div :class="{'non-visible': !shape.isVisible}" @click="toggleShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/eye.svg`)" alt="">
                         </div>
-                        <div>
+                        <div @click="removeShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
                         </div>
                     </div>
@@ -232,7 +232,12 @@
                 const shape: Shape | undefined = this.canvas.shapes.find(item => item.id == id);
                 if(shape == undefined) return;
                 shape.isVisible = !shape.isVisible;
-                this.canvas.renderAll()
+                this.canvas.renderAll();
+            },
+
+            removeShape: function(id: number){
+                this.canvas.shapes = this.canvas.shapes.filter(item => item.id != id);
+                this.canvas.renderAll();
             },
 
             fileOver: function(e: any){

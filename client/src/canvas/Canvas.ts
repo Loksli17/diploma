@@ -36,7 +36,7 @@ export default class Canvas{
     private canvasAnimate: HTMLCanvasElement;
     private ctxAnimate: CanvasRenderingContext2D | null;
 
-    private users: Array<UserCanvas>;
+    public users: Array<UserCanvas>;
     private state: State;
     private countClick: number = 0;
     private currentShape: Shape | undefined;
@@ -86,6 +86,17 @@ export default class Canvas{
     public removeUser(user: UserCanvas){
         const ind: number = this.users.findIndex(item => user.id == item.id);
         this.users.splice(ind, 1);
+    }
+
+    public shapeWithUserUser(id: number): {shape: Shape; user: UserCanvas}{
+
+        const shape: Shape | undefined = this.shapes.find(item => item.id == id);
+        if(shape == undefined) throw new Error('Shape hasnot been founded');
+
+        const user: UserCanvas | undefined = this.users.find(item => item.id == shape.userId);
+        if(user == undefined) throw new Error('user hasnot been founded');
+
+        return {user: user, shape: shape};
     }
 
 
