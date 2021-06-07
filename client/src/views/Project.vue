@@ -296,6 +296,15 @@
             },
 
             createImage: function(type: string){
+
+                if(!this.canvas.shapes.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: 'No data for export',
+                    });
+                    return;
+                }
                 
                 const canvas = this.$refs.canvas! as any;
  
@@ -308,6 +317,16 @@
             },
 
             createJson: function(){
+
+                if(!this.canvas.shapes.length){
+                    this.$flashMessage.show({
+                        type: 'warning',
+                        image: require("../assets/flash/warning.svg"),
+                        text: 'No data for export',
+                    });
+                    return;
+                }
+
                 const json: string = JSON.stringify(this.canvas.shapes);
 
                 const data: string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json));
