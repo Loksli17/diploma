@@ -475,9 +475,9 @@ export default class ProjectController{
         }
 
         let
-            POST      : POST              = req.body,
-            postErrors: Array<keyof POST> = [],
-            shapes    : Array<object>     = [],
+            POST      : POST               = req.body,
+            postErrors: Array<keyof POST>  = [],
+            canvas    : object | undefined = {},
             project   : Project | undefined;
 
         postErrors = PostModule.checkData<POST>(POST, ['id']);
@@ -507,19 +507,20 @@ export default class ProjectController{
         }
 
         try {
-            shapes = JSON.parse(fs.readFileSync(`projects/${project.fileName}`, 'utf8'));
+            canvas = JSON.parse(fs.readFileSync(`projects/${project.fileName}`, 'utf8'));
         }catch(err){
+            canvas = undefined;
             console.error(err);
         }
 
-        res.status(200).send({project: project, shapes: shapes});
+        res.status(200).send({project: project, canvas: canvas});
     }
 
 
     public static async saveFile(req: Request, res: Response){
         
         interface POST{
-            shapes: Array<object>,
+            canvas: object,
             id    : number,
         }
 
@@ -528,7 +529,7 @@ export default class ProjectController{
             postErrors: Array<keyof POST> = [], 
             project   : Project | undefined;
 
-        postErrors = PostModule.checkData<POST>(POST, ['shapes', 'id']);
+        postErrors = PostModule.checkData<POST>(POST, ['canvas', 'id']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -548,8 +549,10 @@ export default class ProjectController{
             return;
         }
 
+        console.log(POST.canvas);
+
         try {
-            fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.shapes));
+            fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.canvas));
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.file()});

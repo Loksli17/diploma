@@ -88,6 +88,15 @@ export default class Canvas{
         } 
     }
 
+    public renderForPng(){
+        if(this.ctx == undefined) return;
+        
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for(let i = 0; i < this.shapes.length; i++){
+            if(this.shapes[i].isVisible) this.shapes[i].render(this.ctx);
+        }
+    }
+
 
     public userAdd(user: UserCanvas){
         this.users.push(user);

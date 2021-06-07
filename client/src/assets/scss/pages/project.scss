@@ -273,11 +273,12 @@ $drawButtonsWrapWidth    : 70px;
                 height: 700px;
                 background: $white;
                 overflow: auto;
+                outline: 2px solid $grayBorder;
 
                 canvas{
                     position: absolute;
                     top: 0;
-                    left: 0;
+                    left: 0;      
                 }
 
                 #canvas-main{

@@ -181,7 +181,7 @@
 
             this.projectId = Number(this.$route.query.id);
             
-            const data: {project: Project; shapes: Array<Shape>} = await this.getProject();
+            const data: {project: Project; canvas: Canvas} = await this.getProject();
             this.project = data.project;
             
             if(this.project == undefined) return;
@@ -203,11 +203,19 @@
                 this.$refs.canvasAnimate as HTMLCanvasElement,
                 this.users,
             );
-            
-            this.canvas.addShapes(data.shapes);
-            this.canvas.renderAll();
 
-            this.oldShapesState = this.canvas.shapes.slice();
+            console.log(data.canvas);
+
+            if(data.canvas != undefined){
+                this.canvas.backgroundColor = data.canvas.backgroundColor;
+                this.canvas.width           = data.canvas.width;
+                this.canvas.height          = data.canvas.height;
+                
+                this.canvas.addShapes(data.canvas.shapes);
+                this.canvas.renderAll();
+
+                this.oldShapesState = this.canvas.shapes.slice();
+            }
 
         },
 
@@ -271,9 +279,17 @@
                     case 'application/json':
                         reader.readAsText(file);
                         reader.addEventListener('load', (e: any) => {
-                            const data: Array<Shape> = JSON.parse(JSON.parse(e.target.result));
-                            this.canvas.addShapes(data);
+                            const data: Canvas = JSON.parse(JSON.parse(e.target.result));
+
+                            this.canvas.backgroundColor = data.backgroundColor;
+                            this.canvas.width           = data.width;
+                            this.canvas.height          = data.height;
+
+                            this.canvas.addShapes(data.shapes);
                             this.canvas.renderAll();
+
+                            this.oldShapesState = this.canvas.shapes.slice();
+
                             this.$flashMessage.show({
                                 type: 'success',
                                 image: require("../assets/flash/success.svg"),
@@ -342,6 +358,10 @@
                 }
                 
                 const canvas = this.$refs.canvas! as any;
+
+                if(type == 'png' && this.backgroundColor.toUpperCase() == '#FFFFFF'){
+                    this.canvas.renderForPng();
+                }
  
                 const link: HTMLElement = document.createElement('a');
                 link.setAttribute('href', canvas.toDataURL(`image/${type}`).replace(`image/${type}`, "image/octet-stream"));
@@ -349,6 +369,10 @@
                 document.body.appendChild(link);
                 link.click();
                 link.remove();
+
+                if(type == 'png' && this.backgroundColor.toUpperCase() == '#FFFFFF'){
+                    this.canvas.renderAll();
+                }
             },
 
             createJson: function(){
@@ -362,7 +386,7 @@
                     return;
                 }
 
-                const json: string = JSON.stringify(this.canvas.shapes);
+                const json: string = JSON.stringify(this.canvas);
 
                 const data: string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(json));
                 const dlAnchorElem: HTMLElement = document.createElement('a');
@@ -399,8 +423,8 @@
 
                 try {
                     const res: any = await this.$axios.post('project/save-file', {
-                        id: this.project!.id,
-                        shapes: this.canvas.shapes,
+                        id    : this.project!.id,
+                        canvas: this.canvas,
                     });
 
                     if(res.status == 400){
