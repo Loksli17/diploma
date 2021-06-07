@@ -138,6 +138,47 @@ export default class NotificationController{
         try {
             notifications = await getRepository(Notification).createQueryBuilder('notification')
                 .where(whereCond, {id: POST.userId})
+                // .andWhere("typeNotificationId = 1")
+                .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
+                .leftJoinAndSelect('notification.userSend', 'user as u1')
+                .leftJoinAndSelect('notification.userReceive', 'user as u2')
+                .orderBy('notification.id', 'DESC')
+                .getMany();
+
+        }catch(err){
+            res.status(400).send({error: ErrorMessage.db()});
+            console.error(err);
+        }
+
+        res.status(200).send({notifications: notifications});
+    }
+
+
+    public static async getFriendsNotifications(req: Request, res: Response){
+
+        interface POST{
+            userId: number,
+            type  : string,
+        }
+
+        let 
+            postErrors   : Array<keyof POST>   = [],
+            whereCond    : string              = '',
+            notifications: Array<Notification> = [],
+            POST         : POST                = req.body;
+        
+        postErrors = PostModule.checkData(POST, ['userId', 'type']);
+        
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        whereCond = POST.type == "send" ? "notification.userSendId = :id" : "notification.userReceiveId = :id";
+        
+        try {
+            notifications = await getRepository(Notification).createQueryBuilder('notification')
+                .where(whereCond, {id: POST.userId})
                 .andWhere("typeNotificationId = 1")
                 .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
                 .leftJoinAndSelect('notification.userSend', 'user as u1')
@@ -224,10 +265,11 @@ export default class NotificationController{
 
 
     public static routes(){
-        this.router.post('/add',               this.createNotification);
-        this.router.post('/get-notifications', this.getNotifications);
-        this.router.post('/delete',            this.removeNotification);
-        this.router.post('/delete-many',       this.removeNotifications);
+        this.router.post('/add',                       this.createNotification);
+        this.router.post('/get-notifications',         this.getNotifications);
+        this.router.post('/get-friends-notifications', this.getFriendsNotifications);
+        this.router.post('/delete',                    this.removeNotification);
+        this.router.post('/delete-many',               this.removeNotifications);
 
         return this.router;
     }

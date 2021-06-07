@@ -91,7 +91,7 @@
                 this.$router.push('/');
 
                 this.$store.commit('setNotifications', []);
-                console.log(this.$store.commit('setNotifications', []));
+                console.log(await this.getNotifications(result.data.user.id))
                 this.$store.commit('setNotifications', await this.getNotifications(result.data.user.id));
             },
         },

@@ -222,7 +222,7 @@
             getSendNotifications: async function(): Promise<Array<Notification> | undefined>{
 
                 try {
-                    const res = await this.$axios.post('/notification/get-notifications', {userId: this.$store.state.userIdentity!.id, type:"send"});
+                    const res = await this.$axios.post('/notification/get-friends-notifications', {userId: this.$store.state.userIdentity!.id, type:"send"});
 
                     if(res.status == 200){
                         return res.data.notifications;
