@@ -235,6 +235,7 @@ $drawButtonsWrapWidth    : 70px;
             top: $projectButtonsWrapHeight;
             left: $drawButtonsWrapWidth + 2px;
             background: $grayMain;
+            overflow: auto;
 
             width: calc(100% - #{$elemsWrapWidth} - #{$drawButtonsWrapWidth} - 2px);
             height: calc(100% - #{$usersWrapHeight} - #{$projectButtonsWrapHeight} - 2px);

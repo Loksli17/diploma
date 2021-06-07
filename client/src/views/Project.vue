@@ -114,6 +114,7 @@
     import Project           from '../types/Project';
     import Canvas, {State}   from '../canvas/Canvas';
     import Shape             from '../canvas/shapes/Shape';
+    import VueResizable      from 'vue-resizable';
 
 
     export default defineComponent({
