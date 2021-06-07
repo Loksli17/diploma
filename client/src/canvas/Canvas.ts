@@ -14,7 +14,7 @@ import Arrow             from './shapes/Arrow';
 
 
 export enum State{
-    POINTER,
+    CURSOR,
     LINE,
     BRUSH,
     RECT,
@@ -60,7 +60,7 @@ export default class Canvas{
         this.ctxAnimate    = canvasAnimate.getContext('2d');
 
         this.users  = userCanvas; 
-        this.state  = State.POINTER;
+        this.state  = State.CURSOR;
         this.shapes = [];
 
         this.shapesHistory = [];
@@ -641,7 +641,7 @@ export default class Canvas{
             case State.ARROW:
                 this.drawArrowProcess(e, action, userId);
                 break;
-            case State.POINTER:
+            case State.CURSOR:
                 break;
         }
     }

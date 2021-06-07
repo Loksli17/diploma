@@ -89,7 +89,7 @@
 
             <div class="work-area">
                 <!-- <vue-resizable> -->
-                    <div ref="canvasWrap">
+                    <div @resize="resize" ref="canvasWrap">
                         <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"
                             @mousemove="mouseMove" 
                             @click="canvasClick" 
@@ -145,6 +145,7 @@
                 ],
 
                 drawButtons: [
+                    {name: 'Cursor',             icon: "cursor.svg",             state: State.CURSOR,           isActive: true},
                     {name: 'Brush',              icon: "brush.svg",              state: State.BRUSH,             isActive: false},
                     {name: 'Line',               icon: "line.svg",               state: State.LINE,              isActive: false},
                     {name: 'Rectangle',          icon: "rect.svg",               state: State.RECT,              isActive: false},
@@ -193,14 +194,7 @@
 
             this.oldShapesState = this.canvas.shapes.slice();
 
-            const canvasWrap = this.$refs.canvasWrap! as any;
-            
-            canvasWrap.style.width = this.canvas.width;
-            canvasWrap.style.height = this.canvas.height;
-
-            console.log(canvasWrap.style.width);
         },
-
 
         created: function(){
 
