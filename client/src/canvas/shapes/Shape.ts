@@ -10,6 +10,7 @@ export default abstract class Shape{
     public id: number = 0;
     public icon: string = "";
     protected static countNumber: number = 0;
+    public isVisible: boolean = true;
 
     public static countId: number = 0;
 

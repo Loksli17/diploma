@@ -84,6 +84,14 @@
                 <div class="item" v-for="shape in canvas.shapes" :key="shape.name">
                     <img :src="require(`@/assets/draw-items/${shape.icon}`)">
                     <span>{{shape.name}}</span>
+                    <div class="settings">
+                        <div :class="{'non-visible': !shape.isVisible}" @click="toggleShape(shape.id)">
+                            <img :src="require(`@/assets/settings-items/eye.svg`)" alt="">
+                        </div>
+                        <div>
+                            <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -219,6 +227,13 @@
         },
 
         methods: {
+
+            toggleShape: function(id: number){
+                const shape: Shape | undefined = this.canvas.shapes.find(item => item.id == id);
+                if(shape == undefined) return;
+                shape.isVisible = !shape.isVisible;
+                this.canvas.renderAll()
+            },
 
             fileOver: function(e: any){
                 this.fileOverStatus = true;

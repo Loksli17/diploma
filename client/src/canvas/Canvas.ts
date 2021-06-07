@@ -74,7 +74,7 @@ export default class Canvas{
     public renderAll(){
         this.clear();
         for(let i = 0; i < this.shapes.length; i++){
-            this.shapes[i].render(this.ctx);
+            if(this.shapes[i].isVisible) this.shapes[i].render(this.ctx);
         } 
     }
 
