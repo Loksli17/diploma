@@ -254,6 +254,18 @@ $drawButtonsWrapWidth    : 70px;
                     }
                 }
             }
+
+            .shape-menu{
+                position: fixed;
+                right: $elemsWrapWidth - 2px;
+                transform: translateY(-17px);
+                background: $white;
+                border: 2px double $grayBorder;
+
+                .row{
+                    padding: 20px;
+                }
+            }
         }
 
         .work-area{

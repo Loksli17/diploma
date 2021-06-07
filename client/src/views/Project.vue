@@ -86,17 +86,24 @@
 
             <div class="elems-wrap">
 
-                <div class="item" v-for="shape in canvas.shapes" :key="shape.name">
+                <div class="item" v-for="shape in canvas.shapes" :key="shape.name" @click="openShapeMenu(shape)">
                     <img :src="require(`@/assets/draw-items/${shape.icon}`)">
                     <span>{{shape.name}}</span>
                     <div class="settings">
-                        <div :class="{'non-visible': !shape.isVisible}" @click="toggleShape(shape.id)">
+                        <div :class="{'non-visible': !shape.isVisible}" @click.stop="toggleShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/eye.svg`)" alt="">
                         </div>
                         <div @click="removeShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
                         </div>
                     </div>
+
+                    <ShapeMenu
+                        v-if="shape.showMenu"
+                        v-bind:shapeData="shape"
+                        v-on:close-menu="hideShapeMenu"
+                        >
+                    </ShapeMenu>
                 </div>
             </div>
 
@@ -128,6 +135,7 @@
     import Project           from '../types/Project';
     import Canvas, {State}   from '../canvas/Canvas';
     import Shape             from '../canvas/shapes/Shape';
+    import ShapeMenu         from '../components/ShapeMenu.vue';
     import VueResizable      from 'vue-resizable';
 
 
@@ -175,7 +183,10 @@
             }
         },
 
-        // components: {VueResizable},
+        components: {
+            ShapeMenu,
+            // VueResizable
+        },
 
         mounted: async function(){
 
@@ -203,8 +214,6 @@
                 this.$refs.canvasAnimate as HTMLCanvasElement,
                 this.users,
             );
-
-            console.log(data.canvas);
 
             if(data.canvas != undefined){
                 this.canvas.backgroundColor = data.canvas.backgroundColor;
@@ -248,6 +257,19 @@
         },
 
         methods: {
+
+            openShapeMenu: function(shape: Shape){
+                this.canvas.shapes.forEach(item => {
+                    item.showMenu = false;
+                })
+                shape.showMenu = true;
+            },
+
+            hideShapeMenu: function(){
+                this.canvas.shapes.forEach(item => {
+                    item.showMenu = false;
+                });
+            },
 
             toggleShape: function(id: number){
                 const shape: Shape | undefined = this.canvas.shapes.find(item => item.id == id);
