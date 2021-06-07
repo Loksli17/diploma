@@ -39,6 +39,11 @@
                     <span>Area height:</span>
                     <input type="number" min="200" max="2000" v-model="canvas.height">
                 </div>
+
+                <div class="row">
+                    <span>Background color:</span>
+                    <input type="color" v-model="backgroundColor">
+                </div>
             </div>
 
             <div v-if="showExportMenu" class="export-menu">
@@ -142,6 +147,8 @@
                 showImportMenu  : false as boolean,
                 fileOverStatus  : false as boolean,
 
+                backgroundColor: '#FFFFFF' as string,
+
                 settingsButtons: [
                     {name: 'Back',     icon: 'back-arrow.svg',    text: null,     click: 'goBack',             padding: true},
                     {name: 'Forward',  icon: 'forward-arrow.svg', text: null,     click: "goForward",          padding: true},
@@ -224,6 +231,12 @@
             this.$socket.on('mouseMove', (data: any) => {
                 const x = 228;
             });
+        },
+
+        watch: {
+            backgroundColor: function(newVal: string){
+                this.canvas.setBackground(newVal);
+            }
         },
 
         methods: {

@@ -46,6 +46,7 @@ export default class Canvas{
     public brushWidth: number = 1;
     public brushColor: string = "#000000";
     public fillStatus: boolean = false;
+    public backgroundColor: string = "#FFFFFF";
 
     public width: number = 900;
     public height: number = 500;
@@ -64,6 +65,15 @@ export default class Canvas{
         this.shapes = [];
 
         this.shapesHistory = [];
+    }
+
+
+    public setBackground(value: string){
+
+        if(this.ctx == undefined) return;
+
+        this.backgroundColor = value;
+        this.renderAll();
     }
 
 
@@ -815,6 +825,8 @@ export default class Canvas{
     public clear(){
         if(this.ctx == undefined) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = this.backgroundColor;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     public clearAnimate(){
