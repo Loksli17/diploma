@@ -138,7 +138,6 @@ export default class NotificationController{
         try {
             notifications = await getRepository(Notification).createQueryBuilder('notification')
                 .where(whereCond, {id: POST.userId})
-                // .andWhere("typeNotificationId = 1")
                 .leftJoinAndSelect('notification.typeNotification', 'typeNotification')
                 .leftJoinAndSelect('notification.userSend', 'user as u1')
                 .leftJoinAndSelect('notification.userReceive', 'user as u2')
