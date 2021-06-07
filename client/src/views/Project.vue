@@ -89,16 +89,15 @@
 
             <div class="work-area">
                 <div>
-                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"></canvas>
-                    <canvas id="canvas-main" width="1200" height="700" ref="canvas" 
+                    <canvas id="canvas-animate" width="1200" height="700" ref="canvasAnimate"
                         @mousemove="mouseMove" 
                         @click="canvasClick" 
                         @mouseover="drawCursor"
                         @mouseout="normalCursor"
                         @mousedown="mouseDown"
                         @mouseup="mouseUp"
-                        >
-                    </canvas>
+                    ></canvas>
+                    <canvas id="canvas-main" width="1200" height="700" ref="canvas"></canvas>
                 </div>
             </div>
             
