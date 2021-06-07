@@ -93,7 +93,7 @@
                         <div :class="{'non-visible': !shape.isVisible}" @click.stop="toggleShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/eye.svg`)" alt="">
                         </div>
-                        <div @click="removeShape(shape.id)">
+                        <div @click.stop="removeShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
                         </div>
                     </div>
