@@ -42,7 +42,7 @@
                             <router-link @click="cleanActiveTab" class="user-show-link" :to="'/user/edit'">Settings</router-link>
                         </li>
                         <li>
-                            <router-link class="user-show-link" @click="reloadParent" :to="`/user/view?id=${user.id}`">View myself page</router-link>
+                            <router-link class="user-show-link" :to="`/user/view?id=${user.id}`">View myself page</router-link>
                         </li>
                         <li>
                             <router-link @click="cleanActiveTab" class="user-show-link" :to="'/logout'">Log out</router-link>
@@ -81,11 +81,6 @@
         },
 
         methods: {
-
-            reloadParent: function(): void{
-                this.cleanActiveTab();
-                this.$emit("reload-page");
-            },
 
             hideUserMenu: function(): void{
                 this.showUserMenu = false;
@@ -147,10 +142,10 @@
                 });
 
                 this.$store.commit('setTabs', this.tabs);
+                
             },
 
             setActiveTab(ind: number): void{
-
                 this.tabs.map((item: Tab) => {
                     item.isActive = item.link == this.tabs[ind].link;
                     return item;

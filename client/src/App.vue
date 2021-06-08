@@ -1,6 +1,6 @@
 <template>
     <FlashMessage class="flash-message" position="right bottom"/>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
 </template>
 
 

@@ -184,9 +184,9 @@
         },
 
         mounted: async function(){
-
-            this.projectId = Number(this.$route.query.id);
             
+            this.projectId = Number(this.$route.query.id);
+        
             const data: {project: Project; canvas: Canvas} = await this.getProject();
             this.project = data.project;
             
@@ -218,10 +218,7 @@
                 this.canvas.renderAll();
 
                 this.oldShapesState = this.canvas.shapes.slice();
-            }
-
-            console.log(this.canvas.shapes);
-
+                    }
         },
 
         created: function(){

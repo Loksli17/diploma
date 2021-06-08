@@ -192,23 +192,6 @@
 
         methods: {
 
-            initPage: async function(): Promise<void>{
-                this.pageUser         = await this.getPageUser();
-                this.projects         = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
-                this.amountProjects   = await this.getAmountProjects(this.projectsFilter);
-                this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
-                this.friendshipStatus = await this.checkFriends();
-
-                this.friendsCount  = this.friends!.length;
-                this.projectsCount = 0;
-
-                console.log(this.friendshipStatus);
-            },
-
-            reloadPage: async function(): Promise<void>{
-                this.initPage();
-            },
-
             resetSearch: async function(): Promise<void>{
 
                 const pagination = this.$refs.pagination as any;
@@ -324,8 +307,6 @@
             },
 
             getPageUser: async function(): Promise<User | undefined>{
-
-                console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 
                 if(this.$route.path != '/user/view') return;
 
@@ -527,7 +508,16 @@
         },
 
         mounted: async function(){
-            this.initPage();
+            this.pageUser         = await this.getPageUser();
+            this.projects         = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+            this.amountProjects   = await this.getAmountProjects(this.projectsFilter);
+            this.friends          = await this.getFriends(this.friendsRange, this.friendsCount);
+            this.friendshipStatus = await this.checkFriends();
+
+            this.friendsCount  = this.friends!.length;
+            this.projectsCount = 0;
+
+            console.log(this.friendshipStatus);
         },
         
     });
