@@ -68,6 +68,7 @@
                     text-decoration: none;
                     border: 1px solid #AEAAAA;
                     color: black;
+                    background: #fff;
 
                     &.active-a-nav{
                         color: white;

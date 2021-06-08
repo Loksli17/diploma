@@ -1,0 +1,30 @@
+
+@import 'flex';
+@import '../base/colors';
+@import '../components/form';
+@import '../utils//layout/column';
+
+%auth-wrap{
+    width: 100%;
+    height: 100vh;
+    @include flex(center, center);
+    background: linear-gradient(283deg, $white 7%, $blue 100%);
+
+    .wrap{
+        @include column(50px);
+        // border: 2px solid $grayBorder;
+        box-sizing: border-box;
+        padding: 40px;
+        background: $white;
+
+        h1{
+            text-align: left;
+            color: $blue;
+            font-size: 35px;
+        }
+
+        form{
+            @extend %form;
+        }
+    }
+}

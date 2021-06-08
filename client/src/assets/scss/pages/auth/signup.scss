@@ -1,0 +1,8 @@
+@import '../../index';
+
+
+.signup-page{
+    
+    @extend %auth-wrap !optional;
+    
+}

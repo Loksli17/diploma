@@ -25,7 +25,7 @@ $inputGap   : 15px;
             color: $red;
 
             input{
-                border: 1.5px solid $red;
+                border-bottom: 2px solid $red;
             }
         }
 
@@ -45,6 +45,13 @@ $inputGap   : 15px;
             background: rgba($white, $alpha: 0);
             border-bottom: 2px solid $black;
             height: max-content;
+            outline: none;
+
+            &:-webkit-autofill {
+                -webkit-box-shadow: inset 0 0 0 50px #fff !important;
+                -webkit-text-fill-color: $blue !important;
+                color: $blue !important;
+            }
 
             &:focus{
                 outline: 0px solid;

@@ -1,0 +1,8 @@
+@import '../../index';
+
+
+.login-page{
+    
+    @extend %auth-wrap !optional;
+    
+}

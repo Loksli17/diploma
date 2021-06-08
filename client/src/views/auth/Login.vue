@@ -1,7 +1,9 @@
 <template>
-    <div>
-        <div>
-            <AuthNav v-bind:ind='0'/>
+    <div class="login-page">
+
+        <AuthNav v-bind:ind='0'/>
+
+        <div class="wrap">
             <h1>Login</h1>
             <Form
                 v-bind:rows="rowsFormLogin"
@@ -105,5 +107,5 @@
 </script>
 
 <style lang="scss">
-    @import '../../assets/scss/index';
+    @import '../../assets/scss/pages/auth/login.scss';
 </style>

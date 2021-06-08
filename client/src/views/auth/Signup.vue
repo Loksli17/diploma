@@ -1,21 +1,26 @@
 <template>
     <div>
-        <div></div>
-        <div>
-            <AuthNav v-bind:ind='1'/>
-            <h1>Signup</h1>
-            <Form
-                v-bind:rows="rowsFormSignup"
-                v-bind:action="'/auth/signup'"
-                v-bind:tableName="'user'"
-                v-bind:className="'signup-form'"
-                v-bind:successCode="201"
-                v-bind:overloadParseResult="true"
-                v-on:result-parser="formResultParser"
-            />
+        <AuthNav v-bind:ind='1'/>
+        
+        <div class="signup-page">
+
+            <div class="wrap">
+                <h1>Signup</h1>
+                <Form
+                    v-bind:rows="rowsFormSignup"
+                    v-bind:action="'/auth/signup'"
+                    v-bind:tableName="'user'"
+                    v-bind:className="'signup-form'"
+                    v-bind:successCode="201"
+                    v-bind:overloadParseResult="true"
+                    v-on:result-parser="formResultParser"
+                />
+            </div>
+            
         </div>
     </div>
 </template>
+
 
 <script lang="ts">
     import {defineComponent} from 'vue';
@@ -66,3 +71,8 @@
     });
     
 </script>
+
+
+<style lang="scss">
+    @import '../../assets/scss/pages/auth/signup.scss';
+</style>
