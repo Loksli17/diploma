@@ -26,10 +26,44 @@ export default class Arrow extends Shape{
 
         ctx.lineWidth   = this.width;
         ctx.strokeStyle = this.color;
+
+        const
+            w: number   = 5,
+            h: number   = 15,
+            x: number   = this.points[1].x - this.points[0].x,
+            y: number   = this.points[1].y - this.points[0].y,
+            len: number = Point.ditanseBetweenPoint(this.points[0], this.points[1]);
+
+        let
+            ox: number   = 0,
+            oy: number   = 0,
+            nLen: number = 0,
+            phi: number  = 0,
+            ny: number   = 0,
+            nx: number   = 0;
+
+        phi = Math.atan(y / x);
+        if (x < 0) phi += Math.PI;
+        if (x == 0 && y > 0) phi = Math.PI / 2;
+        if (x == 0 && y == 0) phi = 3 * Math.PI / 2;
+
+        ny = (this.points[0].x - this.points[1].x); 
+        nx = (this.points[1].y - this.points[0].y);
+        nLen = Math.sqrt(nx * nx + ny * ny);
+        nx = nx / nLen * w; 
+        ny = ny / nLen * w;
+
         ctx.beginPath();
         ctx.moveTo(this.points[0].x, this.points[0].y);    
         ctx.lineTo(this.points[1].x, this.points[1].y);
-        ctx.stroke(); 
 
+        ox = this.points[0].x + (len - h) * Math.cos(phi);
+        oy = this.points[0].y + (len - h) * Math.sin(phi);
+
+        ctx.moveTo(this.points[1].x, this.points[1].y);
+        ctx.lineTo(ox + nx, oy + ny);
+        ctx.moveTo(this.points[1].x, this.points[1].y);
+        ctx.lineTo(ox - nx, oy - ny);
+        ctx.stroke();
     }
 }
