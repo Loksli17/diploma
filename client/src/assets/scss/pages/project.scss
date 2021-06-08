@@ -11,7 +11,7 @@ $drawButtonsWrapWidth    : 70px;
     top: $projectButtonsWrapHeight - 2px;
     background: $blueHover;
     border: 2px solid $grayBorder;
-    z-index: 9999;
+    z-index: 9998;
 
     .row{
         @include row(20px);
@@ -212,7 +212,7 @@ $drawButtonsWrapWidth    : 70px;
             height: 100%;
             box-sizing: border-box;
             border-left: 2px solid $grayBorder;
-            z-index: 9999;
+            z-index: 9998;
             overflow: auto;
 
             .item{
@@ -299,7 +299,11 @@ $drawButtonsWrapWidth    : 70px;
         transform: translateY(-17px);
         background: $white;
         border: 2px double $grayBorder;
-        z-index: 999;
+        z-index: 9999;
+        width: 300px;
+
+        top: 400px;
+        left: 600px;
 
         .row{
             padding: 20px;

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="activeStatus" class="shape-menu">
+    <div ref="wrap" v-if="activeStatus" class="shape-menu" @mousedown="dragMouseDown">
         <div class="row">
             <h1>{{shape.name}}</h1>
         </div>
@@ -33,19 +33,14 @@
                 activeStatus: false as boolean,
                 shape       : {name: '', color: '#ffffff', } as Shape,
                 type        : '' as string,
-            }
-        },
 
-        props: {
-            shapeData: {
-                type    : Object as () => Shape,
-                required: true,
+                positions: {
+                    clientX: undefined as number | undefined,
+                    clinetY: undefined as number | undefined,
+                    movementX: 0,
+                    movementY: 0
+                }
             }
-        },
-        
-        created: function(){
-            this.shape = this.shapeData;
-            
         },
 
         methods: {
@@ -61,6 +56,32 @@
             show: function(){
                 this.activeStatus = true;
             },
+
+            dragMouseDown(e: MouseEvent) {
+                e.preventDefault();
+
+                this.positions.clientX = e.clientX;
+                this.positions.clinetY = e.clientY;
+                document.onmousemove = this.elementDrag;
+                document.onmouseup = this.closeDragElement;
+            },
+
+            elementDrag(e: MouseEvent) {
+                e.preventDefault();
+                this.positions.movementX = (this.positions.clientX ?? 0) - e.clientX;
+                this.positions.movementY = (this.positions.clinetY ?? 0) - e.clientY;
+
+                [this.positions.clientX, this.positions.clinetY] = [e.clientX, e.clientY];
+                
+                const container = this.$refs.wrap as HTMLElement;
+                container.style.top = (container.offsetTop - this.positions.movementY) + "px";
+                container.style.left = (container.offsetLeft - this.positions.movementX) + "px";
+            },
+
+            closeDragElement() {
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
         },
     });
 </script>
