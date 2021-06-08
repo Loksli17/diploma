@@ -256,7 +256,6 @@
 
             openShapeMenu: function(shape: Shape){
                 const menu = this.$refs.shapeMenu! as any;
-
                 menu.setShape(shape);
                 menu.show();
             },
@@ -283,6 +282,9 @@
             removeShape: function(id: number){
                 this.canvas.shapes = this.canvas.shapes.filter(item => item.id != id);
                 this.canvas.renderAll();
+
+                const menu = this.$refs.shapeMenu! as any;
+                menu.close();
             },
 
             fileOver: function(e: any){
