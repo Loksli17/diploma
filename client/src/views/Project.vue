@@ -97,15 +97,10 @@
                             <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
                         </div>
                     </div>
-
-                    <ShapeMenu
-                        v-if="shape.showMenu"
-                        v-bind:shapeData="shape"
-                        v-on:close-menu="hideShapeMenu"
-                        >
-                    </ShapeMenu>
                 </div>
             </div>
+
+            <ShapeMenu ref="shapeMenu" v-on:close-menu="hideShapeMenu"></ShapeMenu>
 
             <div class="work-area">
                 <!-- <vue-resizable> -->
@@ -259,16 +254,10 @@
         methods: {
 
             openShapeMenu: function(shape: Shape){
-                this.canvas.shapes.forEach(item => {
-                    item.showMenu = false;
-                })
-                shape.showMenu = true;
-            },
+                const menu = this.$refs.shapeMenu! as any;
 
-            hideShapeMenu: function(){
-                this.canvas.shapes.forEach(item => {
-                    item.showMenu = false;
-                });
+                menu.setShape(shape);
+                menu.show();
             },
 
             toggleShape: function(id: number){

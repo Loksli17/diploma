@@ -1,5 +1,5 @@
 <template>
-    <div class="shape-menu">
+    <div v-if="activeStatus" class="shape-menu">
         <div class="row">
             <h1>{{shape.name}}</h1>
         </div>
@@ -28,11 +28,11 @@
 
     export default defineComponent({
         
-        
         data: function(){
             return {
-                shape: {} as Shape,
-                type : '' as string,
+                activeStatus: false as boolean,
+                shape       : {name: '', color: '#ffffff', } as Shape,
+                type        : '' as string,
             }
         },
 
@@ -50,8 +50,17 @@
 
         methods: {
             close: function(){
-                this.$emit('close-menu');
-            } 
+                this.activeStatus = false;
+            },
+
+            setShape: function(shape: Shape){
+                this.shape = shape;
+                this.type  = shape.icon.slice(0, -4);
+            },
+
+            show: function(){
+                this.activeStatus = true;
+            },
         },
     });
 </script>
