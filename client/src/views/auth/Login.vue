@@ -73,9 +73,10 @@
                 }
 
                 this.$flashMessage.show({
-                    type : 'success',
+                    blockClass: 'success',
                     image: require("../../assets/flash/success.svg"),
-                    text : result.data.msg,
+                    text: result.data.msg,
+                    title: "Authorization",
                 });
 
                 result.data.user.authDate = moment().add(1, 'd');
