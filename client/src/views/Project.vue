@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <ShapeMenu ref="shapeMenu" v-on:close-menu="hideShapeMenu"></ShapeMenu>
+            <ShapeMenu ref="shapeMenu" v-on:change-fill="changeShapeFill" v-on:change-color="changeShapeColor" v-on:change-width="changeShapeWidth"></ShapeMenu>
 
             <div class="work-area">
                 <!-- <vue-resizable> -->
@@ -200,7 +200,6 @@
             this.users.push(user);
 
             if(this.project.users!.length){
-                //todo connect to project room socket
                 this.$socket.emit('joinProject', {userId: this.$store.state.userIdentity!.id, projectId: this.projectId});
             }
 
@@ -220,6 +219,8 @@
 
                 this.oldShapesState = this.canvas.shapes.slice();
             }
+
+            console.log(this.canvas.shapes);
 
         },
 
@@ -258,6 +259,18 @@
 
                 menu.setShape(shape);
                 menu.show();
+            },
+
+            changeShapeColor: function(){
+                this.canvas.renderAll();
+            },
+
+            changeShapeWidth: function(){
+                this.canvas.renderAll();
+            },
+
+            changeShapeFill: function(){
+                this.canvas.renderAll();
             },
 
             toggleShape: function(id: number){

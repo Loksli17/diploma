@@ -28,8 +28,8 @@ export default class Arrow extends Shape{
         ctx.strokeStyle = this.color;
 
         const
-            w: number   = 5,
-            h: number   = 15,
+            w: number   = 8,
+            h: number   = 20,
             x: number   = this.points[1].x - this.points[0].x,
             y: number   = this.points[1].y - this.points[0].y,
             len: number = Point.ditanseBetweenPoint(this.points[0], this.points[1]);

@@ -827,7 +827,7 @@ export default class Canvas{
                 
             }
 
-            
+            this.shapes[i].name = shapes[i].name;
         }
     }
 

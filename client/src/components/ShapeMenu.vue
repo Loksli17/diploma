@@ -1,19 +1,34 @@
 <template>
     <div ref="wrap" v-if="activeStatus" class="shape-menu" @mousedown="dragMouseDown">
+        
         <div class="row">
             <h1>{{shape.name}}</h1>
         </div>
+
         <div class="row">
             <span>Type: {{type}}</span>
         </div>
+
         <div class="row">
             <span>Color</span>
-            <input type="color" v-model="shape.color">
+            <input type="color" @mousedown.stop @change.stop="changeShapeColor" v-model="shape.color">
         </div>
+
         <div class="row">
             <span>Name</span>
-            <input type="text" v-model="shape.name">
+            <input @mousedown.stop type="text" v-model="shape.name">
         </div>
+
+        <div class="row">
+            <span>Width</span>
+            <input @mousedown.stop type="number" @change.stop="changeShapeWidth" min="1" max="10" v-model="shape.width">
+        </div>
+
+        <div v-if="shape.fill != undefined" class="row">
+            <span>Fill</span>
+            <input @mousedown.stop type="checkbox" @change.stop="changeShapeFill" min="1" max="10" v-model="shape.fill">
+        </div>
+
         <div class="row">
             <button @click="close" class="btn">Close</button>
         </div>
@@ -56,6 +71,19 @@
             show: function(){
                 this.activeStatus = true;
             },
+
+            changeShapeColor: function(){
+                this.$emit('change-color');
+            },
+
+            changeShapeWidth: function(){
+                this.$emit('change-width');
+            },
+
+            changeShapeFill: function(){
+                this.$emit('change-fill');
+            },
+
 
             dragMouseDown(e: MouseEvent) {
                 e.preventDefault();
