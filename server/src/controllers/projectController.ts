@@ -20,24 +20,25 @@ export default class ProjectController{
 
     private static router: Router = Router();
 
+
     private static async getProjects(req: Request, res: Response){
         
         interface POST{
-            take  : number;
-            skip  : number;
-            userId: number;
-            filter: number | boolean;
+            take      : number;
+            skip      : number;
+            userId    : number;
+            filter    : number | boolean;
+            publicOnly: boolean;
         }
 
         let 
-            postErrors: Array<keyof POST> = [],
-            where     : string            = "true",
-            POST      : POST              = req.body,
-            projects  : Array<Project>    = [];
+            postErrors : Array<keyof POST> = [],
+            where      : string            = "true",
+            publicWhere: string            = "true",
+            POST       : POST              = req.body,
+            projects   : Array<Project>    = [];
         
-        postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId']);
-
-        console.log(POST);
+        postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId', 'publicOnly']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -45,14 +46,17 @@ export default class ProjectController{
         }
 
         if(POST.filter !== true){
-            where = "authorId = :id";
+            where = "project.authorId = :id";
         }
 
-        console.log(where);
+        if(POST.publicOnly){
+            publicWhere = "project.viewStatusId = 1";
+        }
 
         try{
             projects = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
+                .andWhere(publicWhere)
                 .andWhere(new Brackets(qb => {
                     qb.where("uhp.userId = :id", {id: POST.userId})
                     .orWhere("project.authorId = :id", {id: POST.userId})
@@ -79,17 +83,19 @@ export default class ProjectController{
     private static async getAmountProjects(req: Request, res: Response){
 
         interface POST{
-            userId: number;
-            filter: number | boolean;
+            userId    : number;
+            filter    : number | boolean;
+            publicOnly: boolean;
         }
 
         let 
-            postErrors: Array<keyof POST> = [],
-            where     : string            = "true",
-            POST      : POST              = req.body,
-            count     : number            = 0;
+            postErrors  : Array<keyof POST> = [],
+            where       : string            = "true",
+            publicWhere: string            = "true",
+            POST        : POST              = req.body,
+            count       : number            = 0;
 
-        postErrors = PostModule.checkData(POST, ['filter', 'userId']);
+        postErrors = PostModule.checkData(POST, ['filter', 'userId', 'publicOnly']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -100,9 +106,14 @@ export default class ProjectController{
             where = "authorId = :id";
         }
 
+        if(POST.publicOnly){
+            publicWhere = "project.viewStatusId = 1";
+        }
+
         try{
             count = await getRepository(Project).createQueryBuilder('project')
                 .where(where, {id: POST.userId})
+                .andWhere(publicWhere)
                 .andWhere(new Brackets(qb => {
                     qb.where("uhp.userId = :id", {id: POST.userId})
                     .orWhere("project.authorId = :id", {id: POST.userId})

@@ -36,28 +36,39 @@
                 <div v-if="showUserMenu" class="user-menu">
                     <ul>
                         <li>
-                            <div class="img-wrap">
-                                <img :src="require(`../assets/menu/home.svg`)" alt="">
-                            </div>
-                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/'">Home</router-link>
+                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/'">
+                                <div class="img-wrap">
+                                    <img :src="require(`../assets/menu/home.svg`)" alt="">
+                                </div>
+                                <span>Home</span>
+                            </router-link>
                         </li>
+
                         <li>
-                            <div class="img-wrap">
-                                <img :src="require(`../assets/menu/settings.svg`)" alt="">
-                            </div>
-                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/user/edit'">Settings</router-link>
+                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/user/edit'">
+                                <div class="img-wrap">
+                                    <img :src="require(`../assets/menu/settings.svg`)" alt="">
+                                </div>
+                                <span>Settings</span>  
+                            </router-link>
                         </li>
+
                         <li>
-                            <div class="img-wrap">
-                                <img :src="require(`../assets/menu/my-self-page.svg`)" alt="">
-                            </div>
-                            <router-link class="user-show-link" :to="`/user/view?id=${user.id}`">View myself page</router-link>
+                            <router-link class="user-show-link" :to="`/user/view?id=${user.id}`">
+                                <div class="img-wrap">
+                                    <img :src="require(`../assets/menu/my-self-page.svg`)" alt="">
+                                </div>
+                                <span>View myself page</span> 
+                            </router-link>
                         </li>
-                        <li class="logout">
-                            <div class="img-wrap">
-                                <img :src="require(`../assets/menu/logout.svg`)" alt="">
-                            </div>
-                            <router-link @click="cleanActiveTab" class="user-show-link" :to="'/logout'">Log out</router-link>
+
+                        <li>
+                            <router-link  @click="cleanActiveTab" class="user-show-link logout" :to="'/logout'">
+                                <div class="img-wrap">
+                                    <img :src="require(`../assets/menu/logout.svg`)" alt="">
+                                </div>
+                                Log out
+                            </router-link>
                         </li>
                     </ul>
                 </div>

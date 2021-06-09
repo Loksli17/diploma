@@ -437,7 +437,12 @@
             
             getProjects: async function(take: number = 10, skip: number = 0, filter: number | boolean = true): Promise<Array<Project> | undefined> {
                 try {
-                    const res = await this.$axios.post('project/get-projects', {take: take, skip: skip, userId: this.$store.state.userIdentity!.id, filter: filter});
+                    const res = await this.$axios.post('project/get-projects', {
+                        take      : take, 
+                        skip      : skip, 
+                        userId    : this.$store.state.userIdentity!.id, filter: filter,
+                        publicOnly: false,
+                    });
 
                     if(res.status == 200){
                         res.data.projects.forEach((elem: Project) => {
@@ -465,7 +470,12 @@
 
             getAmountProjects: async function(filter: number | boolean = true): Promise<number | undefined> {
                 try {
-                    const res = await this.$axios.post('project/get-amount-projects', {userId: this.$store.state.userIdentity!.id, filter: filter});
+                    const res = await this.$axios.post('project/get-amount-projects', {
+                        userId    : this.$store.state.userIdentity!.id,
+                        filter    : filter,
+                        publicOnly: false,
+                    });
+                    
                     if(res.status == 200){
                         return res.data.amount;
                     }
