@@ -81,6 +81,7 @@ router.beforeEach(async (to, from, next) => {
         socket.close();
         store.commit('setUserIdentity', null);
         store.commit('setJWT', null);
+        store.commit('setTabs', null);
         router.push('/login');
     }else{
         next();
