@@ -56,10 +56,10 @@
                         let msg: string = "";
                         
                         if(status){
-                            msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} accepted your request for friendship.`;
+                            msg = `User ${this.notification.userReceive!.firstName} ${this.notification.userSend!.firstName} accepted your request for friendship.`;
                             this.$emit('accept', this.notification);
                         }else{
-                            msg = `User ${this.notification.userSend!.firstName} ${this.notification.userSend!.firstName} NOT accepted your request for friendship.`;
+                            msg = `User ${this.notification.userReceive!.firstName} ${this.notification.userSend!.firstName} NOT accepted your request for friendship.`;
                             this.$emit('not-accept', this.notification);
                         }
 

@@ -43,7 +43,6 @@
 
     ._vue-flash-msg-body{
         border-radius: 0px;
-        height: 110px;
     }
     
     div:nth-child(2){

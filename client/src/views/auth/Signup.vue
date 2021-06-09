@@ -23,6 +23,7 @@
 
 
 <script lang="ts">
+    declare const require: any
     import {defineComponent} from 'vue';
     import AuthNav           from '../../components/auth/AuthNav.vue';
     import Form, {FormItem}  from '../../components/Form.vue';
@@ -55,11 +56,12 @@
                 }
 
                 this.$router.push('/login');
-                
+
                 this.$flashMessage.show({
-                    type: 'success',
-                    // image: require("../../assets/flashMessage/fail.svg"),
+                    blockClass: 'success',
+                    image: require("../../assets/flash/success.svg"),
                     text: result.data.msg,
+                    title: "Authorization",
                 });
             }
         },

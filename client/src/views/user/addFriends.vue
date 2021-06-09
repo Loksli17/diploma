@@ -201,18 +201,21 @@
                     if(res.status == 200){
                         return res.data;
                     }else{
+
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
+                            blockClass: 'error',
                             image: require("../../assets/flash/fail.svg"),
+                            text: 'Error with query',
+                            title: "Server",
                         });
                         console.error(res.data.error);
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
+                        blockClass: 'error',
                         image: require("../../assets/flash/fail.svg"),
+                        text: 'Error with query',
+                        title: "Server",
                     });
                     console.error(err);  
                 }
@@ -227,17 +230,19 @@
                     if(res.status == 200){
                         return res.data.notifications;
                     }else{
-                        this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
+                       this.$flashMessage.show({
+                            blockClass: 'error',
                             image: require("../../assets/flash/fail.svg"),
+                            text: 'Error with query',
+                            title: "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
+                        blockClass: 'error',
                         image: require("../../assets/flash/fail.svg"),
+                        text: 'Error with query',
+                        title: "Server",
                     });
                     console.error(err);
                 }
@@ -258,9 +263,10 @@
 
                 if(res.status == 400){
                    this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
+                        blockClass: 'error',
                         image: require("../../assets/flash/fail.svg"),
+                        text: 'Error with query',
+                        title: "Server",
                     });
                     return;
                 }
@@ -269,9 +275,10 @@
                 this.users = res.data.users;
 
                 this.$flashMessage.show({
-                    type: 'success',
-                    image: require("../../assets/flash/success.svg"),
-                    text: `Users were founded`,
+                    blockClass: 'success',
+                    image: require("../../assets/flash/fail.svg"),
+                    text: 'Error with query',
+                    title: "Users were founded",
                 });
                 return;
             },
@@ -299,22 +306,27 @@
                         this.$socket.emit('removeNotification', {notification: notific, msg: `User ${notific.userSend!.firstName} ${notific.userSend!.lastName} removed request for friendlist.`});
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("../../assets/flash/success.svg"),
-                        });
-                    }else{
-                        this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
+                            blockClass: 'success',
                             image: require("../../assets/flash/fail.svg"),
+                            text: res.data.msg,
+                            title: "Notification",
+                        });
+
+                    }else{
+
+                        this.$flashMessage.show({
+                            blockClass: 'error',
+                            image: require("../../assets/flash/fail.svg"),
+                            text: "Error with query",
+                            title: "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
+                        blockClass: 'error',
                         image: require("../../assets/flash/fail.svg"),
+                        text: "Error with query",
+                        title: "Server",
                     });
                     console.error(err);
                 }
@@ -369,22 +381,26 @@
 
                     if(res.status == 201){
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
+                            blockClass: 'success',
                             image: require("../../assets/flash/success.svg"),
+                            text: res.data.msg,
+                            title: "Frienship",
                         });
+
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
+                            blockClass: 'error',
                             image: require("../../assets/flash/fail.svg"),
+                            text: "Error with query",
+                            title: "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
+                        blockClass: 'error',
                         image: require("../../assets/flash/fail.svg"),
+                        text: "Error with query",
+                        title: "Server",
                     });
                     console.error(err);
                 }
@@ -395,15 +411,24 @@
                 const responseData: {users: Array<User>; amount: number} | undefined = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: data.take, skip: data.skip, user: this.user});
 
                 if(!responseData!.users.length){
+
                     this.$flashMessage.show({
-                        type: 'warning',
+                        blockClass: 'warning',
                         image: require("../../assets/flash/warning.svg"),
                         text: `No more users`,
+                        title: "Pagination",
                     });
                     return;
                 }
 
                 this.users = responseData!.users;
+                
+                this.users = this.users.map((user: User) => {
+                    user.potentialFriendStatus = this.sendNotifications!.findIndex(
+                        (notific: Notification) => notific.typeNotificationId == 1 && notific.userReceiveId == user.id
+                    ) == -1 ? false : true;
+                    return user;
+                });
             }
         },
         
