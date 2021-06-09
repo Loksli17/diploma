@@ -767,6 +767,8 @@
                 if(res.status == 201){
                     
                     const index: number = this.projects.findIndex((project) => project.id === res.data.project.id);
+                    
+                    if(this.projects[index].isOwn) res.data.project.isOwn = true;
                    
                     this.projectView = res.data.project;
                     this.projects.splice(index, 1, res.data.project);

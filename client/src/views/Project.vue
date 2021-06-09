@@ -186,6 +186,14 @@
         mounted: async function(){
             
             this.projectId = Number(this.$route.query.id);
+
+            const access: boolean | undefined = await this.checkAccess();
+
+            console.log(access);
+
+            if(!access){
+                this.$router.push('404');
+            }
         
             const data: {project: Project; canvas: Canvas} = await this.getProject();
             this.project = data.project;
@@ -218,7 +226,7 @@
                 this.canvas.renderAll();
 
                 this.oldShapesState = this.canvas.shapes.slice();
-                    }
+            }
         },
 
         created: function(){
@@ -518,6 +526,34 @@
                 }
             },
 
+            checkAccess: async function(): Promise<boolean | undefined>{
+
+                try {
+                    const res = await this.$axios.post('/project/check-access', {
+                        projectId: this.projectId,
+                        userId   : this.$store.state.userIdentity!.id,
+                    });
+
+                    if(res.status == 200){
+                        console.log(res);
+                        return res.data.access;
+                    }else{
+                        this.$flashMessage.show({
+                            type: 'error',
+                            text: 'Error with query',
+                            image: require("@/assets/flash/fail.svg"),
+                        });
+                    }
+                }catch(err){
+                    this.$flashMessage.show({
+                        type: 'error',
+                        text: 'Error with query',
+                        image: require("@/assets/flash/fail.svg"),
+                    });
+                    console.error(err);
+                }
+
+            },
 
             setCanvasState: function(btn: any, index: number){
                 this.canvas.setState(btn.state);

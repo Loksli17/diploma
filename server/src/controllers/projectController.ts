@@ -588,6 +588,40 @@ export default class ProjectController{
     }
 
 
+    private static async checkAccess(req: Request, res: Response){
+
+        interface POST{
+            projectId: object,
+            userId   : number,
+        }
+
+        let
+            POST      : POST              = req.body,
+            postErrors: Array<keyof POST> = [], 
+            project   : Project | undefined;
+
+        postErrors = PostModule.checkData<POST>(POST, ['projectId', 'userId']);
+
+        if(postErrors.length){
+            res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
+            return;
+        }
+
+        console.log(POST);
+
+        project = await getRepository(Project).createQueryBuilder('project')
+            .leftJoinAndSelect('user_has_project', 'uhp', 'uhp.projectId = project.id')
+            .where('project.id = :projectId', {projectId: POST.projectId})
+            .andWhere(new Brackets(qb => {
+                qb.where("uhp.userId = :userId", {userId: POST.userId})
+                .orWhere("project.authorId = :userId", {userId: POST.userId})
+            }))
+            .getOne();
+
+        res.status(200).send({access: project == undefined ? false : true});
+    }
+
+
     public static routes(){
         this.router.post('/get-projects' ,       this.getProjects);
         this.router.post('/get-amount-projects', this.getAmountProjects);
@@ -601,6 +635,7 @@ export default class ProjectController{
         this.router.post('/remove-collaborator', this.removeCollaborator);
         this.router.post('/get-project',         this.getProjectById);
         this.router.post('/save-file',           this.saveFile);
+        this.router.post('/check-access',        this.checkAccess);
 
         return this.router;
     }
