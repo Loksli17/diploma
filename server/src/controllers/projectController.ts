@@ -37,6 +37,8 @@ export default class ProjectController{
         
         postErrors = PostModule.checkData(POST, ['take', 'filter', 'skip', 'userId']);
 
+        console.log(POST);
+
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
             return;
@@ -45,6 +47,8 @@ export default class ProjectController{
         if(POST.filter !== true){
             where = "authorId = :id";
         }
+
+        console.log(where);
 
         try{
             projects = await getRepository(Project).createQueryBuilder('project')

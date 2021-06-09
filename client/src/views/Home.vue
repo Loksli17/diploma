@@ -24,8 +24,8 @@
                     <div class="select-header">
                         <div><img :src=" require(`../assets/select-icon.svg`)"></div>
                         <select class="select-header" @change="onFilterChange($event)">
-                            <option :value="true">All projects</option>
-                            <option :value="this.$store.state.userIdentity.id">My projects</option>
+                            <option :value="'all'">All projects</option>
+                            <option :value="'my'">My projects</option>
                         </select>
                     </div>
 
@@ -581,9 +581,11 @@
 
 
             onFilterChange: async function(e: any): Promise<void>{
+                
+                console.log(e.target.value);
 
-                if(e.target.value == '1'){
-                    this.projectsFilter = 1;
+                if(e.target.value == 'my'){
+                    this.projectsFilter = this.$store.state.userIdentity!.id;
                 }else{
                     this.projectsFilter = true;
                 }
