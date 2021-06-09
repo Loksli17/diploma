@@ -36,15 +36,27 @@
                 <div v-if="showUserMenu" class="user-menu">
                     <ul>
                         <li>
+                            <div class="img-wrap">
+                                <img :src="require(`../assets/menu/home.svg`)" alt="">
+                            </div>
                             <router-link @click="cleanActiveTab" class="user-show-link" :to="'/'">Home</router-link>
                         </li>
                         <li>
+                            <div class="img-wrap">
+                                <img :src="require(`../assets/menu/settings.svg`)" alt="">
+                            </div>
                             <router-link @click="cleanActiveTab" class="user-show-link" :to="'/user/edit'">Settings</router-link>
                         </li>
                         <li>
+                            <div class="img-wrap">
+                                <img :src="require(`../assets/menu/my-self-page.svg`)" alt="">
+                            </div>
                             <router-link class="user-show-link" :to="`/user/view?id=${user.id}`">View myself page</router-link>
                         </li>
-                        <li>
+                        <li class="logout">
+                            <div class="img-wrap">
+                                <img :src="require(`../assets/menu/logout.svg`)" alt="">
+                            </div>
                             <router-link @click="cleanActiveTab" class="user-show-link" :to="'/logout'">Log out</router-link>
                         </li>
                     </ul>
