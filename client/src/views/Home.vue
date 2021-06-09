@@ -1076,6 +1076,14 @@
 
 
         created: async function(){
+
+            this.$socket.on('notification', async (data: any) => {
+                
+                if(data.notification.typeNotificationId === 3 || data.notification.typeNotificationId === 4){
+                    this.projects = await this.getProjects(this.projectsRange, this.projectsCount, this.projectsFilter);
+                }
+                
+            });
             
             const viewStatusElements: Array<Option> = [];
 
