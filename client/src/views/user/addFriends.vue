@@ -410,6 +410,8 @@
 
                 const responseData: {users: Array<User>; amount: number} | undefined = await this.getUsersAmount({userId: this.$store.state.userIdentity!.id, take: data.take, skip: data.skip, user: this.user});
 
+                console.log(data.take, data.skip);
+
                 if(!responseData!.users.length){
 
                     this.$flashMessage.show({

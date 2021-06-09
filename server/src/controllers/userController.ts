@@ -144,12 +144,12 @@ export default class UserController{
             friends = await getRepository(User).createQueryBuilder('user')
                 .innerJoin('user_has_user', 'uhu', 'uhu.userId1 = user.id or uhu.userId2 = user.id')
                 .where('(uhu.userId1 = :id || uhu.userId2 = :id) and user.id != :id', {id: POST.userId})
-                .skip(POST.skip)
-                .take(POST.take)
                 .orderBy('user.status')
                 .getMany();
 
             if(friends.length) friendsIds = friends.map(item => item.id!);
+            
+            console.log(POST);
             
             users = await getRepository(User).createQueryBuilder()
                 .where(friends.length ? "id not in (:ids)" : "", {ids: friendsIds})
@@ -163,6 +163,8 @@ export default class UserController{
                 .skip(POST.skip)
                 .take(POST.take)
                 .getMany();
+
+            // console.log('azazaza', kek);
 
             amount = await getRepository(User).createQueryBuilder()
                 .where(friends.length ? "id not in (:ids)" : "", {ids: friendsIds})

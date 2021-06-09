@@ -499,7 +499,7 @@
 
 
             moreFriendsEvt: async function(){
-                const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount);
+                const newFriends: Array<User> | undefined = await this.getFriends(this.friendsRange, this.friendsCount, this.$store.state.userIdentity!.id);
 
                 if(newFriends == undefined){
                     this.$flashMessage.show({

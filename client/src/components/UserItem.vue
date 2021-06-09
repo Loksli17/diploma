@@ -7,7 +7,7 @@
 
         <div class="">
             <div class="login">
-                <span>{{userData.login}} <template v-if="fullNameStatus">({{userData.firstName}} {{userData.lastName}})</template></span>
+                <span>{{userData.login}} {{userData.id}} <template v-if="fullNameStatus">({{userData.firstName}} {{userData.lastName}})</template></span>
             </div>
             <div v-if="onlineStatus">
                 <span v-if="userData.status" class="online">online</span>
