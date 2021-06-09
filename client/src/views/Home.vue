@@ -388,9 +388,9 @@
                 dragging: false,
 
                 userContexMenuItems: [
-                    {value: "View profile", link: "/user/view?id=", img: "view-icon.svg"},
-                    {value: "Go to chat", link: "/chat?idUserReceive=", img: "chat-icon.svg"}, 
-                    {value: "Remove form friends", link: "", img: "remove-icon.svg", click: "remove-friend"},
+                    {value: "View profile",        link: "/user/view?id=",       img: "view-icon.svg"},
+                    {value: "Go to chat",          link: "/chat?idUserReceive=", img: "chat-icon.svg"}, 
+                    {value: "Remove from friends", link: "",                     img: "remove-icon.svg", click: "remove-friend", classRemove: true},
                 ] as Array<MenuUserItem>,
             }  
         },
