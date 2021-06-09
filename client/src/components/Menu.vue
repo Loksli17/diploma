@@ -168,7 +168,7 @@
                 
             },
 
-            setActiveTab(ind: number): void{
+            setActiveTab: function(ind: number): void{
                 this.tabs.map((item: Tab) => {
                     item.isActive = item.link == this.tabs[ind].link;
                     return item;
@@ -177,9 +177,19 @@
                 this.$store.commit('setTabs', this.tabs);
             },
 
-            setNotificationAmount(val: number): void{
+            setNotificationAmount: function(val: number): void{
                 this.amountNotifications = val;
-            }
+            },
+
+            setNameOfActiveTab: function(val: Project): void{
+                
+                this.tabs.map(item => {
+                    if(item.link == val.id) item.name = val.name;
+                    return item;
+                });
+
+                this.$store.commit('setTabs', this.tabs);
+            },
         },
 
 

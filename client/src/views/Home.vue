@@ -776,6 +776,9 @@
                     res.data.project.dateOfEdit   = this.$filters.datetimeToView(res.data.project.dateOfEdit);
                     res.data.project.dateOfCreate = this.$filters.datetimeToView(res.data.project.dateOfCreate!);
 
+                    const menu = this.$refs.globalMenu! as any;
+                    menu.setNameOfActiveTab(this.projects[index]);
+
                     this.$flashMessage.show({
                         type: 'success',
                         image: require("../assets/flash/success.svg"),
