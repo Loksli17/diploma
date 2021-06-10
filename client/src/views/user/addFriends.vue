@@ -365,7 +365,6 @@
 
                 menu.setNotificationAmount(menu.amountNotifications - 1);
                 console.log(menu.amountNotifications - 1);
-                // this.$refs.globalMenu.amountNotifications = this.$refs.globalMenu.amountNotifications - 1;
 
                 const answerFriendNotification = this.$refs.answerFriendship as any;
                 answerFriendNotification.setViewStatus(false);
