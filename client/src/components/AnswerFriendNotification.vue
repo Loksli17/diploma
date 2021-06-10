@@ -30,9 +30,6 @@
             }
         },
 
-        // created: function(){
-
-        // },
 
         methods: {
             
@@ -64,9 +61,9 @@
                         }
 
                         this.$socket.emit('answerFriendship', {
-                            msg: msg,
+                            msg         : msg,
                             notification: this.notification,
-                            userSendId: this.notification.userSendId,
+                            userSendId  : this.notification.userSendId,
                         });
                         
                     }else{

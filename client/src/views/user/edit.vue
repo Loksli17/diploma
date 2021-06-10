@@ -201,6 +201,8 @@
             goodAnswer: function(notification: Notification){
                 const index = this.notifications!.findIndex(item => item.id == notification.id);
 
+                console.log(notification, index);
+
                 this.notifications!.splice(index, 1);
                 this.$store.commit('removeNotification', index);
 
