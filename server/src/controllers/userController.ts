@@ -362,7 +362,7 @@ export default class UserController{
                 try{
                     fullFileName = Parser.parseFileName(file, POST.userId);
                     if(fullFileName == oldFileName) break;
-                    file.mv(`../client/public/${fullFileName}`);
+                    file.mv(`avatars/${fullFileName}`);
                     user.avatar = fullFileName;
                 }catch(err){
                     res.status(400).send({error: 'Error with file moving'});
@@ -372,10 +372,10 @@ export default class UserController{
             }
         }
 
-        //!deleting old avatar
+        //*deleting old avatar
         if(oldFileName != user.avatar && fs.existsSync(`../client/public/${oldFileName}`)){
             try{
-                fs.unlinkSync(`../client/public/${oldFileName}`);
+                fs.unlinkSync(`avatars/${oldFileName}`);
             }catch(err){
                 res.status(400).send({error: 'Error with unlik old avatar'});
                 throw new Error(err);

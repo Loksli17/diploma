@@ -27,11 +27,22 @@
         </ActionBack>
 
         <ActionBack ref="actionBackAvatar" v-bind:headerMainText="`User with id: ${this.user.id}`" v-bind:headerAddText="`Add avatar`">
-            <form id="fileForm" ref="fileForm" >
-                <span>Drop new image here</span>
-            </form>
-            <img :src="fileSrc" alt="">
-            <progress :value="progressValue" max="100"></progress>
+            <div class="upload-avatar-field" :class="{'active-field': fileDropStatus}">
+                <form class="fileForm" :class="{'form-active': fileOverStatus}" ref="fileForm" @drop.prevent="fileDrop" @dragenter.prevent @dragover.prevent="fileOver" @dragleave="fileLeave">
+                    <span>Drop new image here</span>
+                </form>
+                <div v-if="fileDropStatus">
+                    <img  :src="fileSrc" alt="">
+                </div>
+                <div class="info" v-if="fileDropStatus">
+                    <span>Size: {{file.size}}</span>
+                    <span>Name: {{file.name}}</span>
+                    <div>
+                        <progress v-if="fileUploading" :value="progressValue" max="100"></progress>
+                        <button @click="sendFile" class="btn">Load image</button>
+                    </div> 
+                </div> 
+            </div>
         </ActionBack>
 
 
@@ -120,6 +131,10 @@
                 capableDragAndDrop: false as boolean,
                 fileSrc           : '',
                 progressValue     : 0,
+                fileOverStatus    : false as boolean,
+                fileDropStatus    : false as boolean,
+                file              : {} as File,
+                fileUploading     : false as boolean,
 
                 rowsEditForm: [
                     [{type: 'text', name: 'login', label: 'Login'}, {type: 'hidden', name: 'id'}],
@@ -161,56 +176,6 @@
 
             this.rowsPasswordForm[0][2].value = this.user.id;
         },
-
-        //? this function are needed for init drag and drop prop
-        mounted: async function(){
-            this.capableDragAndDrop = this.determineCapableDragAndDrop();
-
-            if(!this.capableDragAndDrop){
-                this.$flashMessage.show({
-                    type: 'error',
-                    image: require("../../assets/flash/fail.svg"),
-                    text: 'Your browser can not works with drag and drop. Baaaad.',
-                });
-                return;
-            }
-
-            const events: Array<string> = [
-                'drag', 
-                'dragstart', 
-                'dragend', 
-                'dragover', 
-                'dragenter', 
-                'dragleave', 
-                'drop'
-            ];
-
-            // events.forEach(function(e: string){
-            //     this.$refs.fileForm.addEventListener(e, function(evt){
-            //         evt.preventDefault();
-            //         evt.stopPropagation();
-            //     }.bind(this), false);
-            // }.bind(this));
-
-            // this.$refs.fileForm.addEventListener('drop', function(e){
-            //     const 
-            //         file: any = e.dataTransfer.files[0],
-            //         deterFile: {'msg': string; success: boolean} = this.checkFile(file);
-
-            //     if(!deterFile.success){
-            //         this.$flashMessage.show({
-            //             type: 'error',
-            //             text: deterFile.msg,
-            //         });
-            //         return;
-            //     }
-
-            //     this.readFile(file);
-            //     this.sendFile(file);
-
-            // }.bind(this));
-        },
-
 
         methods: {
 
@@ -284,23 +249,63 @@
             
 
 
-            editDataEvt: function(e: any){
+            editDataEvt: function(){
                 const backComp = this.$refs.actionBackData! as any;
                 backComp.show();
             },
 
-            editPasswordEvt: function(e: any){
+            editPasswordEvt: function(){
                 const background = this.$refs.actionBackPassword! as any;
                 background.show();
             },
 
-            editAvatarEvt: function(e: any){
+            editAvatarEvt: function(){
                 const background = this.$refs.actionBackAvatar! as any;
                 background.show();
             },
 
 
-            //? for file Upload
+
+            fileOver: function(){
+                this.fileOverStatus = true;
+            },
+
+            fileLeave: function(){
+                this.fileOverStatus = false;
+            },
+
+            fileDrop: function(e: any){
+                
+                const
+                    reader: FileReader = new FileReader(), 
+                    file: File         = e.dataTransfer.files[0];
+
+                let checkFileResult: {msg: string; success: boolean} = {msg: '', success: false};
+
+                checkFileResult = this.checkFile(file);
+
+                if(!checkFileResult.success){
+                    this.$flashMessage.show({
+                        blockClass: 'warning',
+                        image: require("../../assets/flash/warning.svg"),
+                        text: 'Format of file must be PNG or JPEG',
+                        title: "File",
+                    });
+                    throw Error('Bad format of file')
+                }
+
+                reader.addEventListener('load', (e: any) => {
+                    const data = e.target.result;
+                    this.fileSrc = data;
+                    this.fileOverStatus = false;
+                    this.fileDropStatus = true;
+                    this.file           = file;
+                })
+
+                reader.readAsDataURL(file);
+            },
+
+            //* for file Upload
             checkFile: function(file: any): {msg: string; success: boolean}{
 
                 if(file.type != 'image/png' && file.type != 'image/jpeg' && file.type != 'image/jpg'){
@@ -314,32 +319,13 @@
                 return {msg: 'Good file', success: true};
             },
 
+            //* for file Upload
+            sendFile: async function(){
+                const data: FormData = new FormData();
+                data.append('file', this.file);
+                data.append('userId', String(this.$store.state.userIdentity!.id));
 
-            //? for file Upload
-            determineCapableDragAndDrop: function(){
-                const div = document.createElement('div');
-
-                return (('draggable' in div) || ('ondragstart' in div && 'ondrag' in div)) && 'FileReader' in window;
-            },
-
-
-            //? for file Upload
-            readFile: function(file: any){
-                const fr: FileReader = new FileReader();
-
-                // fr.addEventListener('load', function(){
-                //     this.fileSrc = fr.result;
-                // }.bind(this), false);
-
-                fr.readAsDataURL(file);
-            },
-
-
-            //? for file Upload
-            sendFile: async function(file: any){
-                const data: FormData = new FormData()
-                data.append('file', file);
-                // data.append('userId', this.$store.state.userIdentity!.id);
+                console.log(this.file);
 
                 const res = await this.$axios.post('user/edit-avatar', data, {
                     onUploadProgress: (e) => {
@@ -355,6 +341,7 @@
                     return;
                 }
 
+                //*change data about path of avatar
                 if(res.status == 200){
                     this.$store.commit('setUserIdentity', res.data.user);
 
@@ -365,7 +352,6 @@
 
                     console.log(this.$store.state.userIdentity);
                 }
-
             },
 
 

@@ -564,8 +564,6 @@ export default class ProjectController{
             return;
         }
 
-        console.log(POST.canvas);
-
         try {
             fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.canvas));
         }catch(err){

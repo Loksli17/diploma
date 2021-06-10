@@ -189,8 +189,6 @@
 
             const access: boolean | undefined = await this.checkAccess();
 
-            console.log(access);
-
             if(!access){
                 this.$router.push('404');
             }
@@ -292,7 +290,7 @@
                 menu.close();
             },
 
-            fileOver: function(e: any){
+            fileOver: function(){
                 this.fileOverStatus = true;
             },
 
