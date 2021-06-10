@@ -79,7 +79,7 @@
 
             <div class="users-wrap">
                 <div class="user" v-for="user in users" :key="user.id" :title="user.firstName + ' ' + user.lastName" >
-                    <div class="avatar" v-if="!user.avatar.includes('default-user')" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}"></div>
+                    <div class="avatar" v-if="!user.avatar.includes('default-user')" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${user.avatar})`}"></div>
                     <span v-else>{{user.firstName[0]}} {{user.lastName[0]}}</span>
                 </div>
             </div>

@@ -50,7 +50,7 @@
 
             <div class="avatar-wrap">
                 <h2>Avatar</h2>
-                <div class="avatar" :style="{backgroundImage: 'url(' + require(`../../assets/user-avatar/${this.user.avatar}`)+ ')'}"></div>
+                <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${this.user.avatar})`}"></div>
                 <button @click="editAvatarEvt" class="btn bth-avatar">Edit Avatar</button>
             </div>
 

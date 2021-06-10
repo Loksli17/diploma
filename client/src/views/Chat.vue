@@ -15,11 +15,11 @@
 
                 <div class="chats-wrap">
                     <div class="chat-item" v-for="(chat, index) in chats" :class="{active: chat.isActive}" :key="chat.id" @click="changeChatEvt(index, chat)">
-                        <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.user2.avatar}`) + ')'}"></div>
+                        <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${chat.user2.avatar})`}"></div>
                         <div class="section">
                             <div class="login">{{chat.user2.login}}</div>
                             <div class="last-message">
-                                <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${chat.lastMessage.user.avatar}`) + ')'}">
+                                <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${chat.lastMessage.user.avatar})`}">
                                     
                                 </div>
                                 <span>
@@ -33,7 +33,7 @@
 
             <div class="current-chat">
                 <div class="header">
-                    <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${interlocutor.avatar}`) + ')'}"></div>
+                    <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${interlocutor.avatar})`}"></div>
                     <router-link class="name" :to="`/user/view?id=${interlocutor.id}`">{{interlocutor.firstName}} {{interlocutor.lastName}} ({{interlocutor.login}})</router-link>
                     <span v-if="interlocutor.status" class="online">online</span>
                     <span v-else class="offline">offline</span>
@@ -43,7 +43,7 @@
                 <div ref="messagesWrap" class="messages-wrap" @scroll="moreMessages">
                     <div class="message" v-for="message in currentChat.messages" :key="message">
                         <div class="identity-message" v-if="$store.state.userIdentity.id == message.userId">
-                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${$store.state.userIdentity.avatar}`) + ')'}"></div>
+                            <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${$store.state.userIdentity.avatar})`}"></div>
                             <div class="text">
                                 <span>{{message.text}}</span>
                                 <span>{{$filters.datetimeToViewMessage(message.date)}}</span>
@@ -56,7 +56,7 @@
                                 <span>{{message.text}}</span>
                                 <span>{{$filters.datetimeToViewMessage(message.date)}}</span>
                             </div>
-                            <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${interlocutor.avatar}`) + ')'}"></div>
+                            <div class="avatar" :style="{backgroundImage:`url(http://localhost:3000/img/avatars/${interlocutor.avatar})`}"></div>
                         </div>
                     </div>
 

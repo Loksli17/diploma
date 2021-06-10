@@ -2,7 +2,7 @@
     
     <div :class="itemClassName" v-click-outside="hideUserMenu"  v-on:click="showUserMenu">
         <div>
-            <div class="avatar" :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${userData.avatar}`) + ')'}"></div>
+            <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${userData.avatar})`}"></div>
         </div>
 
         <div class="">

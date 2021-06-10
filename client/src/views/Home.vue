@@ -221,7 +221,7 @@
                         <div class="collaborators-wrap">
                             <template v-for="(collaborator, ind) in projectViewCollabs" :key="collaborator.id">
                                 <div class="collaborator">
-                                    <div class="avatar" :style="{backgroundImage: 'url(' + require(`../assets/user-avatar/${collaborator.avatar}`)+ ')'}"></div>
+                                    <div class="avatar" :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${collaborator.avatar})`}"></div>
                                     <div>
                                         {{collaborator.firstName}} {{collaborator.lastName}}
                                     </div>
@@ -307,14 +307,14 @@
                 <div class="row-3">
                     <draggable :list="searchCollabsRes" group="users" class="search-result-wrap" @change="log" >
                         <div class="user" :id="user.id" v-for="user in searchCollabsRes" :key="user.id">
-                            <div :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}" class="avatar"></div>
+                            <div :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${user.avatar})`}" class="avatar"></div>
                             <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
                         </div>
                     </draggable>
 
                     <draggable :list="newCollabs" group="users" class="new-users" @change="log">
                         <div class="user" :id="user.id" v-for="user in newCollabs" :key="user.id">
-                            <div :style="{backgroundImage: 'url(' + require(`@/assets/user-avatar/${user.avatar}`) + ')'}" class="avatar"></div>
+                            <div :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${user.avatar})`}" class="avatar"></div>
                             <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
                         </div>
                     </draggable>
