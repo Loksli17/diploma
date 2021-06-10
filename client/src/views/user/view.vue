@@ -47,7 +47,7 @@
                             <div class="project" v-for="project in projects" :key="project.id" @click.prevent="projectOpenEvt(project)">
                                 <div class="project-wrap">
 
-                                    <div class="project-img" :style="{backgroundImage: 'url(' + require(`../../assets/projects/img/${project.image}`)+ ')'}">
+                                    <div class="project-img" :style="{backgroundImage: `url(http://localhost:3000/img/projects/${project.image})`}">
                                         
                                     </div>
 

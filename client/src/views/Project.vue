@@ -440,6 +440,8 @@
             },
 
             saveProject: async function(){
+
+                const canvas = this.$refs.canvas! as any;
                 
                 if(this.canvas.shapes.length == 0){
                     this.$flashMessage.show({
@@ -451,9 +453,19 @@
                 }
 
                 try {
+
+                    const fileReader: FileReader = new FileReader();
+
+                    // fileReader.readAsDataURL(canvas.toDataURL(`image/jpeg`).replace(`image/jpeg`, "image/octet-stream"));
+
+                    // fileReader.addEventListener('load', () => {
+                        
+                    // });
+
                     const res: any = await this.$axios.post('project/save-file', {
                         id    : this.project!.id,
                         canvas: this.canvas,
+                        data  : canvas.toDataURL(`image/jpeg`).replace(`image/jpeg`, "image/octet-stream"),
                     });
 
                     if(res.status == 400){

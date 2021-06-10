@@ -537,6 +537,7 @@ export default class ProjectController{
         interface POST{
             canvas: object,
             id    : number,
+            data  : string,
         }
 
         let
@@ -544,7 +545,7 @@ export default class ProjectController{
             postErrors: Array<keyof POST> = [], 
             project   : Project | undefined;
 
-        postErrors = PostModule.checkData<POST>(POST, ['canvas', 'id']);
+        postErrors = PostModule.checkData<POST>(POST, ['canvas', 'id', 'data']);
 
         if(postErrors.length){
             res.status(400).send({error: ErrorMessage.dataNotSended(postErrors[0])});
@@ -564,8 +565,11 @@ export default class ProjectController{
             return;
         }
 
+        const data = Buffer.from(POST.data.replace("data:image/octet-stream;base64,", ""), 'base64');
+
         try {
             fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.canvas));
+            fs.writeFileSync(`public/img/projects/project${POST.id}.jpeg`, data)
         }catch(err){
             console.error(err);
             res.status(400).send({msg: ErrorMessage.file()});
@@ -573,6 +577,7 @@ export default class ProjectController{
         }
         
         project.fileName = `project${POST.id}.json`;
+        project.image    = `project${POST.id}.jpeg`;
 
         try {
             await getRepository(Project).update(POST.id, project);

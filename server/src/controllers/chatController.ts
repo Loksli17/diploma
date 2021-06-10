@@ -93,8 +93,6 @@ export default class ChatController{
                 .groupBy('chat_id')
                 .getRawMany();
 
-            console.log(chatsDb);
-
             for(let i = 0; i < chatsDb.length; i++){
                 let 
                     item: any  = chatsDb[i],

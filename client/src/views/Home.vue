@@ -44,9 +44,7 @@
                             <div class="project" v-for="project in projects" :key="project.id" @click.prevent="projectOpenEvt(project)">
                                 <div class="project-wrap">
 
-                                    <div class="project-img" :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}">
-                                        
-                                    </div>
+                                    <div class="project-img" :style="{backgroundImage: `url(http://localhost:3000/img/projects/${project.image})`}"></div>
 
                                     <div class="project-info">
 
@@ -94,7 +92,7 @@
                                 <tr v-for="project in projects" :key="project.id">
                                     <td>{{project.id}}</td>
                                     <td>
-                                        <div :style="{backgroundImage: 'url(' + require(`../assets/projects/img/${project.image}`)+ ')'}"></div>
+                                        <div :style="{backgroundImage: `url(http://localhost:3000/img/projects/${project.image})`}"></div>
                                     </td>
                                     <td>{{project.name}}</td>
                                     <td>{{project.dateOfEdit}}</td>
@@ -178,7 +176,7 @@
 
                 <div class="col-1">
                     <div class="row">
-                        <div :style="{backgroundImage: 'url(' + require(`@/assets/projects/img/${projectView.image}`) + ')'}" class="project-img"></div>
+                        <div :style="{backgroundImage: `url(http://localhost:3000/img/projects/${projectView.image})`}" class="project-img"></div>
                     </div>
 
                     <div class="row">
