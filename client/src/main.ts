@@ -132,6 +132,12 @@ declare module '@vue/runtime-core'{
 
 const app = createApp(App);
 
+app.use(AuthPlagin);
+
+if(store.state.userIdentity != null){
+    app.config.globalProperties.$refreshToken();
+}
+
 app.directive('click-outside', {
     mounted(el: any, binding: any) {
         el.clickOutsideEvent = function (e: any) {
@@ -211,4 +217,4 @@ socket.on('answerFriendship', (data: any) => {
 
 app.component('Menu', Menu);
 
-app.use(AuthPlagin).use(store).use(router).mount('#app');
+app.use(store).use(router).mount('#app');
