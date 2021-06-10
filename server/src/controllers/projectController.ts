@@ -607,8 +607,6 @@ export default class ProjectController{
             return;
         }
 
-        console.log(POST);
-
         project = await getRepository(Project).createQueryBuilder('project')
             .leftJoinAndSelect('user_has_project', 'uhp', 'uhp.projectId = project.id')
             .where('project.id = :projectId', {projectId: POST.projectId})

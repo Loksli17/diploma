@@ -96,6 +96,8 @@
                 this.$store.commit('setNotifications', []);
                 console.log(await this.getNotifications(result.data.user.id))
                 this.$store.commit('setNotifications', await this.getNotifications(result.data.user.id));
+
+                this.$refreshToken();
             },
         },
 

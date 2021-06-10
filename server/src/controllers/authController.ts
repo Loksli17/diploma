@@ -52,7 +52,7 @@ export default class AuthController{
             return;
         }
 
-        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '15m'});
+        token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '16m'});
         console.log(token);
         res.status(200).send({token: token, user: user, msg: `${user.firstName}, welcome to Draw Together`});
     }
@@ -82,7 +82,7 @@ export default class AuthController{
         }
 
         token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '15m'});
-        console.log(token);
+        console.log(token, 'this');
         res.status(200).send({token: token});
     }
 

@@ -10,6 +10,7 @@ import store                              from './store';
 import User                               from './types/User';
 import {Socket, io}                       from 'socket.io-client';
 import Menu                               from './components/Menu.vue'; 
+import AuthPlagin                         from './router/authPlagin';
 
 
 let user: User | null = null;
@@ -124,6 +125,7 @@ declare module '@vue/runtime-core'{
         $flashMessage: FlashMessagePlugin;
         $store: typeof store;
         $socket: Socket;
+        $refreshToken: Function;
         // $router: Router;
     }
 }
@@ -209,4 +211,4 @@ socket.on('answerFriendship', (data: any) => {
 
 app.component('Menu', Menu);
 
-app.use(store).use(router).mount('#app');
+app.use(AuthPlagin).use(store).use(router).mount('#app');
