@@ -93,6 +93,8 @@ export default class ChatController{
                 .groupBy('chat_id')
                 .getRawMany();
 
+            console.log(chatsDb);
+
             for(let i = 0; i < chatsDb.length; i++){
                 let 
                     item: any  = chatsDb[i],
@@ -119,12 +121,14 @@ export default class ChatController{
 
                 if(item['u2_id'] != POST.userId){
                     chat.user2 = new User();
-                    chat.user2.login = item['u2_login'];
-                    chat.user2.email = item['u2_email'];
+                    chat.user2.login  = item['u2_login'];
+                    chat.user2.email  = item['u2_email'];
+                    chat.user2.avatar = item['u2_avatar'];
                 }else{
                     chat.user2 = new User();
-                    chat.user2.login = item['u1_login'];
-                    chat.user2.email = item['u2_email'];
+                    chat.user2.login  = item['u1_login'];
+                    chat.user2.email  = item['u2_email'];
+                    chat.user2.avatar = item['u2_avatar'];
                 }
 
                 chats.push(chat);

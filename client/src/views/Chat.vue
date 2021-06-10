@@ -433,6 +433,8 @@
                 chat.lastMessage = data.message;
             });
 
+        console.log(this.chats);
+
         },
     });
 </script>
