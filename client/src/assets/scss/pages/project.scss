@@ -286,6 +286,10 @@ $drawButtonsWrapWidth    : 70px;
                 }
 
                 #canvas-animate{
+                    z-index: 3;
+                }
+
+                #canvas-mouse{
                     z-index: 2;
                 }
             }

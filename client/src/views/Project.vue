@@ -113,7 +113,8 @@
                             @mousedown="mouseDown"
                             @mouseup="mouseUp"
                         ></canvas>
-                        <canvas id="canvas-main" width="1200" height="700" ref="canvas"></canvas>
+                        <canvas id="canvas-mouse" width="1200" height="700" ref="canvasMouse"></canvas>
+                        <canvas id="canvas-main"  width="1200" height="700" ref="canvas"></canvas>
                     </div>
                 <!-- </vue-resizable> -->
             </div>
@@ -132,6 +133,7 @@
     import Shape             from '../canvas/shapes/Shape';
     import ShapeMenu         from '../components/ShapeMenu.vue';
     import VueResizable      from 'vue-resizable';
+    import Cursor            from '../canvas/Cursor';
 
 
     export default defineComponent({
@@ -212,6 +214,7 @@
             this.canvas = new Canvas(
                 this.$refs.canvas as HTMLCanvasElement,
                 this.$refs.canvasAnimate as HTMLCanvasElement,
+                this.$refs.canvasMouse as HTMLCanvasElement,
                 this.users,
             );
 
@@ -225,27 +228,52 @@
 
                 this.oldShapesState = this.canvas.shapes.slice();
             }
+
+            // this.canvas.cursors.push(new Cursor(this.$store.state.userIdentity!.firstName, this.$store.state.userIdentity!.lastName, this.$store.state.userIdentity!.id));
         },
 
         created: function(){
 
             this.$socket.on('joinProject', (data: any) => {
+
                 data.users = data.users.map((item: any) => {
                     const user: UserCanvas = item;
                     user.color  = "#000";
                     user.cursor = {x: 0, y: 0};
                     return user;
                 });
+
                 this.users = data.users;
+
+                this.canvas.cursors = [];
+                data.users.forEach((item: any) => {
+                    if(item.id != this.$store.state.userIdentity!.id) this.canvas.cursors.push(new Cursor(item.firstName, item.lastName, item.id));
+                });
+
             });
 
             this.$socket.on('leaveProject', (data: any) => {
-                const ind: number = this.users.findIndex(item => item.id == data.id);
+                let ind: number = this.users.findIndex(item => item.id == data.id);
                 this.users.splice(ind, 1);
+
+                ind = this.canvas.cursors.findIndex(item => item.userId == data.id);
+                this.canvas.cursors.splice(ind, 1);
             });
 
             this.$socket.on('mouseMove', (data: any) => {
+                // console.log(data);
                 const x = 228;
+
+                if(this.canvas.cursors == undefined) return;
+
+                this.canvas.cursors.map(item => {
+                    if(data.userId == item.userId){
+                        item.x = data.x;
+                        item.y = data.y;
+                        this.canvas.renderCursors();
+                    }
+                    return item;
+                })
             });
         },
 
@@ -454,14 +482,6 @@
 
                 try {
 
-                    const fileReader: FileReader = new FileReader();
-
-                    // fileReader.readAsDataURL(canvas.toDataURL(`image/jpeg`).replace(`image/jpeg`, "image/octet-stream"));
-
-                    // fileReader.addEventListener('load', () => {
-                        
-                    // });
-
                     const res: any = await this.$axios.post('project/save-file', {
                         id    : this.project!.id,
                         canvas: this.canvas,
@@ -545,7 +565,6 @@
                     });
 
                     if(res.status == 200){
-                        console.log(res);
                         return res.data.access;
                     }else{
                         this.$flashMessage.show({

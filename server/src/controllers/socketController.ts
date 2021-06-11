@@ -184,6 +184,20 @@ export default class SocketContoller{
         });
     }
 
+
+    public static drawShape(socket: Socket){
+
+        interface Data{
+            shape    : Object;
+            user     : User;
+            projectId: number;
+        }
+
+        socket.on('drawShape', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('drawShape', data);
+        })
+    } 
+
     
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
@@ -194,5 +208,6 @@ export default class SocketContoller{
         SocketContoller.joinProject(socket);
         SocketContoller.leaveProject(socket);
         SocketContoller.mouseMove(socket);
+        SocketContoller.drawShape(socket);
     }
 }

@@ -11,6 +11,7 @@ import Bezier            from './shapes/Bezier';
 import Ellipse           from './shapes/Ellipse';
 import Rhombus           from './shapes/Rhombus';
 import Arrow             from './shapes/Arrow';
+import Cursor            from './Cursor';
 
 
 export enum State{
@@ -36,6 +37,9 @@ export default class Canvas{
     private canvasAnimate: HTMLCanvasElement;
     private ctxAnimate: CanvasRenderingContext2D | null;
 
+    private canvasMouse: HTMLCanvasElement;
+    private ctxMouse: CanvasRenderingContext2D | null;
+
     public users: Array<UserCanvas>;
     private state: State;
     private countClick: number = 0;
@@ -51,8 +55,10 @@ export default class Canvas{
     public width: number = 900;
     public height: number = 500;
 
+    public cursors: Array<Cursor> = [];
 
-    constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
+
+    constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, canvasMouse: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
         
         this.canvas = canvas;
         this.ctx    = canvas.getContext('2d');
@@ -60,11 +66,24 @@ export default class Canvas{
         this.canvasAnimate = canvasAnimate;
         this.ctxAnimate    = canvasAnimate.getContext('2d');
 
+        this.canvasMouse = canvasMouse;
+        this.ctxMouse    = canvasMouse.getContext('2d');
+
         this.users  = userCanvas; 
         this.state  = State.CURSOR;
         this.shapes = [];
 
         this.shapesHistory = [];
+    }
+
+
+    public renderCursors(){
+        if(this.ctxMouse == undefined) return;
+        this.ctxMouse.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        for(let i = 0; i < this.cursors.length; i++){
+            this.cursors[i].render(this.ctxMouse);
+        }
     }
 
 

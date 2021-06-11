@@ -34,8 +34,7 @@ export default class Rectangle extends Shape{
         }else{
             ctx.strokeStyle = this.color;
             ctx.strokeRect(this.points[0].x, this.points[0].y, this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y);
-        }
-        
+        } 
         
     }
 }
