@@ -195,7 +195,7 @@ export default class SocketContoller{
 
         socket.on('drawShape', (data: Data) => {
             this.io.sockets.to(`project${data.projectId}`).emit('drawShape', data);
-        })
+        });
     } 
 
     

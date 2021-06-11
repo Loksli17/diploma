@@ -12,6 +12,8 @@ import Ellipse           from './shapes/Ellipse';
 import Rhombus           from './shapes/Rhombus';
 import Arrow             from './shapes/Arrow';
 import Cursor            from './Cursor';
+import { Socket } from 'socket.io-client';
+import User from '@/types/User';
 
 
 export enum State{
@@ -56,9 +58,12 @@ export default class Canvas{
     public height: number = 500;
 
     public cursors: Array<Cursor> = [];
+    public socket: Socket;
+    public currentUser: User;
+    public projectId: number;
 
 
-    constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, canvasMouse: HTMLCanvasElement, userCanvas: Array<UserCanvas>){
+    constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, canvasMouse: HTMLCanvasElement, userCanvas: Array<UserCanvas>, socket: Socket, user: User, projectId: number){
         
         this.canvas = canvas;
         this.ctx    = canvas.getContext('2d');
@@ -74,6 +79,9 @@ export default class Canvas{
         this.shapes = [];
 
         this.shapesHistory = [];
+        this.socket        = socket;
+        this.currentUser   = user;
+        this.projectId     = projectId;
     }
 
 
@@ -151,6 +159,14 @@ export default class Canvas{
         this.render();
     }
 
+    private emitShape(){
+        this.socket.emit('drawShape', {
+            shape    : this.currentShape,
+            user     : this.currentUser,
+            projectId: this.projectId,
+        });
+    }
+
 
     private drawLineProcess(coords: {x: number; y: number}, action: string, userId: number){
 
@@ -182,6 +198,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -224,6 +241,8 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
+
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -266,6 +285,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -314,6 +334,7 @@ export default class Canvas{
                     this.shapesHistory = this.shapes.slice();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }
 
                 break;
@@ -334,7 +355,7 @@ export default class Canvas{
                     userId,
                     this.brushColor,
                     this.brushWidth,
-                    this.fillStatus
+                    this.fillStatus,
                 );
                 
                 this.countClick = 1;
@@ -354,6 +375,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -397,6 +419,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -476,6 +499,7 @@ export default class Canvas{
 
                     this.render();
                     this.countClick = 0;
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -534,6 +558,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -591,6 +616,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -630,6 +656,7 @@ export default class Canvas{
                     this.render();
                     this.countClick = 0;
                     this.clearAnimate();
+                    this.emitShape();
                 }else{
                     this.clearAnimate();
                     this.currentShape.render(this.ctxAnimate);
@@ -696,23 +723,19 @@ export default class Canvas{
     }
 
 
-    public addShapes(shapes: Array<Shape>){
-
-        if(shapes == undefined) return;
-
-        for(let i: number = 0; i < shapes.length; i++){
-
-            switch(shapes[i].icon){
+    public addShape(shape: Shape){
+        
+        switch(shape.icon){
 
                 case 'line.svg':
 
                     this.shapes.push(
                         new Line(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Line).width,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as Line).width,
                         )
                     );
                     break;
@@ -721,12 +744,12 @@ export default class Canvas{
                     
                     this.shapes.push(          
                         new Rectangle(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Rectangle).width,
-                            (shapes[i] as Rectangle).fill,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as Rectangle).width,
+                            (shape as Rectangle).fill,
                         )
                     )
                     break;
@@ -735,12 +758,12 @@ export default class Canvas{
 
                     this.shapes.push(          
                         new Circle(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Circle).width,
-                            (shapes[i] as Circle).fill,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as Circle).width,
+                            (shape as Circle).fill,
                         )
                     )
                     break;
@@ -750,12 +773,12 @@ export default class Canvas{
 
                     this.shapes.push(          
                         new IsoscelesTriangle(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as IsoscelesTriangle).width,
-                            (shapes[i] as IsoscelesTriangle).fill,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as IsoscelesTriangle).width,
+                            (shape as IsoscelesTriangle).fill,
                         )
                     )
                     break;
@@ -764,12 +787,12 @@ export default class Canvas{
 
                     this.shapes.push(          
                         new RightTriangle(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as RightTriangle).width,
-                            (shapes[i] as RightTriangle).fill,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as RightTriangle).width,
+                            (shape as RightTriangle).fill,
                         )
                     )
                     break;
@@ -778,10 +801,10 @@ export default class Canvas{
 
                     this.shapes.push(          
                         new Bezier(
-                            shapes[i].points.slice(),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Bezier).width,
+                            shape.points.slice(),
+                            shape.userId,
+                            shape.color,
+                            (shape as Bezier).width,
                         )
                     )
                     break;
@@ -791,14 +814,14 @@ export default class Canvas{
                     
                     this.shapes.push(
                         new Brush(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Brush).width,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as Brush).width,
                         )
                     );
 
-                    this.shapes[this.shapes.length - 1].points = shapes[i].points.slice();
+                    this.shapes[this.shapes.length - 1].points = shape.points.slice();
 
                     break;
 
@@ -806,11 +829,11 @@ export default class Canvas{
                     
                     this.shapes.push(
                         new Ellipse(
-                            shapes[i].points.slice(),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Ellipse).width,
-                            (shapes[i] as Ellipse).fill,
+                            shape.points.slice(),
+                            shape.userId,
+                            shape.color,
+                            (shape as Ellipse).width,
+                            (shape as Ellipse).fill,
                         )
                     );
 
@@ -820,11 +843,11 @@ export default class Canvas{
                     
                     this.shapes.push(
                         new Rhombus(
-                            shapes[i].points.slice(),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Rhombus).width,
-                            (shapes[i] as Rhombus).fill,
+                            shape.points.slice(),
+                            shape.userId,
+                            shape.color,
+                            (shape as Rhombus).width,
+                            (shape as Rhombus).fill,
                         )
                     );
 
@@ -834,19 +857,27 @@ export default class Canvas{
                     
                     this.shapes.push(
                         new Arrow(
-                            new Point(shapes[i].points[0].id, shapes[i].points[0].x, shapes[i].points[0].y),
-                            new Point(shapes[i].points[1].id, shapes[i].points[1].x, shapes[i].points[1].y),
-                            shapes[i].userId,
-                            shapes[i].color,
-                            (shapes[i] as Arrow).width,
+                            new Point(shape.points[0].id, shape.points[0].x, shape.points[0].y),
+                            new Point(shape.points[1].id, shape.points[1].x, shape.points[1].y),
+                            shape.userId,
+                            shape.color,
+                            (shape as Arrow).width,
                         )
                     );
 
-                    break;
-                
+                    break; 
             }
 
-            this.shapes[i].name = shapes[i].name;
+        this.shapes[this.shapes.length - 1].name = shape.name;
+    }
+
+
+    public addShapes(shapes: Array<Shape>){
+
+        if(shapes == undefined) return;
+
+        for(let i: number = 0; i < shapes.length; i++){
+            this.addShape(shapes[i]);
         }
     }
 

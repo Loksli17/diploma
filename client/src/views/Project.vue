@@ -216,6 +216,9 @@
                 this.$refs.canvasAnimate as HTMLCanvasElement,
                 this.$refs.canvasMouse as HTMLCanvasElement,
                 this.users,
+                this.$socket,
+                this.$store.state.userIdentity!,
+                this.projectId,
             );
 
             if(data.canvas != undefined){
@@ -229,7 +232,6 @@
                 this.oldShapesState = this.canvas.shapes.slice();
             }
 
-            // this.canvas.cursors.push(new Cursor(this.$store.state.userIdentity!.firstName, this.$store.state.userIdentity!.lastName, this.$store.state.userIdentity!.id));
         },
 
         created: function(){
@@ -261,8 +263,6 @@
             });
 
             this.$socket.on('mouseMove', (data: any) => {
-                // console.log(data);
-                const x = 228;
 
                 if(this.canvas.cursors == undefined) return;
 
@@ -275,6 +275,11 @@
                     return item;
                 })
             });
+
+            this.$socket.on('drawShape', (data: any) => {
+                this.canvas.addShape(data.shape);
+                this.canvas.renderAll();
+            })
         },
 
         watch: {
