@@ -154,6 +154,12 @@ export default class Canvas{
     }
 
 
+    public removeShape(id: number){
+        const ind: number = this.shapes.findIndex(item => id == item.id);
+        this.shapes.splice(ind, 1);
+    }
+
+
     public backStep(){
         this.shapes.pop();
         this.renderAll();

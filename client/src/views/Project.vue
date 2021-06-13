@@ -274,6 +274,7 @@
 
 
             this.$socket.on('sinhronizeData', (data: any) => {
+                this.canvas.shapes = [];
                 this.canvas.copyData(JSON.parse(data.canvas));
                 this.canvas.renderAll();
             });
@@ -320,13 +321,24 @@
             this.$socket.on('changeCanvas', (data: any) => {
 
                 if(data.userId == this.$store.state.userIdentity!.id) return;
-
-                console.log(data, 'change');
                 
                 this.canvas.setBackground(data.color);
 
                 this.canvas.height = data.height;
                 this.canvas.width  = data.width;
+            });
+            
+
+            this.$socket.on('removeShape', (data: any) => {
+                if(data.userId == this.$store.state.userIdentity!.id) return;
+
+                this.canvas.removeShape(data.shapeId);
+                this.canvas.renderAll();
+
+                const menu = this.$refs.shapeMenu! as any;
+
+                if(menu == null) return; 
+                menu.close();
             });
         },
 
@@ -371,11 +383,17 @@
             },
 
             removeShape: function(id: number){
-                this.canvas.shapes = this.canvas.shapes.filter(item => item.id != id);
+                this.canvas.removeShape(id);
                 this.canvas.renderAll();
 
                 const menu = this.$refs.shapeMenu! as any;
                 menu.close();
+
+                this.$socket.emit('removeShape', {
+                    userId   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId,
+                    shapeId  : id,
+                });
             },
 
             fileOver: function(){

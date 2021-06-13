@@ -231,6 +231,20 @@ export default class SocketContoller{
         });
     }
 
+
+    public static removeShape(socket: Socket){
+
+        interface Data{
+            shapeId  : number;
+            userId   : number;
+            projectId: number;
+        }
+
+        socket.on('removeShape', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('removeShape', data);
+        });
+    }
+
     
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
@@ -244,5 +258,6 @@ export default class SocketContoller{
         SocketContoller.drawShape(socket);
         SocketContoller.sinhronizeData(socket);
         SocketContoller.changeCanvas(socket);
+        SocketContoller.removeShape(socket);
     }
 }
