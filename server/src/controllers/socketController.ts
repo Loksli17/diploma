@@ -212,7 +212,23 @@ export default class SocketContoller{
                 socket.to(value.socketId).emit('sinhronizeData', {canvas: data.canvas});
             });
         });
+    }
 
+
+    public static changeCanvas(socket: Socket){
+
+        interface Data{
+            color : string;
+            height: number;
+            width : number
+            userId: number;
+            projectId: number;
+        }
+
+
+        socket.on('changeCanvas', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('mouseMove', data);
+        });
     }
 
     

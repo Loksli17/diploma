@@ -247,7 +247,8 @@
                     return user;
                 });
 
-                this.users = data.users;
+                this.users        = data.users;
+                this.canvas.users = data.users;
 
                 this.canvas.cursors = [];
                 data.users.forEach((item: any) => {

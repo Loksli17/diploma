@@ -168,6 +168,9 @@ export default class Canvas{
     }
 
     private emitShape(){
+        
+        if(this.users.length < 2) return;
+
         this.socket.emit('drawShape', {
             shape    : this.currentShape,
             user     : this.currentUser,
