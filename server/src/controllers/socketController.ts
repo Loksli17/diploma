@@ -218,16 +218,16 @@ export default class SocketContoller{
     public static changeCanvas(socket: Socket){
 
         interface Data{
-            color : string;
-            height: number;
-            width : number
-            userId: number;
+            color    : string;
+            height   : number;
+            width    : number
+            userId   : number;
             projectId: number;
         }
 
-
         socket.on('changeCanvas', (data: Data) => {
-            this.io.sockets.to(`project${data.projectId}`).emit('mouseMove', data);
+            console.log(data);
+            this.io.sockets.to(`project${data.projectId}`).emit('changeCanvas', data);
         });
     }
 
@@ -243,5 +243,6 @@ export default class SocketContoller{
         SocketContoller.mouseMove(socket);
         SocketContoller.drawShape(socket);
         SocketContoller.sinhronizeData(socket);
+        SocketContoller.changeCanvas(socket);
     }
 }

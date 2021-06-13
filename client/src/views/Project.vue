@@ -42,7 +42,7 @@
 
                 <div class="row">
                     <span>Background color:</span>
-                    <input type="color" v-model="backgroundColor">
+                    <input type="color" @change="changeBackgroundColor" v-model="backgroundColor">
                 </div>
             </div>
 
@@ -232,6 +232,8 @@
                 this.oldShapesState = this.canvas.shapes.slice();
             }
 
+            this.backgroundColor = this.canvas.backgroundColor;
+
         },
 
         created: function(){
@@ -313,15 +315,35 @@
                 this.canvas.addShape(data.shape);
                 this.canvas.renderAll();
             });
+
+
+            this.$socket.on('changeCanvas', (data: any) => {
+
+                if(data.userId == this.$store.state.userIdentity!.id) return;
+
+                console.log(data, 'change');
+                
+                this.canvas.setBackground(data.color);
+
+                this.canvas.height = data.height;
+                this.canvas.width  = data.width;
+            });
         },
 
-        watch: {
-            backgroundColor: function(newVal: string){
-                this.canvas.setBackground(newVal);
-            }
-        },
 
         methods: {
+
+            changeBackgroundColor: function(){
+                this.canvas.setBackground(this.backgroundColor);
+
+                this.$socket.emit('changeCanvas', {
+                    color    : this.backgroundColor,
+                    height   : this.canvas.height,
+                    width    : this.canvas.width,
+                    userid   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId
+                });
+            },
 
             openShapeMenu: function(shape: Shape){
                 const menu = this.$refs.shapeMenu! as any;
@@ -632,6 +654,7 @@
                 this.drawButtons.forEach(item => {
                     item.isActive = false;
                 });
+
                 this.drawButtons[index].isActive = true;
             },
 
