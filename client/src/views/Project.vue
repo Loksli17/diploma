@@ -238,6 +238,8 @@
 
             this.$socket.on('joinProject', (data: any) => {
 
+                if(this.projectId != data.projectId) return;
+
                 data.users = data.users.map((item: any) => {
                     const user: UserCanvas = item;
                     user.color  = "#000";
@@ -254,11 +256,8 @@
 
             });
 
+
             this.$socket.on('leaveProject', (data: any) => {
-
-                if(this.projectId != data.projectId) return;
-
-                console.log(data);
 
                 let ind: number = this.users.findIndex(item => item.id == data.userId);
                 this.users.splice(ind, 1);
@@ -266,13 +265,11 @@
                 ind = this.canvas.cursors.findIndex(item => item.userId == data.userId);
                 this.canvas.cursors.splice(ind, 1);
 
-                console.log(this.canvas.cursors);
                 this.canvas.renderCursors();
             });
 
-            this.$socket.on('mouseMove', (data: any) => {
 
-                if(this.projectId != data.projectId) return;
+            this.$socket.on('mouseMove', (data: any) => {
 
                 if(this.canvas.cursors == undefined) return;
 
@@ -286,13 +283,12 @@
                 })
             });
 
-            this.$socket.on('drawShape', (data: any) => {
 
-                if(this.projectId != data.projectId) return;
+            this.$socket.on('drawShape', (data: any) => {
                 
                 this.canvas.addShape(data.shape);
                 this.canvas.renderAll();
-            })
+            });
         },
 
         watch: {

@@ -150,7 +150,7 @@ export default class SocketContoller{
                     users = await getRepository(User).createQueryBuilder().where('socketId in (:ids)', {ids: Array.from(clients)}).getMany();
                 }
   
-                this.io.sockets.to(`project${data.projectId}`).emit('joinProject', {user: value, users: users});
+                this.io.sockets.to(`project${data.projectId}`).emit('joinProject', {user: value, users: users, projectId: data.projectId});
             });
         });
 
