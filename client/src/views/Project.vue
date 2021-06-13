@@ -251,13 +251,33 @@
 
                 this.canvas.cursors = [];
                 data.users.forEach((item: any) => {
-                    if(item.id != this.$store.state.userIdentity!.id) this.canvas.cursors.push(new Cursor(item.firstName, item.lastName, item.id));
+                    if(item.id != this.$store.state.userIdentity!.id){
+                        this.canvas.cursors.push(new Cursor(item.firstName, item.lastName, item.id))
+                    }
                 });
 
+                let maxId: number = 0;
+                data.users.forEach((item: any) => {
+                    if(data.user.id != item.id && item.id > maxId) { maxId = item.id; } 
+                });
+
+                if(maxId == this.$store.state.userIdentity!.id){   
+                    delete this.canvas.socket;
+                    this.$socket.emit('sinhronizeData', {canvas: JSON.stringify(this.canvas), userId: data.user.id});
+                    this.canvas.socket = this.$socket;
+                }   
+                
+            });
+
+
+            this.$socket.on('sinhronizeData', (data: any) => {
+                this.canvas.copyData(JSON.parse(data.canvas));
+                this.canvas.renderAll();
             });
 
 
             this.$socket.on('leaveProject', (data: any) => {
+                
 
                 let ind: number = this.users.findIndex(item => item.id == data.userId);
                 this.users.splice(ind, 1);
@@ -285,6 +305,9 @@
 
 
             this.$socket.on('drawShape', (data: any) => {
+                
+                if(this.projectId != data.projectId) return;
+                if(data.user.id == this.$store.state.userIdentity!.id) return;
                 
                 this.canvas.addShape(data.shape);
                 this.canvas.renderAll();

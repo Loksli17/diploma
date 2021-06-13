@@ -84,6 +84,14 @@ export default class Canvas{
         this.projectId     = projectId;
     }
 
+    public copyData(canvas: {backgroundColor: string; shapes: Array<Shape>; width: number; height: number}): void{
+
+        this.addShapes(canvas.shapes);
+        this.backgroundColor = canvas.backgroundColor;
+        this.width           = canvas.width;
+        this.height          = canvas.height;
+    }
+
 
     public renderCursors(){
         if(this.ctxMouse == undefined) return;

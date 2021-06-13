@@ -188,7 +188,7 @@ export default class SocketContoller{
     public static drawShape(socket: Socket){
 
         interface Data{
-            shape    : Object;
+            shape    : object;
             user     : User;
             projectId: number;
         }
@@ -196,7 +196,24 @@ export default class SocketContoller{
         socket.on('drawShape', (data: Data) => {
             this.io.sockets.to(`project${data.projectId}`).emit('drawShape', data);
         });
-    } 
+    }
+
+
+    public static sinhronizeData(socket: Socket){
+        interface Data{
+            canvas: object;
+            userId: number;
+        }
+        
+        socket.on('sinhronizeData', (data: Data) => {
+            getRepository(User).findOne(data.userId)
+            .then((value: User | undefined): void => {
+                if(value == undefined || value.socketId == undefined) return;
+                socket.to(value.socketId).emit('sinhronizeData', {canvas: data.canvas});
+            });
+        });
+
+    }
 
     
     public static route(socket: Socket): void{
@@ -209,5 +226,6 @@ export default class SocketContoller{
         SocketContoller.leaveProject(socket);
         SocketContoller.mouseMove(socket);
         SocketContoller.drawShape(socket);
+        SocketContoller.sinhronizeData(socket);
     }
 }
