@@ -255,14 +255,24 @@
             });
 
             this.$socket.on('leaveProject', (data: any) => {
-                let ind: number = this.users.findIndex(item => item.id == data.id);
+
+                if(this.projectId != data.projectId) return;
+
+                console.log(data);
+
+                let ind: number = this.users.findIndex(item => item.id == data.userId);
                 this.users.splice(ind, 1);
 
-                ind = this.canvas.cursors.findIndex(item => item.userId == data.id);
+                ind = this.canvas.cursors.findIndex(item => item.userId == data.userId);
                 this.canvas.cursors.splice(ind, 1);
+
+                console.log(this.canvas.cursors);
+                this.canvas.renderCursors();
             });
 
             this.$socket.on('mouseMove', (data: any) => {
+
+                if(this.projectId != data.projectId) return;
 
                 if(this.canvas.cursors == undefined) return;
 
@@ -277,6 +287,9 @@
             });
 
             this.$socket.on('drawShape', (data: any) => {
+
+                if(this.projectId != data.projectId) return;
+                
                 this.canvas.addShape(data.shape);
                 this.canvas.renderAll();
             })
@@ -492,6 +505,8 @@
                         canvas: this.canvas,
                         data  : canvas.toDataURL(`image/jpeg`).replace(`image/jpeg`, "image/octet-stream"),
                     });
+
+                    console.log(res);
 
                     if(res.status == 400){
                         this.$flashMessage.show({

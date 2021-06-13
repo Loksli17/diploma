@@ -165,7 +165,7 @@ export default class SocketContoller{
 
         socket.on('leaveProject', (data: Data) => {
             socket.leave(`project${data.projectId}`);
-            this.io.sockets.to(`project${data.projectId}`).emit('leaveProject', {id: data.userId});
+            this.io.sockets.to(`project${data.projectId}`).emit('leaveProject', data);
         });
     }
 
