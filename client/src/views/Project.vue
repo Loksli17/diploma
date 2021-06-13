@@ -520,13 +520,13 @@
 
                 try {
 
+                    delete this.canvas.socket;
+
                     const res: any = await this.$axios.post('project/save-file', {
                         id    : this.project!.id,
-                        canvas: this.canvas,
-                        data  : canvas.toDataURL(`image/jpeg`).replace(`image/jpeg`, "image/octet-stream"),
+                        canvas: JSON.stringify(this.canvas),
+                        data  : canvas.toDataURL(`image/png`).replace(`image/png`, "image/octet-stream"),
                     });
-
-                    console.log(res);
 
                     if(res.status == 400){
                         this.$flashMessage.show({
@@ -536,6 +536,8 @@
                         });
                         return;  
                     }
+
+                    this.canvas.socket = this.$socket;
 
                     this.$flashMessage.show({
                         type: 'success',

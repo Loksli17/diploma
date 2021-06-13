@@ -522,7 +522,7 @@ export default class ProjectController{
         }
 
         try {
-            canvas = JSON.parse(fs.readFileSync(`projects/${project.fileName}`, 'utf8'));
+            canvas = JSON.parse(fs.readFileSync(`public/projects/${project.fileName}`, 'utf8'));
         }catch(err){
             canvas = undefined;
             console.error(err);
@@ -535,10 +535,11 @@ export default class ProjectController{
     public static async saveFile(req: Request, res: Response){
         
         interface POST{
-            canvas: object,
+            canvas: string,
             id    : number,
             data  : string,
         }
+        
 
         let
             POST      : POST              = req.body,
@@ -568,7 +569,7 @@ export default class ProjectController{
         const data = Buffer.from(POST.data.replace("data:image/octet-stream;base64,", ""), 'base64');
 
         try {
-            fs.writeFileSync(`projects/project${POST.id}.json`, JSON.stringify(POST.canvas));
+            fs.writeFileSync(`public/projects/project${POST.id}.json`, JSON.stringify(JSON.parse(POST.canvas)));
             fs.writeFileSync(`public/img/projects/project${POST.id}.jpeg`, data)
         }catch(err){
             console.error(err);
