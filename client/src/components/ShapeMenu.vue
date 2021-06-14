@@ -49,6 +49,11 @@
                 shape       : {name: '', color: '#ffffff', } as Shape,
                 type        : '' as string,
 
+                // name: "" as string,
+                // color: "" as string,
+                // fill: undefined as boolean,
+                // width: 1 as str
+
                 positions: {
                     clientX: undefined as number | undefined,
                     clinetY: undefined as number | undefined,

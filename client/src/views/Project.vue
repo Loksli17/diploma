@@ -368,7 +368,7 @@
             this.$socket.on('changeShape', (data: any) => {
                 if(data.userId == this.$store.state.userIdentity!.id) return;
 
-                console.log(data);
+                console.log(data, "AAAAA FUUUUUCK");
 
                 this.canvas.changeShape(data.shape);
                 this.canvas.renderAll();

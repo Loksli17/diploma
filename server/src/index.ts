@@ -70,9 +70,9 @@ export class App{
                 methods: config.cors.methods,
             }
         ));
-        this.app.use(express.json());
+        this.app.use(express.json({limit: '30mb'}));
         this.app.use(express.static('public'));
-        this.app.use(express.urlencoded({extended: true}));
+        this.app.use(express.urlencoded({extended: true, limit: '30mb'}));
         this.app.use(fileUpload());
         // this.app.use(morgan('combined'));
     }

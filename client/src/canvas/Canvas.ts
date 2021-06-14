@@ -171,18 +171,17 @@ export default class Canvas{
         this.shapes[ind].name  = shape.name;
         this.shapes[ind].width = shape.width;
 
-
         if(this.shapes[ind] instanceof Rectangle){
             (this.shapes[ind] as Rectangle).fill = (shape as Rectangle).fill;
-        }else if(shape instanceof Circle){
+        }else if(this.shapes[ind] instanceof Circle){
             (this.shapes[ind] as Circle).fill = (shape as Rectangle).fill;
-        }else if(shape instanceof IsoscelesTriangle){
+        }else if(this.shapes[ind] instanceof IsoscelesTriangle){
             (this.shapes[ind] as IsoscelesTriangle).fill = (shape as Rectangle).fill;
-        }else if(shape instanceof RightTriangle){
+        }else if(this.shapes[ind] instanceof RightTriangle){
             (this.shapes[ind] as RightTriangle).fill = (shape as Rectangle).fill;
-        }else if(shape instanceof Ellipse){
+        }else if(this.shapes[ind] instanceof Ellipse){
             (this.shapes[ind] as Ellipse).fill = (shape as Rectangle).fill;
-        }else if(shape instanceof Rhombus){
+        }else if(this.shapes[ind] instanceof Rhombus){
             (this.shapes[ind] as Rhombus).fill = (shape as Rectangle).fill;
         }
 
