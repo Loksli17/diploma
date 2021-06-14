@@ -272,7 +272,11 @@
 
                 if(maxId == this.$store.state.userIdentity!.id){   
                     delete this.canvas.socket;
-                    this.$socket.emit('sinhronizeData', {canvas: JSON.stringify(this.canvas), userId: data.user.id});
+                    this.$socket.emit('sinhronizeData', {
+                        canvas   : JSON.stringify(this.canvas), 
+                        userId   : data.user.id,
+                        projectId: this.projectId,
+                    });
                     this.canvas.socket = this.$socket;
                 }   
                 
@@ -280,6 +284,9 @@
 
 
             this.$socket.on('sinhronizeData', (data: any) => {
+
+                if(this.projectId != data.projectId) return;
+
                 this.canvas.shapes = [];
                 this.canvas.copyData(JSON.parse(data.canvas));
                 this.canvas.renderAll();
@@ -584,6 +591,10 @@
             reset: function(){
                 this.canvas.shapes = this.oldShapesState.slice();
                 this.canvas.renderAll();
+
+                delete this.canvas.socket;
+                this.$socket.emit('resetCanvas', {canvas: JSON.stringify(this.canvas), projectId: this.projectId});
+                this.canvas.socket = this.$socket;
             },
 
             saveProject: async function(){
