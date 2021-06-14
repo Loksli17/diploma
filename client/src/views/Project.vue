@@ -399,8 +399,14 @@
             },
 
             openShapeMenu: function(shape: Shape){
-                const menu = this.$refs.shapeMenu! as any;
-                menu.setShape(shape);
+
+                const
+                    user = this.users.find(item => item.id == shape.userId), 
+                    menu = this.$refs.shapeMenu! as any;
+                
+                console.log(user, shape, this.users);
+
+                menu.setShape(shape, user);
                 menu.show();
             },
 

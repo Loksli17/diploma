@@ -222,6 +222,7 @@ $drawButtonsWrapWidth    : 70px;
                 background: $white;
                 align-items: center;
                 border-bottom: 2px solid $grayBorder;
+                cursor: pointer;
 
                 span{
                     text-align: left;
@@ -309,8 +310,75 @@ $drawButtonsWrapWidth    : 70px;
         top: 400px;
         left: 600px;
 
+        .btn{
+            width: 100%;
+            @extend %btn !optional;
+            @include buttonTheme();
+        }
+
         .row{
+            width: 100%;
+            box-sizing: border-box;
+            grid-template-columns: 60px auto;
+            @include row(20px);
+            justify-content: flex-start;
+            align-items: center;
             padding: 20px;
+            border-bottom: 2px solid $grayBorder;
+
+            &:first-child{
+                background: $blue;
+                color: $white;
+                height: 81px;
+            }
+
+            &:last-child{
+                border-bottom: 0px solid $grayBorder;
+            }
+
+            span{
+                text-align: left;
+                font-size: 18px;
+            }
+        }
+
+        .column{
+            @include column(10px);
+            justify-content: flex-start;
+            padding: 20px;
+            border-bottom: 2px solid $grayBorder;
+            grid-template-columns: 100%;
+            width: 100%;
+            box-sizing: border-box;
+
+            span{
+                text-align: left;
+                font-size: 16px;
+
+                &:first-child{
+                    padding-bottom: 10px;
+                    border-bottom: 2px dashed $grayBorder;
+                }
+            }
+
+            b{
+                color: $blue;
+            }
+        }
+
+    }
+
+    input[type=checkbox]{
+        width: 20px;
+        height: 20px;
+    }
+
+    input[type=number], input[type=text], input[type=color]{
+        height: 25px;
+        border: 2px solid $blue;
+
+        &:focus{
+            outline: 0px solid;
         }
     }
 }

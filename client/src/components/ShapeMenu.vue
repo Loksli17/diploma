@@ -5,31 +5,32 @@
             <h1>{{shape.name}}</h1>
         </div>
 
-        <div class="row">
-            <span>Type: {{type}}</span>
+        <div class="column">
+            <span>Type: <b>{{type}}</b></span>
+            <span>Author: <b>{{user.login}}</b></span>
         </div>
 
         <div class="row">
-            <span>Color</span>
+            <span>Color:</span>
             <input type="color" @mousedown.stop @change.stop="changeShapeColor" v-model="shape.color">
         </div>
 
         <div class="row">
-            <span>Name</span>
+            <span>Name:</span>
             <input @mousedown.stop type="text" @change.stop="changeShapeName" v-model="shape.name">
         </div>
 
         <div class="row">
-            <span>Width</span>
+            <span>Width:</span>
             <input @mousedown.stop type="number" @change.stop="changeShapeWidth" min="1" max="10" v-model="shape.width">
         </div>
 
         <div v-if="shape.fill != undefined" class="row">
-            <span>Fill</span>
+            <span>Fill:</span>
             <input @mousedown.stop type="checkbox" @change.stop="changeShapeFill" v-model="shape.fill">
         </div>
 
-        <div class="row">
+        <div class="button-row">
             <button @click="close" class="btn">Close</button>
         </div>
     </div>
@@ -39,6 +40,7 @@
 <script lang="ts">
     import {defineComponent} from 'vue';
     import Shape             from '../canvas/shapes/Shape';
+    import UserCanvas        from '../canvas/UserCanvas';
 
 
     export default defineComponent({
@@ -48,11 +50,7 @@
                 activeStatus: false as boolean,
                 shape       : {name: '', color: '#ffffff', } as Shape,
                 type        : '' as string,
-
-                // name: "" as string,
-                // color: "" as string,
-                // fill: undefined as boolean,
-                // width: 1 as str
+                user        : {} as UserCanvas,
 
                 positions: {
                     clientX: undefined as number | undefined,
@@ -68,7 +66,8 @@
                 this.activeStatus = false;
             },
 
-            setShape: function(shape: Shape){
+            setShape: function(shape: Shape, user: UserCanvas){
+                this.user  = user;
                 this.shape = shape;
                 this.type  = shape.icon.slice(0, -4);
             },
