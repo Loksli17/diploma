@@ -11,6 +11,7 @@ export default abstract class Shape{
     public icon: string = "";
     protected static countNumber: number = 0;
     public isVisible: boolean = true;
+    public width: number = 1;
 
     public static countId: number = 0;
 

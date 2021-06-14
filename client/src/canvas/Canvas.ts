@@ -154,9 +154,21 @@ export default class Canvas{
     }
 
 
-    public removeShape(id: number){
-        const ind: number = this.shapes.findIndex(item => id == item.id);
-        this.shapes.splice(ind, 1);
+    public removeShape(shape: Shape){
+        this.shapes = this.shapes.filter(item => item.name != shape.name);
+        // const ind: number = this.shapes.findIndex(item => shape.name == item.name);
+        // this.shapes.splice(ind, 1);
+    }
+
+    public changeShape(shape: Shape){
+        console.log()
+        const ind: number = this.shapes.findIndex(item => shape.id == item.id);
+        console.log(this.shapes[ind], ind);
+
+        this.shapes[ind].color = shape.color;
+        this.shapes[ind].name  = shape.name;
+        // this.shapes[ind].fill  = shape.fill;
+        this.shapes[ind].width = shape.width;
     }
 
 

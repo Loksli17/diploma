@@ -16,7 +16,7 @@
 
         <div class="row">
             <span>Name</span>
-            <input @mousedown.stop type="text" v-model="shape.name">
+            <input @mousedown.stop type="text" @change.stop="changeShapeName" v-model="shape.name">
         </div>
 
         <div class="row">
@@ -73,15 +73,19 @@
             },
 
             changeShapeColor: function(){
-                this.$emit('change-color');
+                this.$emit('change-color', this.shape);
             },
 
             changeShapeWidth: function(){
-                this.$emit('change-width');
+                this.$emit('change-width', this.shape);
             },
 
             changeShapeFill: function(){
-                this.$emit('change-fill');
+                this.$emit('change-fill', this.shape);
+            },
+
+            changeShapeName: function(){
+                this.$emit('change-name', this.shape);
             },
 
 

@@ -93,7 +93,7 @@
                         <div :class="{'non-visible': !shape.isVisible}" @click.stop="toggleShape(shape.id)">
                             <img :src="require(`@/assets/settings-items/eye.svg`)" alt="">
                         </div>
-                        <div @click.stop="removeShape(shape.id)">
+                        <div @click.stop="removeShape(shape)">
                             <img :src="require(`@/assets/settings-items/delete.svg`)" alt="">
                         </div>
                     </div>
@@ -332,13 +332,23 @@
             this.$socket.on('removeShape', (data: any) => {
                 if(data.userId == this.$store.state.userIdentity!.id) return;
 
-                this.canvas.removeShape(data.shapeId);
+                this.canvas.removeShape(data.shape);
                 this.canvas.renderAll();
 
                 const menu = this.$refs.shapeMenu! as any;
 
                 if(menu == null) return; 
                 menu.close();
+            });
+
+
+            this.$socket.on('changeShape', (data: any) => {
+                if(data.userId == this.$store.state.userIdentity!.id) return;
+
+                console.log(data);
+
+                this.canvas.changeShape(data.shape);
+                this.canvas.renderAll();
             });
         },
 
@@ -363,15 +373,30 @@
                 menu.show();
             },
 
-            changeShapeColor: function(){
+            changeShapeColor: function(shape: Shape){
+                this.$socket.emit('changeShape', {
+                    shape    : shape,
+                    userId   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId,
+                });
                 this.canvas.renderAll();
             },
 
-            changeShapeWidth: function(){
+            changeShapeWidth: function(shape: Shape){
+                this.$socket.emit('changeShape', {
+                    shape    : shape,
+                    userId   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId,
+                });
                 this.canvas.renderAll();
             },
 
-            changeShapeFill: function(){
+            changeShapeFill: function(shape: Shape){
+                this.$socket.emit('changeShape', {
+                    shape    : shape,
+                    userId   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId,
+                });
                 this.canvas.renderAll();
             },
 
@@ -382,8 +407,9 @@
                 this.canvas.renderAll();
             },
 
-            removeShape: function(id: number){
-                this.canvas.removeShape(id);
+            removeShape: function(shape: Shape){
+
+                this.canvas.removeShape(shape);
                 this.canvas.renderAll();
 
                 const menu = this.$refs.shapeMenu! as any;
@@ -392,7 +418,7 @@
                 this.$socket.emit('removeShape', {
                     userId   : this.$store.state.userIdentity!.id,
                     projectId: this.projectId,
-                    shapeId  : id,
+                    shape    : shape,
                 });
             },
 

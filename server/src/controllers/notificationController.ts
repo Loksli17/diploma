@@ -254,6 +254,8 @@ export default class NotificationController{
         
         try {
             const result = await getRepository(Notification).delete(POST.ids);
+
+            getRepository(User).createQueryBuilder().execute();
             console.log(result);
         }catch(err){
             console.error(err);
