@@ -156,19 +156,29 @@ export default class Canvas{
 
     public removeShape(shape: Shape){
         this.shapes = this.shapes.filter(item => item.name != shape.name);
-        // const ind: number = this.shapes.findIndex(item => shape.name == item.name);
-        // this.shapes.splice(ind, 1);
     }
 
     public changeShape(shape: Shape){
-        console.log()
-        const ind: number = this.shapes.findIndex(item => shape.id == item.id);
-        console.log(this.shapes[ind], ind);
+        const ind: number = this.shapes.findIndex(item => shape.name == item.name && shape.icon == item.icon);
 
         this.shapes[ind].color = shape.color;
         this.shapes[ind].name  = shape.name;
-        // this.shapes[ind].fill  = shape.fill;
         this.shapes[ind].width = shape.width;
+
+
+        if(this.shapes[ind] instanceof Rectangle){
+            (this.shapes[ind] as Rectangle).fill = (shape as Rectangle).fill;
+        }else if(shape instanceof Circle){
+            (this.shapes[ind] as Circle).fill = (shape as Rectangle).fill;
+        }else if(shape instanceof IsoscelesTriangle){
+            (this.shapes[ind] as IsoscelesTriangle).fill = (shape as Rectangle).fill;
+        }else if(shape instanceof RightTriangle){
+            (this.shapes[ind] as RightTriangle).fill = (shape as Rectangle).fill;
+        }else if(shape instanceof Ellipse){
+            (this.shapes[ind] as Ellipse).fill = (shape as Rectangle).fill;
+        }else if(shape instanceof Rhombus){
+            (this.shapes[ind] as Rhombus).fill = (shape as Rectangle).fill;
+        }
     }
 
 

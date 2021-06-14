@@ -100,7 +100,13 @@
                 </div>
             </div>
 
-            <ShapeMenu ref="shapeMenu" v-on:change-fill="changeShapeFill" v-on:change-color="changeShapeColor" v-on:change-width="changeShapeWidth"></ShapeMenu>
+            <ShapeMenu ref="shapeMenu" 
+                v-on:change-fill="changeShapeFill" 
+                v-on:change-color="changeShapeColor" 
+                v-on:change-width="changeShapeWidth"
+                v-on:change-name="changeShapeName"
+            >
+            </ShapeMenu>
 
             <div class="work-area">
                 <!-- <vue-resizable> -->
@@ -392,6 +398,15 @@
             },
 
             changeShapeFill: function(shape: Shape){
+                this.$socket.emit('changeShape', {
+                    shape    : shape,
+                    userId   : this.$store.state.userIdentity!.id,
+                    projectId: this.projectId,
+                });
+                this.canvas.renderAll();
+            },
+
+            changeShapeName: function(shape: Shape){
                 this.$socket.emit('changeShape', {
                     shape    : shape,
                     userId   : this.$store.state.userIdentity!.id,

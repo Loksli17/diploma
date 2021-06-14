@@ -26,7 +26,7 @@
 
         <div v-if="shape.fill != undefined" class="row">
             <span>Fill</span>
-            <input @mousedown.stop type="checkbox" @change.stop="changeShapeFill" min="1" max="10" v-model="shape.fill">
+            <input @mousedown.stop type="checkbox" @change.stop="changeShapeFill" v-model="shape.fill">
         </div>
 
         <div class="row">
