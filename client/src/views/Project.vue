@@ -402,6 +402,7 @@
                     userId   : this.$store.state.userIdentity!.id,
                     projectId: this.projectId,
                 });
+                this.canvas.changeShape(shape); //!bad variant
                 this.canvas.renderAll();
             },
 
@@ -411,6 +412,7 @@
                     userId   : this.$store.state.userIdentity!.id,
                     projectId: this.projectId,
                 });
+                this.canvas.changeShape(shape); //!bad variant
                 this.canvas.renderAll();
             },
 
@@ -420,6 +422,7 @@
                     userId   : this.$store.state.userIdentity!.id,
                     projectId: this.projectId,
                 });
+                this.canvas.changeShape(shape); //!bad variant
                 this.canvas.renderAll();
             },
 
@@ -429,6 +432,7 @@
                     userId   : this.$store.state.userIdentity!.id,
                     projectId: this.projectId,
                 });
+                this.canvas.changeShape(shape); //!bad variant
                 this.canvas.renderAll();
             },
 
@@ -605,6 +609,7 @@
                 delete this.canvas.socket;
                 this.$socket.emit('resetCanvas', {canvas: JSON.stringify(this.canvas), projectId: this.projectId});
                 this.canvas.socket = this.$socket;
+                this.canvas.clearHistory();
             },
 
             saveProject: async function(){

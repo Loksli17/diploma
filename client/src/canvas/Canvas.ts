@@ -79,7 +79,7 @@ export default class Canvas{
         this.users  = userCanvas; 
         this.state  = State.CURSOR;
         this.shapes = [];
-        
+
         this.socket        = socket;
         this.currentUser   = user;
         this.projectId     = projectId;
@@ -156,6 +156,12 @@ export default class Canvas{
 
     public removeShape(shape: Shape){
         this.shapes = this.shapes.filter(item => item.name != shape.name);
+        this.writeStepHistory({
+            backgroundColor: this.backgroundColor,
+            shapes         : this.shapes.slice(),
+            width          : this.width,
+            height         : this.height,
+        });
     }
 
     public changeShape(shape: Shape){
@@ -179,6 +185,13 @@ export default class Canvas{
         }else if(shape instanceof Rhombus){
             (this.shapes[ind] as Rhombus).fill = (shape as Rectangle).fill;
         }
+
+        this.writeStepHistory({
+            backgroundColor: this.backgroundColor,
+            shapes         : this.shapes.slice(),
+            width          : this.width,
+            height         : this.height,
+        });
     }
 
     
@@ -199,10 +212,15 @@ export default class Canvas{
     }
 
     private writeStepHistory(canvas: {backgroundColor: string; shapes: Array<Shape>; width: number; height: number}){
-
         if(this.history.length - this.historyPointer > 1){this.history = this.history.slice(0, this.historyPointer + 1)}
         this.historyPointer++;
-        this.history.push(canvas);
+        this.history.push(Object.assign({}, canvas));
+
+        console.log(this.history)
+    }
+
+    public clearHistory(){
+        this.history = [];
     }
 
 
