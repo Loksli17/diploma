@@ -255,7 +255,6 @@ export default class SocketContoller{
         }
 
         socket.on('changeShape', (data: Data) => {
-            console.log(data);
             this.io.sockets.to(`project${data.projectId}`).emit('changeShape', data);
         });
     }
@@ -264,8 +263,13 @@ export default class SocketContoller{
     public static resetCanvas(socket: Socket){
 
         interface Data{
-
+            canvas  : object;
+            projectId: number;
         }
+
+        socket.on('resetCanvas', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('resetCanvas', data);
+        });
     }
 
     
@@ -283,5 +287,6 @@ export default class SocketContoller{
         SocketContoller.changeCanvas(socket);
         SocketContoller.removeShape(socket);
         SocketContoller.changeShape(socket);
+        SocketContoller.resetCanvas(socket);
     }
 }

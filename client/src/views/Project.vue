@@ -293,6 +293,16 @@
             });
 
 
+            this.$socket.on('resetCanvas', (data: any) => {
+
+                if(this.projectId != data.projectId) return;
+
+                this.canvas.shapes = [];
+                this.canvas.copyData(JSON.parse(data.canvas));
+                this.canvas.renderAll();
+            });
+
+
             this.$socket.on('leaveProject', (data: any) => {
                 
 
