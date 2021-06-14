@@ -591,11 +591,13 @@
             },
 
             goBack: function(){
-                this.canvas.backStep();
+                this.canvas.backStepHistory();
+                // this.canvas.backStep();
             },
 
             goForward: function(){
-                this.canvas.forwardStep();
+                this.canvas.forwardStepHistory();
+                // this.canvas.forwardStep();
             },
 
             reset: function(){

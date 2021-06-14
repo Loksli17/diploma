@@ -12,8 +12,8 @@ import Ellipse           from './shapes/Ellipse';
 import Rhombus           from './shapes/Rhombus';
 import Arrow             from './shapes/Arrow';
 import Cursor            from './Cursor';
-import { Socket } from 'socket.io-client';
-import User from '@/types/User';
+import { Socket }        from 'socket.io-client';
+import User              from '@/types/User';
 
 
 export enum State{
@@ -42,12 +42,11 @@ export default class Canvas{
     private canvasMouse: HTMLCanvasElement;
     private ctxMouse: CanvasRenderingContext2D | null;
 
-    public users: Array<UserCanvas>;
+    public  users: Array<UserCanvas>;
     private state: State;
     private countClick: number = 0;
     private currentShape: Shape | undefined;
     public  shapes: Array<Shape>;
-    private shapesHistory: Array<Shape>;
 
     public brushWidth: number = 1;
     public brushColor: string = "#000000";
@@ -61,6 +60,9 @@ export default class Canvas{
     public socket: Socket;
     public currentUser: User;
     public projectId: number;
+
+    private history: Array<{backgroundColor: string; shapes: Array<Shape>; width: number; height: number}> = [{backgroundColor: "#FFFFFF", shapes: [], width: 900, height: 500}];
+    private historyPointer: number = 0;
 
 
     constructor(canvas: HTMLCanvasElement, canvasAnimate: HTMLCanvasElement, canvasMouse: HTMLCanvasElement, userCanvas: Array<UserCanvas>, socket: Socket, user: User, projectId: number){
@@ -85,7 +87,6 @@ export default class Canvas{
     }
 
     public copyData(canvas: {backgroundColor: string; shapes: Array<Shape>; width: number; height: number}): void{
-
         this.addShapes(canvas.shapes);
         this.backgroundColor = canvas.backgroundColor;
         this.width           = canvas.width;
@@ -181,19 +182,31 @@ export default class Canvas{
         }
     }
 
-
-    public backStep(){
-        this.shapes.pop();
+    
+    public backStepHistory(){
+        this.historyPointer--;
+        if(this.historyPointer < 0) {this.historyPointer++; return}
+        this.shapes = [];
+        this.copyData(this.history[this.historyPointer]);
         this.renderAll();
     }
 
-    public forwardStep(){
-        const index: number = this.shapes.length - 1;
-
-        if(this.shapesHistory[index + 1] == undefined) return;
-        this.shapes.push(this.shapesHistory[index + 1]);
-        this.render();
+    public forwardStepHistory(){
+        this.historyPointer++;
+        if(this.historyPointer == this.history.length) {this.historyPointer--; return}
+        this.shapes = [];
+        this.copyData(this.history[this.historyPointer]);
+        this.renderAll();
     }
+
+    private writeStepHistory(canvas: {backgroundColor: string; shapes: Array<Shape>; width: number; height: number}){
+
+        if(this.history.length - this.historyPointer > 1){this.history = this.history.slice(0, this.historyPointer + 1)}
+        this.historyPointer++;
+        this.history.push(canvas);
+    }
+
+
 
     private emitShape(){
         
@@ -232,7 +245,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -275,7 +293,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -319,7 +342,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -370,7 +398,13 @@ export default class Canvas{
 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
+
                     this.countClick = 0;
                     this.clearAnimate();
                     this.emitShape();
@@ -409,7 +443,12 @@ export default class Canvas{
 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -453,7 +492,12 @@ export default class Canvas{
 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -534,7 +578,12 @@ export default class Canvas{
                 if(action == 'click'){
                     this.clearAnimate();
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -592,7 +641,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -650,7 +704,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
@@ -690,7 +749,12 @@ export default class Canvas{
                 
                 if(action == 'click'){
                     this.shapes.push(this.currentShape);
-                    this.shapesHistory = this.shapes.slice();
+                    this.writeStepHistory({
+                        backgroundColor: this.backgroundColor,
+                        shapes         : this.shapes.slice(),
+                        width          : this.width,
+                        height         : this.height,
+                    });
 
                     this.render();
                     this.countClick = 0;
