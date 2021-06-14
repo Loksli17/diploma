@@ -187,7 +187,7 @@ export default class Canvas{
 
         this.writeStepHistory({
             backgroundColor: this.backgroundColor,
-            shapes         : this.shapes.slice(),
+            shapes         : this.shapes.map(item => Object.assign({}, item)),
             width          : this.width,
             height         : this.height,
         });
@@ -263,7 +263,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -311,7 +311,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -360,7 +360,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -416,7 +416,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -461,7 +461,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -510,7 +510,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -596,7 +596,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -659,7 +659,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -722,7 +722,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });
@@ -767,7 +767,7 @@ export default class Canvas{
                     this.shapes.push(this.currentShape);
                     this.writeStepHistory({
                         backgroundColor: this.backgroundColor,
-                        shapes         : this.shapes.slice(),
+                        shapes         : this.shapes.map(item => Object.assign({}, item)),
                         width          : this.width,
                         height         : this.height,
                     });

@@ -255,7 +255,6 @@ export default class SocketContoller{
         }
 
         socket.on('changeShape', (data: Data) => {
-            console.log('AAAAAAA FUCK')
             this.io.sockets.to(`project${data.projectId}`).emit('changeShape', data);
         });
     }
