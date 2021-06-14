@@ -592,12 +592,10 @@
 
             goBack: function(){
                 this.canvas.backStepHistory();
-                // this.canvas.backStep();
             },
 
             goForward: function(){
                 this.canvas.forwardStepHistory();
-                // this.canvas.forwardStep();
             },
 
             reset: function(){

@@ -79,8 +79,7 @@ export default class Canvas{
         this.users  = userCanvas; 
         this.state  = State.CURSOR;
         this.shapes = [];
-
-        this.shapesHistory = [];
+        
         this.socket        = socket;
         this.currentUser   = user;
         this.projectId     = projectId;
