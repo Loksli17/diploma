@@ -371,6 +371,16 @@
                 this.canvas.changeShape(data.shape);
                 this.canvas.renderAll();
             });
+
+
+            this.$socket.on('changeState', (data: any) => {
+
+                if(data.userId == this.$store.state.userIdentity!.id) return;
+                
+                this.canvas.shapes = [];
+                this.canvas.copyData(JSON.parse(data.canvas));
+                this.canvas.renderAll();
+            });
         },
 
 

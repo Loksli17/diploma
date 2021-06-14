@@ -207,6 +207,7 @@ export default class SocketContoller{
         }
         
         socket.on('sinhronizeData', (data: Data) => {
+            console.log(data);
             getRepository(User).findOne(data.userId)
             .then((value: User | undefined): void => {
                 if(value == undefined || value.socketId == undefined) return;
@@ -273,6 +274,19 @@ export default class SocketContoller{
     }
 
     
+    public static changeState(socket: Socket){
+        
+        interface Data{
+            canvas  : object;
+            projectId: number;
+        }
+
+        socket.on('changeState', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('changeState', data);
+        });
+    }
+
+    
     public static route(socket: Socket): void{
         SocketContoller.notification(socket);
         SocketContoller.sendMessage(socket);
@@ -288,5 +302,6 @@ export default class SocketContoller{
         SocketContoller.removeShape(socket);
         SocketContoller.changeShape(socket);
         SocketContoller.resetCanvas(socket);
+        SocketContoller.changeState(socket);
     }
 }

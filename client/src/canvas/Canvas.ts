@@ -200,6 +200,12 @@ export default class Canvas{
         this.shapes = [];
         this.copyData(this.history[this.historyPointer]);
         this.renderAll();
+
+        this.socket.emit('changeState', {
+            canvas   : JSON.stringify(this.history[this.historyPointer]), 
+            userId   : this.currentUser.id,
+            projectId: this.projectId,
+        });
     }
 
     public forwardStepHistory(){
@@ -208,6 +214,11 @@ export default class Canvas{
         this.shapes = [];
         this.copyData(this.history[this.historyPointer]);
         this.renderAll();
+
+        this.socket.emit('changeState', {
+            canvas   : JSON.stringify(this.history[this.historyPointer]), 
+            projectId: this.projectId,
+        });
     }
 
     private writeStepHistory(canvas: {backgroundColor: string; shapes: Array<Shape>; width: number; height: number}){
