@@ -277,12 +277,27 @@ export default class SocketContoller{
     public static changeState(socket: Socket){
         
         interface Data{
-            canvas  : object;
+            canvas   : object;
+            userId   : number;
             projectId: number;
         }
 
         socket.on('changeState', (data: Data) => {
             this.io.sockets.to(`project${data.projectId}`).emit('changeState', data);
+        });
+    }
+
+
+    public static importCanvas(socket: Socket){
+
+        interface Data{
+            canvas   : object;
+            userId   : number;
+            projectId: number;
+        }
+
+        socket.on('importCanvas', (data: Data) => {
+            this.io.sockets.to(`project${data.projectId}`).emit('importCanvas', data);
         });
     }
 
@@ -303,5 +318,6 @@ export default class SocketContoller{
         SocketContoller.changeShape(socket);
         SocketContoller.resetCanvas(socket);
         SocketContoller.changeState(socket);
+        SocketContoller.importCanvas(socket);
     }
 }

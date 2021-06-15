@@ -381,6 +381,16 @@
                 this.canvas.copyData(JSON.parse(data.canvas));
                 this.canvas.renderAll();
             });
+
+
+            this.$socket.on('importCanvas', (data: any) => {
+
+                if(this.projectId != data.projectId) return;
+
+                this.canvas.shapes = [];
+                this.canvas.copyData(JSON.parse(data.canvas));
+                this.canvas.renderAll();
+            });
         },
 
 
@@ -403,8 +413,6 @@
                 const
                     user = this.users.find(item => item.id == shape.userId), 
                     menu = this.$refs.shapeMenu! as any;
-                
-                console.log(user, shape, this.users);
 
                 menu.setShape(shape, user);
                 menu.show();
@@ -505,6 +513,12 @@
                                 type: 'success',
                                 image: require("../assets/flash/success.svg"),
                                 text: 'File has been imported successfully',
+                            });
+
+                            this.$socket.emit('importCanvas', {
+                                canvas   : JSON.stringify(data), 
+                                userId   : this.$store.state.userIdentity!.id,
+                                projectId: this.projectId,
                             });
                         })
                         break;
