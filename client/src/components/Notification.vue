@@ -74,22 +74,27 @@
                         this.$emit('remove-notification', this.data.id);
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("../assets/flash/success.svg"),
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : res.data.msg,
+                            title     : "Remove notification",
                         });
+
                     }else{
+
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("../assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Remove notification",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Remove notification",
                     });
                     console.error(err);
                 }

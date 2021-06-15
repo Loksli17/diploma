@@ -68,5 +68,19 @@ $inputGap   : 15px;
             top: $heightInput + 5px + 10px + 21px;
             font-size: 14px;
         }
+
+        select{
+            padding: 10px;
+            border: 0px solid;
+            font-size: 18px;
+            
+            &:focus{
+                outline: 0px solid;
+            }
+
+            option{
+                padding: 10px;
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@
                     >
                     </textarea>
 
-                    <select v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
+                    <select class="custom-select" v-else-if="item.type == 'select'" v-model="item.selected" :name=item.name :multiple=item.multiple :disabled=item.disabled>
                         <option v-for="option in item.options" :key="option.id" :value="option.id">{{option.text}}</option>
                     </select>
                     
@@ -41,6 +41,7 @@
 
 
 <script lang="ts">
+    declare const require: any;
     import {defineComponent} from "vue";
     import config            from '../config/config';
 
@@ -212,15 +213,17 @@
 
                     if(this.result.status == this.successCode){
                         this.$flashMessage.show({
-                            type: 'success',
-                            // image: require("../../assets/flashMessage/fail.svg"),
-                            text: this.result.data.msg,
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : this.result.data.msg,
+                            title     : "Users were founded",
                         });
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            // image: require("../../assets/flashMessage/fail.svg"),
-                            text: `Unexpected server error`,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : "Error with query",
+                            title     : "Server",
                         });
                     }
                 }catch(err){

@@ -104,11 +104,11 @@
     declare const require: any;
 
     import {defineComponent}        from 'vue';
-    import User                     from '../../types/User';
-    import UserItem, {MenuUserItem} from '../../components/UserItem.vue';
-    import Pagination               from '../../components/Pagination.vue';
-    import Notification             from '../../types/Notification';
-    import AnswerFriendNotification from '../../components/AnswerFriendNotification.vue';
+    import User                     from '@/types/User';
+    import UserItem, {MenuUserItem} from '@/components/UserItem.vue';
+    import Pagination               from '@/components/Pagination.vue';
+    import Notification             from '@/types/Notification';
+    import AnswerFriendNotification from '@/components/AnswerFriendNotification.vue';
 
 
     export default defineComponent({
@@ -204,7 +204,7 @@
 
                         this.$flashMessage.show({
                             blockClass: 'error',
-                            image     : require("../../assets/flash/fail.svg"),
+                            image     : require("@/assets/flash/fail.svg"),
                             text      : 'Error with query',
                             title     : "Server",
                         });
@@ -213,7 +213,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
+                        image     : require("@/assets/flash/fail.svg"),
                         text      : 'Error with query',
                         title     : "Server",
                     });
@@ -232,7 +232,7 @@
                     }else{
                        this.$flashMessage.show({
                             blockClass: 'error',
-                            image     : require("../../assets/flash/fail.svg"),
+                            image     : require("@/assets/flash/fail.svg"),
                             text      : 'Error with query',
                             title     : "Server",
                         });
@@ -240,7 +240,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
+                        image     : require("@/assets/flash/fail.svg"),
                         text      : 'Error with query',
                         title     : "Server",
                     });
@@ -264,7 +264,7 @@
                 if(res.status == 400){
                    this.$flashMessage.show({
                         blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
+                        image     : require("@/assets/flash/fail.svg"),
                         text      : 'Error with query',
                         title     : "Server",
                     });
@@ -276,9 +276,9 @@
 
                 this.$flashMessage.show({
                     blockClass: 'success',
-                    image     : require("../../assets/flash/fail.svg"),
-                    text      : 'Error with query',
-                    title     : "Users were founded",
+                    image     : require("@/assets/flash/success.svg"),
+                    text      : 'Users were founded',
+                    title     : "Search",
                 });
                 return;
             },
@@ -307,7 +307,7 @@
 
                         this.$flashMessage.show({
                             blockClass: 'success',
-                            image     : require("../../assets/flash/success.svg"),
+                            image     : require("@/assets/flash/success.svg"),
                             text      : res.data.msg,
                             title     : "Remove friendship request",
                         });
@@ -316,7 +316,7 @@
 
                         this.$flashMessage.show({
                             blockClass: 'error',
-                            image     : require("../../assets/flash/fail.svg"),
+                            image     : require("@/assets/flash/fail.svg"),
                             text      : "Error with query",
                             title     : "Server",
                         });
@@ -324,7 +324,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
+                        image     : require("@/assets/flash/fail.svg"),
                         text      : "Error with query",
                         title     : "Server",
                     });
@@ -395,7 +395,7 @@
                     }else{
                         this.$flashMessage.show({
                             blockClass: 'error',
-                            image     : require("../../assets/flash/fail.svg"),
+                            image     : require("@/assets/flash/fail.svg"),
                             text      : "Error with query",
                             title     : "Server",
                         });
@@ -403,7 +403,7 @@
                 }catch(err){
                     this.$flashMessage.show({
                         blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
+                        image     : require("@/assets/flash/fail.svg"),
                         text      : "Error with query",
                         title     : "Server",
                     });
@@ -419,7 +419,7 @@
 
                     this.$flashMessage.show({
                         blockClass: 'warning',
-                        image     : require("../../assets/flash/warning.svg"),
+                        image     : require("@/assets/flash/warning.svg"),
                         text      : `No more users`,
                         title     : "Pagination",
                     });
@@ -442,5 +442,5 @@
 </script>
 
 <style lang="scss">
-    @import '../../assets/scss/pages/user/addFriends.scss';
+    @import '@/assets/scss/pages/user/addFriends.scss';
 </style>

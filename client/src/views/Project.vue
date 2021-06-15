@@ -510,9 +510,10 @@
                             this.oldShapesState = this.canvas.shapes.slice();
 
                             this.$flashMessage.show({
-                                type: 'success',
-                                image: require("../assets/flash/success.svg"),
-                                text: 'File has been imported successfully',
+                                blockClass: 'success',
+                                image     : require("@/assets/flash/success.svg"),
+                                text      : 'File has been imported successfully',
+                                title     : "File",
                             });
 
                             this.$socket.emit('importCanvas', {
@@ -522,11 +523,13 @@
                             });
                         })
                         break;
+
                     default: 
                         this.$flashMessage.show({
-                            type: 'warning',
-                            image: require("../assets/flash/warning.svg"),
-                            text: 'Format of file must be JSON',
+                            blockClass: 'warning',
+                            image     : require("@/assets/flash/warning.svg"),
+                            text      : 'Format of file must be JSON',
+                            title     : "File",
                         });
                 }
 
@@ -575,10 +578,12 @@
 
                 if(!this.canvas.shapes.length){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: 'No data for export',
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'No data for export',
+                        title     : "No data",
                     });
+
                     return;
                 }
                 
@@ -602,11 +607,12 @@
 
             createJson: function(){
 
-                if(!this.canvas.shapes.length){
+                if(!this.canvas.shapes.length){                
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: 'No data for export',
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'No data for export',
+                        title     : "No data",
                     });
                     return;
                 }
@@ -646,9 +652,10 @@
                 
                 if(this.canvas.shapes.length == 0){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: 'Nothing to save',
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'Nothing to save',
+                        title     : "Save project",
                     });
                     return;
                 }
@@ -664,28 +671,34 @@
                     });
 
                     if(res.status == 400){
+    
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: res.data.msg,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : res.data.msg,
+                            title     : "Server",
                         });
                         return;  
                     }
 
                     this.canvas.socket = this.$socket;
-
+                    
                     this.$flashMessage.show({
-                        type: 'success',
-                        image: require("../assets/flash/success.svg"),
-                        text: res.data.msg,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "Save project",
                     });
+
                 }catch(err){
                     console.error(err);
+
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
-                    }); 
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
+                    });
                 }
             },
 
@@ -718,16 +731,18 @@
                         return res.data;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     console.error(err);
                 }
@@ -745,16 +760,18 @@
                         return res.data.access;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     console.error(err);
                 }

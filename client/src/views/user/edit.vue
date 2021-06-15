@@ -223,24 +223,29 @@
                         userSend: notification.userSend,
                     });
 
-                    if(res.status == 201){
+                    if(res.status == 201){    
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("../../assets/flash/success.svg"),
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : res.data.msg,
+                            title     : "Users were founded",
                         });
+                        
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("../../assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : res.data.msg,
+                            title     : "Server",
                         });
+
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("../../assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     console.error(err);
                 }
@@ -286,11 +291,11 @@
                 if(!checkFileResult.success){
                     this.$flashMessage.show({
                         blockClass: 'warning',
-                        image: require("../../assets/flash/warning.svg"),
-                        text: 'Format of file must be PNG or JPEG',
-                        title: "File",
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'Format of file must be PNG or JPEG',
+                        title     : "File",
                     });
-                    throw Error('Bad format of file')
+                    throw Error('Bad format of file');
                 }
 
                 reader.addEventListener('load', (e: any) => {
@@ -333,20 +338,24 @@
                 });
                 
                 if(res.status == 400){
+
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: res.data.error,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : res.data.error,
+                        title     : "Server",
                     });
                     return;
                 }
 
-                //*change data about path of avatar
                 if(res.status == 200){
                     this.$store.commit('setUserIdentity', res.data.user);
 
                     this.$flashMessage.show({
-                        type: 'success',
-                        text: res.data.msg,
+                        blockClass: 'success',
+                        image     : require("../../assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "File",
                     });
 
                     console.log(this.$store.state.userIdentity);
@@ -363,11 +372,12 @@
                 
                 this.$store.commit('setUserIdentity', res.data.user);
                 this.user = res.data.user;
-                
+
                 this.$flashMessage.show({
-                    type: 'success',
-                    image: require("@/assets/flash/success.svg"),
-                    text: res.data.msg,
+                    blockClass: 'success',
+                    image     : require("../../assets/flash/success.svg"),
+                    text      : res.data.msg,
+                    title     : "Update user",
                 });
             },
 
@@ -375,15 +385,22 @@
             passwordFormResultParser: function(res: any){
 
                 if(res.status == 400){
+                    this.$flashMessage.show({
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : res.data.error,
+                        title     : "Server",
+                    });
                     return;
                 }
                 
                 this.$store.commit('setUserIdentity', res.data.user);
-                
+
                 this.$flashMessage.show({
-                    type: 'success',
-                    image: require("@/assets/flash/success.svg"),
-                    text: res.data.msg,
+                    blockClass: 'success',
+                    image     : require("../../assets/flash/success.svg"),
+                    text      : res.data.msg,
+                    title     : "Update password",
                 });
 
                 console.log(res.data.user.password);
@@ -420,22 +437,25 @@
                         menu.setNotificationAmount(0);
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("@/assets/flash/success.svg"),
+                            blockClass: 'success',
+                            image     : require("../../assets/flash/success.svg"),
+                            text      : res.data.msg,
+                            title     : "Remove notification",
                         });
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     console.error(err);
                 }

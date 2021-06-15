@@ -1068,7 +1068,6 @@
                         image     : require("@/assets/flash/warning.svg"),
                         text      : 'You cannot remove collaborators from this project',
                         title     : "No permission",
-                        time      : 100000000,
                     });
 
                     return;

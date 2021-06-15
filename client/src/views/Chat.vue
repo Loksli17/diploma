@@ -108,16 +108,18 @@
                         return res.data.chats;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     console.error(err);
                 }
@@ -134,19 +136,20 @@
                     if(res.status == 200){
                         return res.data.chat;
                     }else{
-                        console.log("sdfsdf");
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
-                    });
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
+                        });
                     console.error(err);
                 }
             },
@@ -253,17 +256,19 @@
                         chat.lastMessage = res.data.message;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
-                    });
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
+                        });
                     console.error(err);
                 }
             },
@@ -311,17 +316,19 @@
                         this.currentChat.messages = res.data.messages.concat(this.currentChat.messages);
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
-                    });
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
+                        });
                     console.error(err);
                 }
             },
@@ -354,23 +361,26 @@
                         }
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            text: res.data.msg,
-                            image: require("@/assets/flash/success.svg"),
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : res.data.msg,
+                            title     : "Remove chat",
                         });
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
-                    });
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : 'Error with query',
+                            title     : "Server",
+                        });
                     console.error(err);
                 }
             }
@@ -432,9 +442,6 @@
 
                 chat.lastMessage = data.message;
             });
-
-        console.log(this.chats);
-
         },
     });
 </script>

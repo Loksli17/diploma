@@ -68,16 +68,18 @@
                         
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            text: 'Error with query',
-                            image: require("@/assets/flash/fail.svg"),
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : "Error with query",
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("@/assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     console.error(err);
                 }
