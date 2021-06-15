@@ -402,10 +402,12 @@
                     const res = await this.$axios.post('/user/remove-friends', {currentUser: this.$store.state.userIdentity!, friendId: user.id});
 
                     if(res.status == 200){
+
                         this.$flashMessage.show({
-                            type: 'success',
-                            image: require("../assets/flash/success.svg"),
-                            text: `User ${user.login} was removed from your friend list`,
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : `User ${user.login} was removed from your friend list`,
+                            title     : "Friendship",
                         });
 
                         this.$socket.emit('notification', {userReceiveId: user.id, notification: res.data.notification});
@@ -417,17 +419,19 @@
                         this.friends.splice(this.friends.findIndex((item) => item.id == user.id), 1);
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: `Error with query`,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : "Error with query",
+                            title     : "Server",
                         });
                         throw new Error();
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     throw new Error(err);
                 }
@@ -450,16 +454,18 @@
                         return res.data.projects;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: `Error with query`,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : "Error with query",
+                            title     : "Server",
                         });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        text: 'Error with query',
-                        image: require("../assets/flash/fail.svg"),
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     throw new Error(err);
                 }
@@ -479,9 +485,10 @@
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: 'Error with query',
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     throw new Error(err);
                 }
@@ -497,9 +504,10 @@
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: 'Error with query',
+                        blockClass: 'error',
+                        image     : require("../assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     throw new Error(err);
                 }
@@ -511,18 +519,20 @@
 
                 if(newFriends == undefined){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'error',
+                        image     : require("../assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     return;
                 }
 
                 if(!newFriends.length){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You don't have more friends`,
+                        blockClass: 'error',
+                        image     : require("../assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                 }
 
@@ -535,21 +545,24 @@
 
                 if(newProjects == undefined){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'error',
+                        image     : require("../assets/flash/fail.svg"),
+                        text      : "Error with query",
+                        title     : "Server",
                     });
                     return;
                 }
 
                 if(!newProjects.length){
+
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You don't have more projects`,
+                        blockClass: 'warning',
+                        image     : require("../assets/flash/warning.svg"),
+                        text      : "You don't have more projects",
+                        title     : "No data",
                     });
                     return;
-                }``
+                }
 
                 this.projects = newProjects;
             },
@@ -559,9 +572,10 @@
                 
                 if(this.searchValueProject == ""){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `Input some data`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : `Input some data`,
+                        title     : "No data",
                     });
                     return;
                 }
@@ -573,9 +587,10 @@
 
                     if(!projects.length){
                         this.$flashMessage.show({
-                            type: 'warning',
-                            image: require("../assets/flash/warning.svg"),
-                            text: `No projects to display`,
+                            blockClass: 'warning',
+                            image     : require("@/assets/flash/warning.svg"),
+                            text      : `No projects to display`,
+                            title     : "No data",
                         });
                         return;
                     }
@@ -589,8 +604,6 @@
 
 
             onFilterChange: async function(e: any): Promise<void>{
-                
-                console.log(e.target.value);
 
                 if(e.target.value == 'my'){
                     this.projectsFilter = this.$store.state.userIdentity!.id;
@@ -603,28 +616,32 @@
                     amountProjects: number | undefined      = await this.getAmountProjects(this.projectsFilter);
                 
                 if(newProjects == undefined){
+
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Error with query`,
+                        title     : "Server",
                     });
                     return;
                 }
 
                 if(!newProjects.length){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You don't have more projects`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : `You don't have more projects`,
+                        title     : "No data",
                     });
                     return;
                 }
 
                 if(amountProjects == undefined){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Error with query`,
+                        title     : "Server",
                     });
                     return;
                 }
@@ -658,9 +675,10 @@
 
                 if(res.status == 400 && res.data.msg != "Bad validation"){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: res.data.msg,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : res.msg.data,
+                        title     : "Server",
                     });
                     return;
                 }else if(res.status == 400 && res.data.msg == "Bad validation"){
@@ -674,9 +692,10 @@
                     this.amountProjects!++;
 
                     this.$flashMessage.show({
-                        type: 'success',
-                        image: require("../assets/flash/success.svg"),
-                        text: res.data.msg,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "Friendship",
                     });
                     return;
                 }
@@ -691,9 +710,10 @@
 
                 if(this.projectView == undefined){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Unexpected error`,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Unexpected error`,
+                        title     : "Server",
                     });
                 }
                 
@@ -703,9 +723,10 @@
                         collaborators = res.data.collaborators;
                     }else{
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: `Error with query`,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : `Error with query`,
+                            title     : "Server",
                         });
                     }
                 }catch(err){
@@ -727,10 +748,12 @@
                 }
 
                 if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You cannot edit this projects`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : `You cannot edit this projects`,
+                        title     : "No permission",
                     });
                     return;
                 }
@@ -778,9 +801,10 @@
                     menu.setNameOfActiveTab(this.projects[index]);
 
                     this.$flashMessage.show({
-                        type: 'success',
-                        image: require("../assets/flash/success.svg"),
-                        text: res.data.msg,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "Edit project",
                     });
                 }
             },
@@ -798,9 +822,10 @@
 
                 if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You cannot delete this project`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : `You cannot delete this project`,
+                        title     : "No permission",
                     });
                     return;
                 }
@@ -810,9 +835,10 @@
 
                     if(res.status === 400){
                         this.$flashMessage.show({
-                            image: require("../assets/flash/fail.svg"),
-                            type: 'error',
-                            text: res.data.msg,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : res.data.msg,
+                            title     : "Server",
                         });
                         return;
                     }
@@ -828,16 +854,18 @@
                         this.$socket.emit('manyNotifications', {userIds: res.data.userIds, notifications: res.data.notifications});
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            image: require("../assets/flash/success.svg"),
-                            text: res.data.msg,
-                        });
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "Edit project",
+                    });
                     }
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'success',
-                        image: require("../assets/flash/success.svg"),
-                        text: 'Error with query',
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                 }
                     
@@ -852,9 +880,10 @@
                 
                 if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You cannot add collaborators is this project`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'You cannot add collaborators is this project',
+                        title     : "No permission",
                     });
                     return;
                 }
@@ -873,9 +902,10 @@
                 if(this.searchValueUser == ""){
                     this.searchCollabsRes = [];
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `Input some data`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'Input some data',
+                        title     : "No data",
                     });
                     return;
                 }
@@ -900,17 +930,20 @@
                     res = await this.$axios.post('user/search-collaborators', {searchData: this.searchValueUser, authUserId: this.$store.state.userIdentity!.id, collabsIds: collabsIds});
                 }catch(err){
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: 'Error with query',
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                 }
                 
                 if(res.status === 400){
+
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: res.data.msg,
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : res.data.msg,
+                        title     : "Server",
                     });
                     return;
                 }
@@ -919,9 +952,10 @@
 
                 if(!users.length){
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `No users to display`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'No users to display',
+                        title     : "No data",
                     });
                 }
 
@@ -932,10 +966,12 @@
             addCollaboratorsEvt: async function(id: number){
                                 
                 if(!this.newCollabs!.length){
+   
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `At first, add new collaborators`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'At first, add new collaborators',
+                        title     : "No data",
                     });
                     return;
                 }
@@ -955,10 +991,12 @@
                     });
 
                     if(res.status == 400){
+
                         this.$flashMessage.show({
-                            type: 'warning',
-                            image: require("../assets/flash/warning.svg"),
-                            text: res.data.msg,
+                            blockClass: 'warning',
+                            image     : require("@/assets/flash/warning.svg"),
+                            text      : res.data.msg,
+                            title     : "Server",
                         });
                         return;
                     }
@@ -972,10 +1010,12 @@
                     this.newCollabs = [];
 
                     if(!this.newCollabs!.length){
+
                         this.$flashMessage.show({
-                            type: 'success',
-                            image: require("../assets/flash/success.svg"),
-                            text: res.data.msg,
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : res.data.msg,
+                            title     : "Collaborators",
                         });
 
                         this.$socket.emit('manyNotifications', {
@@ -987,10 +1027,12 @@
                     }
                     
                 }catch(err){
+   
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : 'Error with query',
+                        title     : "Server",
                     });
                     return;               
                 }
@@ -1020,11 +1062,15 @@
                 }
 
                 if(this.projectView.isOwn == undefined || !this.projectView.isOwn){
+
                     this.$flashMessage.show({
-                        type: 'warning',
-                        image: require("../assets/flash/warning.svg"),
-                        text: `You cannot add collaborators is this project`,
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : 'You cannot remove collaborators from this project',
+                        title     : "No permission",
+                        time      : 100000000,
                     });
+
                     return;
                 }
 
@@ -1036,10 +1082,12 @@
                     });
 
                     if(res.status == 400){
+
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: res.data.msg,
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : res.data.msg,
+                            title     : "Server",
                         });
                         return;  
                     }
@@ -1049,17 +1097,21 @@
                     this.projectViewCollabs.splice(ind, 1);
 
                     this.$flashMessage.show({
-                        type: 'success',
-                        image: require("../assets/flash/success.svg"),
-                        text: res.data.msg,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/success.svg"),
+                        text      : res.data.msg,
+                        title     : "Collaborators",
                     });
+
                 }catch(err){
                     console.error(err);
+
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
-                    }); 
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Error with query`,
+                        title     : "Server",
+                    });
                 }
             },
 
@@ -1109,9 +1161,10 @@
                     });
                 }else{
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: `Error with query`,
+                        blockClass: 'success',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Error with query`,
+                        title     : "Server",
                     });
                 }  
             }catch(err){

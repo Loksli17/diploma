@@ -28,6 +28,7 @@
 .flash-message{
     position: absolute;
     z-index: 9999;
+    opacity: 0.95;
 
     .success{
         background-color: #21cc7c;
@@ -38,14 +39,18 @@
     }
 
     .warning{
-        background-color: #f4cb59;
+        background-color: #eeba2b;
+    }
+
+    .info{
+        background-color: #36ccf1;
     }
 
     ._vue-flash-msg-body{
         border-radius: 0px;
     }
     
-    div:nth-child(2){
+    ._vue-flash-msg-body__content{
         @include column(10px);
         grid-auto-rows: max-content auto;
         color: #fff;

@@ -130,22 +130,27 @@
                         this.$emit('add-to-friendlist', res.data.notification);
 
                         this.$flashMessage.show({
-                            type: 'success',
-                            image: require("../assets/flash/success.svg"),
-                            text: `Invate to friendlist was sended to user: ${this.userData.login}`,
+                            blockClass: 'success',
+                            image     : require("@/assets/flash/success.svg"),
+                            text      : `Invate to friendlist was sended to user: ${this.userData.login}`,
+                            title     : "Frienship",
                         });
+
                     }else{
+
                         this.$flashMessage.show({
-                            type: 'error',
-                            image: require("../assets/flash/fail.svg"),
-                            text: 'Error with query',
+                            blockClass: 'error',
+                            image     : require("@/assets/flash/fail.svg"),
+                            text      : `Error with query`,
+                            title     : "Server",
                         });
                     }
                 }catch(err) {
                     this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flash/fail.svg"),
-                        text: 'Error with query',
+                        blockClass: 'error',
+                        image     : require("@/assets/flash/fail.svg"),
+                        text      : `Error with query`,
+                        title     : "Server",
                     });
                     console.error(err);
                 }
