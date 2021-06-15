@@ -5,7 +5,6 @@ import Point from '../Point';
 export default class Bezier extends Shape{
 
     public width: number = 1;
-    public fill: boolean = false;
 
     constructor(points: Array<Point>, userId: number, color: string, width: number){
         super(`Bezier${++Bezier.countNumber}`, userId, color);

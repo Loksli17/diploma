@@ -165,7 +165,11 @@ export default class Canvas{
     }
 
     public changeShape(shape: Shape){
-        const ind: number = this.shapes.findIndex(item => shape.name == item.name && shape.icon == item.icon);
+        
+        console.log(shape, 'this');
+        let ind: number = this.shapes.findIndex(item => shape.name == item.name && shape.icon == item.icon);
+
+        if(ind == -1) ind = this.shapes.findIndex(item => shape.id == item.id && shape.icon == item.icon);
 
         this.shapes[ind].color = shape.color;
         this.shapes[ind].name  = shape.name;
