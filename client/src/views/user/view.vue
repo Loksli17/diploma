@@ -47,7 +47,7 @@
                             <div class="project" v-for="project in projects" :key="project.id" @click.prevent="projectOpenEvt(project)">
                                 <div class="project-wrap">
 
-                                    <div class="project-img" :style="{backgroundImage: `url(http://localhost:3000/public/img/projects/${project.image})`}">
+                                    <div class="project-img" :style="{backgroundImage: `url(http://localhost:3000/img/projects/${project.image})`}">
                                         
                                     </div>
 
@@ -89,7 +89,7 @@
                                 <tr v-for="project in projects" :key="project.id">
                                     <td>{{project.id}}</td>
                                     <td>
-                                        <div :style="{backgroundImage: `url(http://localhost:3000/public/img/projects/${project.image})`}"></div>
+                                        <div :style="{backgroundImage: `url(http://localhost:3000/img/projects/${project.image})`}"></div>
                                     </td>
                                     <td>{{project.name}}</td>
                                     <td>{{project.dateOfEdit}}</td>
@@ -552,7 +552,7 @@
             this.friendsCount  = this.friends!.length;
             this.projectsCount = 0;
 
-            console.log(this.friendshipStatus);
+            console.log(this.projects);
         },
         
     });
