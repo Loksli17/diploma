@@ -371,10 +371,10 @@
 
                 if(!newFriends.length){
                     this.$flashMessage.show({
-                        blockClass: 'error',
-                        image     : require("../../assets/flash/fail.svg"),
-                        text      : `Error with query`,
-                        title     : "Server",
+                        blockClass: 'warning',
+                        image     : require("@/assets/flash/warning.svg"),
+                        text      : "This user has't more friends",
+                        title     : "Friends",
                     });
                 }
 

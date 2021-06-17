@@ -15,7 +15,7 @@ const init = async(): Promise<void> => {
         //     dateOfCreate: new Date(),
         // },
         // {
-        //     name    : 'projectOfYourRukav',
+        //     name    : 'project1',
         //     filename: 'lol.json',
         //     members : [{id: '125@mail.ru', isAuthor: true}, {id: '124@mail.ru', isAuthor: false}],
         // },

@@ -306,14 +306,14 @@
                     <draggable :list="searchCollabsRes" group="users" class="search-result-wrap" @change="log" >
                         <div class="user" :id="user.id" v-for="user in searchCollabsRes" :key="user.id">
                             <div :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${user.avatar})`}" class="avatar"></div>
-                            <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
+                            <div class="name">{{user.firstName}} {{user.lastName}} ({{user.login}})</div>
                         </div>
                     </draggable>
 
                     <draggable :list="newCollabs" group="users" class="new-users" @change="log">
                         <div class="user" :id="user.id" v-for="user in newCollabs" :key="user.id">
                             <div :style="{backgroundImage: `url(http://localhost:3000/img/avatars/${user.avatar})`}" class="avatar"></div>
-                            <div class="name">{{user.firstName}}{{user.lastName}} ({{user.login}})</div>
+                            <div class="name">{{user.firstName}} {{user.lastName}} ({{user.login}})</div>
                         </div>
                     </draggable>
                 </div>
@@ -519,7 +519,7 @@
 
                 if(newFriends == undefined){
                     this.$flashMessage.show({
-                        blockClass: 'error',
+                        blockClass: 'wir',
                         image     : require("../assets/flash/fail.svg"),
                         text      : "Error with query",
                         title     : "Server",
@@ -529,10 +529,10 @@
 
                 if(!newFriends.length){
                     this.$flashMessage.show({
-                        blockClass: 'error',
-                        image     : require("../assets/flash/fail.svg"),
-                        text      : "Error with query",
-                        title     : "Server",
+                        blockClass: 'warning',
+                        image     : require("../assets/flash/warning.svg"),
+                        text      : "You haven't more friends",
+                        title     : "Friends",
                     });
                 }
 

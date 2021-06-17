@@ -539,7 +539,6 @@ export default class ProjectController{
             id    : number,
             data  : string,
         }
-        
 
         let
             POST      : POST              = req.body,
