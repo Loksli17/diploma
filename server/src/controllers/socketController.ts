@@ -15,22 +15,32 @@ export default class SocketContoller{
         if(socket.handshake.query.user == undefined || typeof socket.handshake.query.user != "string") return;
 
         let user: User = JSON.parse(socket.handshake.query.user);
-        user.socketId = socket.id;
-        user.status   = true;
-        getRepository(User).update(user.id!, user);
 
-        console.log(`user with id=${user.id} socket id=${user.socketId}`);
+        getRepository(User).findOne(user.id).then((value: User | undefined) => {
+            if(value == undefined) return;
+            console.log('connect', value);
 
-        socket.on('disconnect', (reason: string) => {
-            //todo reconnect if user just sleeping
-            user.socketId = "";
-            user.status   = false;
-            getRepository(User).update(user.id!, user);
-            console.log(`user with id=${user.id} has been disconnect reason: ${reason}`);
+            value.socketId = socket.id;
+            value.status   = true;
+            getRepository(User).update(value.id!, value);
+
+            console.log(`user with id=${value.id} socket id=${value.socketId}`);
+
+            socket.on('disconnect', (reason: string) => {
+                getRepository(User).findOne(user.id).then((value: User | undefined) => {
+                    if(value == undefined) return;
+                    console.log('dissconnect', value);
+
+                     //todo reconnect if user just sleeping
+                    value.socketId = "";
+                    value.status   = false;
+                    getRepository(User).update(value.id!, value);
+                    console.log(`user with id=${value.id} has been disconnect reason: ${reason}`);
+                });
+            });
+            
+            SocketContoller.route(socket);
         });
-        
-        SocketContoller.route(socket);
-        
     }
 
 

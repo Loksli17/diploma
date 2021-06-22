@@ -75,7 +75,6 @@ router.beforeEach(async (to, from, next) => {
         const projects = store.state.tabs;
         
         if(projects != undefined) projects.forEach((item) => {
-            console.log(item);
             socket.emit('leaveProject', {userId: store.state.userIdentity!.id, projectId: item.link});
         });
         

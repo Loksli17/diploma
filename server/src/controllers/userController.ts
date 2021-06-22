@@ -454,6 +454,7 @@ export default class UserController{
         }
         
         //!edit password
+        console.log(POST.new);
         user.password = crypto.SHA256(POST.new).toString();
 
         try {

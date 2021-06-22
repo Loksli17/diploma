@@ -40,12 +40,12 @@ export default class AuthController{
         //TODO: !!add TRY CATCH
         user = await getRepository(User).findOne({where: {email: POST.email}});
 
-        console.log(user);
-
         if(user == undefined){
             res.status(400).send({msg: 'Bad validation', errors: [{msg: `User with this email doesn' exists`, name: 'email'}]});
             return;
         }
+
+        console.log(user.password, crypto.SHA256(POST.password).toString());
 
         if(user.password !== crypto.SHA256(POST.password).toString()){
             res.status(400).send({msg: 'Bad validation', errors: [{msg: `Password uncorrect`, name: 'password'}]});
@@ -82,7 +82,7 @@ export default class AuthController{
         }
 
         token = jwt.sign({id: user.id}, config.secret.jwt, {expiresIn: '16m'});
-        console.log(token, 'this');
+        
         res.status(200).send({token: token});
     }
 

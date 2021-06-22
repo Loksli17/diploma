@@ -403,7 +403,8 @@
                     title     : "Update password",
                 });
 
-                console.log(res.data.user.password);
+                // this.$store.commit('setUserIdentity', res.data.user);
+                console.log(this.$store.state.userIdentity!);
             },
 
 
